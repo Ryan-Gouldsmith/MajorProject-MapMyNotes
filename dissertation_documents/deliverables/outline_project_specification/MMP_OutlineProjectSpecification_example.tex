@@ -45,7 +45,21 @@
 %==============================================================================
 \section{Project description}
 %==============================================================================
+My project is called MapMyNotes and it aims to produce a web application piece of software which will allow the user to upload a photograph of their handwritten notes. When the user uploads their image they have two options, to have the ability to have the note be translated fully by OCR or whether they just want to see the image of the notes and only be able to annotate them.
 
+If they see the image of the notes then there will be automatic tagging of the module code via OCR recognition, this will then archive the notes.
+
+If they select to use full OCR then it will automatically convert the entire image into text based on their hand writing. It will then try to identify the module and metadata to perform automatic tagging of the module.
+
+As well as reading textual information the application will look to extract any images, graphs or diagrams from the note. If they select the full OCR extraction then I will be looking to get the image and put it onto the canvas so they can move the text around it accordingly.
+
+Another key feature is that the application must have searchable notes, so it will have to integrate with a structured database. Map my notes may interact with a PostgreSQL database. After this the application will integrate into a calendar so the notes can be saved for a specific day. The calendar has not been considered but I will be researching into using OAuth with Google calendar to allow me this functionality.
+
+The application will have to interact with an OCR (optical character recognition) tool, and one which I have looked at in great depth is the open source tool Tesseract. It's available under the Apache 2 license, and I will be looking to train handwriting using this tool. Additionally for extracting images I will be looking to use the OpenCV tool. This is under a BSD license so is good enough to use in this project.
+
+The application, from initial looking, seems to have 2 core components. A web application interface and a backend parsing of the notes. For the front end of the application I will be looking to write this in HTML5 and Javascript. I have experience of using ReactJS, so maybe this can be incorporated into the application.
+
+The backend application would have to have access to the openCV and tesseract API's, this means that potentially the backend would have to be written in Python. This has not been decided as of yet.
 
 %==============================================================================
 \section{Proposed tasks}
