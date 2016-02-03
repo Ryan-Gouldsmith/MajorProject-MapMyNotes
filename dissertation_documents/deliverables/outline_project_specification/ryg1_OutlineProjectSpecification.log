@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.8.29)  3 FEB 2016 12:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.8.29)  3 FEB 2016 15:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -363,22 +363,22 @@ LaTeX Font Info:    Font shape `OMS/ppl/m/n' in size <10.95> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 67.
 LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/ppl/b/n' tried instead on input line 67.
- [1] [2] [3] (./ryg1_OutlineProjectSpecification.bbl) 
+ [1] [2] (./ryg1_OutlineProjectSpecification.bbl) 
 AED: lastpage setting LastPage
-[4] (./ryg1_OutlineProjectSpecification.aux) ) 
+[3] (./ryg1_OutlineProjectSpecification.aux) ) 
 Here is how much of TeX's memory you used:
- 5780 strings out of 493089
- 88999 string characters out of 6134842
- 189926 words of memory out of 5000000
+ 5772 strings out of 493089
+ 88915 string characters out of 6134842
+ 189928 words of memory out of 5000000
  8953 multiletter control sequences out of 15000+600000
- 37041 words of font info for 196 fonts, out of 8000000 for 9000
+ 36601 words of font info for 190 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,10n,56p,636b,356s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,10n,56p,636b,350s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on ryg1_OutlineProjectSpecification.pdf (5 pages, 81430 bytes).
+Output written on ryg1_OutlineProjectSpecification.pdf (4 pages, 80862 bytes).
 PDF statistics:
- 41 PDF objects out of 1000 (max. 8388607)
- 28 compressed objects within 1 object stream
+ 38 PDF objects out of 1000 (max. 8388607)
+ 26 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  39425 words of extra memory for PDF output out of 42996 (max. 10000000)
 

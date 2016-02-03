@@ -28,7 +28,7 @@
 \projecttitle{MapMyNotes}
 \projecttitlememoir{MapMyNotes} %same as the project title or abridged version for page header
 \reporttitle{Outline Project Specification}
-\version{0.3}
+\version{0.4}
 \docstatus{Draft}
 \modulecode{CS39440}
 \degreeschemecode{G401}
@@ -66,16 +66,16 @@ The following tasks are ones which should be completed on the project:
 
 \item \textbf{Investigation of how to extract handwriting from images.} This task will involve looking and investigating OCR tools to see how well handwriting data can be interpreted. The tool will need to be trained for the author's handwriting.
 
-\item \textbf{Investigation into server configuration.} The server will need to be configured with running a web application alongside external libraries such as the OCR tool. An appropriate configuration and process needs to be identified.
+\item \textbf{Investigation into server configuration.} The server will need to be configured with running a web application alongside external libraries such as the OCR tool.
 
-\item \textbf{Configuration of local work environment.} Local machines will need to be configured very similar to the server configurations. This would reduce the errors when deploying the code. I will also need to investigate a suitable continuous integration tool to work with a Git repository, and GitHub [CITE]
+\item \textbf{Configuration of local work environment.} Configuration of local machines will closely match that of the server, using the same version control, either git or SVN. Configuration  of a continuous integration tool to aid project development will be required.
 
 \item \textbf{Development}
   \begin{itemize}
 
-    \item \textbf{Produce a front end application to input a note.} The front end features must allow a user to upload an image and see the image on the screen. They can add appropriate tags for the module code. The user can then search for the module code and it will list all the links to the corresponding notes.
+    \item \textbf{Produce a front end application to input a note.} The front end features must allow a user to upload an image and see the image on the screen. They can add appropriate tags for the module code and they can search for the module code, producing a full list of notes based on the module code.
 
-    \item \textbf{Back end parsing the images.} The core business logic should do basic OCR recognition of text at the top of the notes. The other logic could interact with OpenCV's [CITE] libraries to extract the images from the notes. Finally, the backend module should integrate with a calendar to archive the notes so they can be found again via the date.
+    \item \textbf{Back end parsing the images.} The core business logic should conduct basic OCR recognition of text at the top of the notes. The notes can then inteact with OpenCV's libraries to extract diagrams from the notes. Finally, the backend module should integrate with a calendar to archive the notes so they can be found again via the date.
 
   \end{itemize}
 
