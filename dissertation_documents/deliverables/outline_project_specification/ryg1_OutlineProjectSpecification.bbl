@@ -38,10 +38,10 @@ L.~A. Fletcher and R.~Kasturi, ``{A robust algorithm for text string separation
   Intelligence, IEEE Transactions on}, vol.~10, no.~6, pp. 910--918, Nov. 1988.
   [Online]. Available: \url{http://dx.doi.org/10.1109/34.9112}
 \BIBentrySTDinterwordspacing
- \begin{quotation}\noindent This paper was not as useful as I first thought it
-  would be. I soon realised I would not be needing to extract the text from an
+ \begin{quotation}\noindent This paper was not as useful as it looked. It was
+  soon realised that the application did not need to extract the text from an
   diagram in the image, instead the image as a whole. This paper may be
-  revisited if I was to filter out the text, though. \end{quotation}
+  revisited if there was a need to filter out the text. \end{quotation}
 
 \bibitem{citeulike:13920943}
 \BIBentryALTinterwordspacing
@@ -52,9 +52,9 @@ B.~M. Gonzalez, ``{Iris : a solution for executing handwritten code},''
  \begin{quotation}\noindent This thesis was a great reference material for
   handwriting recognition. The used the Tesseract OCR engine to analyse human
   handwriting and convert the code written on the paper to the actual output.
-  The most interesting part of this thesis, for me, was when the author
-  described the training process for handwriting reconition, which I will look
-  to follow a similar approach. \end{quotation}
+  The most interesting part of this thesis was when the author described the
+  training process for handwriting reconition, which shall be considered in
+  this application. \end{quotation}
 
 \bibitem{citeulike:13920892}
 \BIBentryALTinterwordspacing

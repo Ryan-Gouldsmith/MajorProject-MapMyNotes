@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.8.29)  3 FEB 2016 15:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.8.29)  3 FEB 2016 21:05
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -367,15 +367,15 @@ LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <10.95> not available
 AED: lastpage setting LastPage
 [3] (./ryg1_OutlineProjectSpecification.aux) ) 
 Here is how much of TeX's memory you used:
- 5772 strings out of 493089
- 88915 string characters out of 6134842
- 189928 words of memory out of 5000000
+ 5776 strings out of 493089
+ 88961 string characters out of 6134842
+ 189901 words of memory out of 5000000
  8953 multiletter control sequences out of 15000+600000
- 36601 words of font info for 190 fonts, out of 8000000 for 9000
+ 36821 words of font info for 193 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,10n,56p,636b,350s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,10n,56p,650b,350s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on ryg1_OutlineProjectSpecification.pdf (4 pages, 80862 bytes).
+Output written on ryg1_OutlineProjectSpecification.pdf (4 pages, 80577 bytes).
 PDF statistics:
  38 PDF objects out of 1000 (max. 8388607)
  26 compressed objects within 1 object stream
