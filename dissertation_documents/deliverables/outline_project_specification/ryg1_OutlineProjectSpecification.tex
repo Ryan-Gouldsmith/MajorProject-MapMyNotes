@@ -10,6 +10,8 @@
 \usepackage{fancyhdr} %header and footer package
 \usepackage{mmpv2}
 \usepackage{url}
+\usepackage[subtle]{savetrees}
+
 
 % the following packages are used for citations - You only need to include one.
 %
@@ -45,15 +47,15 @@
 %==============================================================================
 \section{Project description}
 %==============================================================================
-My project is called MapMyNotes and it aims to produce a web application which will allow the user to upload an image of their handwritten notes.
+MapMyNotes aims to produce a web application which will allow the user to upload an image of their handwritten notes and store them in a database. It should also provide the functionality to search for a note and add them to a calendar.
 
-Lots of people still handwrite their notes often leading to ridiculous amounts of paper to search through to find their notes. Modern applications have come around such as One Note, which aid this, but people still like to write their notes.
+People still handwrite their notes and this often leads to large amounts of paper. This can be cumbersome especially if they try to search through notes which may not be organised. There are modern applications which will allow you to take notes, such as EverNote [CITE], but people still like writing handwritten notes.
 
-The project aims to produce a web application to aid the digitalisation of their notes. At its very basic level, the user will interact with a web application and upload an image of their handwritten notes. It will use very simple OCR techniques (most likely from the Tesseract OCR engine) to read the title of the notes, who lectured, the module code and the time at a very basic level of the author's handwriting.
+At a basic level the application will allow the user to upload an image of their handwritten notes. It will use very basic OCR analysis to identify the title of the notes, the lecturer, the module code, the location and time. Additionally, at the basic level it will interpret the author's handwriting.
 
-The application can be manually tagged by the user. Additionally, it will then store the notes and the metadata into a database, where a user can search for the tags for a module code and find all associated notes for that user. The database choice for the notes has not been decided, but it will need to consider binary data and metadata, so the choices of a NoSQL and SQL database needs to be considered. Once the notes have been collated they will be added to some form of calendar; OAuth with Google Calendar is a possibility but more research with this needs to be conducted.
+From this the application can manually tag the module code for the notes based on suggestions from the OCR analysis, but ultimately the user tags their own notes. The notes metadata (code, location, lecturer and time) will be stored in the database with the note itself. The user can then search for a given module code and find all associated notes, for the specific user. Finally, the user must be able to insert the notes into a calendar, for archival purposes; OAuth with Google Calendar has been considered but more research needs to be conducted.
 
-If there is sufficient time with the project the application will give the option to do full OCR recognition on the text and produce the entire image as text. This will also incorporate extraction of diagrams and graphs from the image and conduct automatic rotation of the note prior to analysing it. Additionally, they will be able to edit the content of their note and the text associated with it. An additional stretch would be to look at analysing any user's handwriting. Finally, you should be able to link to other notes in the archive.
+If there's sufficient time remaining then the application will look to do full OCR recognition on the note and produce a document which the note has been converted to text. There will also be an extraction of diagrams and graph from the note and the user will be able to drag, rotate etc. Additionally, another further aim is to automatically rotate the image of the note, allowing for notes to be taken at obscure angles and the system will help this. Finally, the application could link to other notes as an archive. These are all long term goals and I will be focusing on the first part mainly.
 
 The methodology that the project will follow will be an adapted Extreme Programming. There needs to be investigatory work on how this can be applied to this project, but during the development stage then CRC cards could be beneficial when thinking about the design stage.
 %==============================================================================
@@ -62,28 +64,28 @@ The methodology that the project will follow will be an adapted Extreme Programm
 The following tasks are ones which should be completed on the project:
 \begin{itemize}
 
-\item \textbf{Investigation of how to extract handwriting from images.} This task will involve looking and investigating OCR tools such as Tesseract to see how well handwriting data can be interpreted. The tool will need to be trained for the authors handwriting so it can interpret it with a high accuracy rate.
+\item \textbf{Investigation of how to extract handwriting from images.} This task will involve looking and investigating OCR tools to see how well handwriting data can be interpreted. The tool will need to be trained for the author's handwriting.
 
-\item \textbf{Investigation into server configuration.} Look into how to host a web application with external dependencies such as Tesseract and Open CV libraries. It will also need to investigate how to store images and metadata into the database reliably as well as deciding on an appropriate library to be able to interact with these.
+\item \textbf{Investigation into server configuration.} The server will need to be configured with running a web application alongside external libraries such as the OCR tool. An appropriate configuration and process needs to be identified.
 
-\item \textbf{Configuration of local work environment.} Configuration of the local environment of my machines to be as similar as the server configuration would be needed to reduce the errors when deploying. Will need to set up a private repository with git, most likely with GitHub [CITE].
+\item \textbf{Configuration of local work environment.} Local machines will need to be configured very similar to the server configurations. This would reduce the errors when deploying the code. I will also need to investigate a suitable continuous integration tool to work with a Git repository, and GitHub [CITE]
 
 \item \textbf{Development}
   \begin{itemize}
 
-    \item \textbf{Produce a front end application to input a note.} The front end features must allow a user to upload an image and see the image on the screen. They can add appropriate tags for the module code. The user can then search for the module code, and it will list all the links to the corresponding notes.
+    \item \textbf{Produce a front end application to input a note.} The front end features must allow a user to upload an image and see the image on the screen. They can add appropriate tags for the module code. The user can then search for the module code and it will list all the links to the corresponding notes.
 
-    \item \textbf{Back end parsing the images.} The core business logic should do basic OCR recognition of text at the top of the notes. The other logic could interact with OpenCV's libraries to extract the images from the notes. Finally, the backend module should integrate with some kind of calendar to archive the notes in a calendar for someones use.
+    \item \textbf{Back end parsing the images.} The core business logic should do basic OCR recognition of text at the top of the notes. The other logic could interact with OpenCV's [CITE] libraries to extract the images from the notes. Finally, the backend module should integrate with a calendar to archive the notes so they can be found again via the date.
 
   \end{itemize}
 
-\item \textbf{Produce a list of constraints that the notes must follow.} As notes are varying from person to person, then a constraint should be attached to the notes to ensure the notes follow a similar format. This should be a small set of rules that can be added to the application which represent a structure for a given upload on the notes.
+\item \textbf{Produce a list of constraints that the notes must follow.} As notes are varying from person to person, then a constraint should be attached to the notes to ensure the notes follow a similar format. This should be a small set of rules that can be added to the application which represent a formalised structure.
 
-\item \textbf{Investigation of how to extract diagrams and graphs from images.} There will be research conducted to identify an efficient way to identify images, graphs and diagrams from an image given the user has followed a set of constraints. If they have followed a set of constraints then they should be able to extract an image into the application.
+\item \textbf{Investigation of how to extract diagrams and graphs from images.} There will be research conducted to identify an efficient way to identify images, graphs and diagrams from an image of a note. This could then be implemented into the system.
 
-\item \textbf{Continuous project meetings and diaries.} The project will consist of weekly meetings with the supervisor. There shall be one group meeting and another individual meeting to show and share concerns and progress. A weekly diary will be kept to keep track of how the project is progressing and will be referenced to in the end report.
+\item \textbf{Continuous project meetings and diaries.} The project will consist of weekly meetings with the supervisor. There shall be one group meeting and another individual meeting to show and share progress. A weekly diary will be kept to monitor individual progress on the project and it will be referenced to in the final report deliverable.
 
-\item \textbf{Preparation for the demonstrations.} The project will consist of a mid project demonstration and an end demonstration. The mid project demonstration will need to be prepared to show minimal character recognition of notes and the ability to upload a note. The final project demonstration should show the ability to search for a note by tagging it and uploading it to a calendar.
+\item \textbf{Preparation for the demonstrations.} The project will consist of a mid project demonstration and an end demonstration. The mid project demonstration will need to be prepared to show minimal character recognition of notes and the ability to upload an image. The final project demonstration should show the ability to search for a note by tagging it and archiving it in a calendar.
 
 \end{itemize}
 
@@ -93,13 +95,15 @@ The following tasks are ones which should be completed on the project:
 The following are deliverables which are expected to be completed on the project:
 \begin{itemize}
 
-  \item \textbf{The MapMyNotes software.} There should be a web application which at the minimum will take an image and save it to the database and input it into a calendar. This should be well tested and well structured with appropriate comments where necessary.
+  \item \textbf{The MapMyNotes software.} There should be a web application which at the minimum will take an image and save it to a database and integrate with a calendar. This should be well tested and well structured with appropriate comments where necessary along with providing any build scripts from the server.
 
-  \item \textbf{A collection of user acceptance and model tests.} Due to this being a web application then user acceptance and integration tests should be provided for all the front end applications. Additionally, the models which control the logic should also be provided in the testing sections.
+  \item \textbf{A collection of user acceptance and model tests.} A series of user acceptance and integration tests should be provided for the front end application. Additionally, back end models should have appropriate logic tested.
 
-  \item \textbf{Story Card, CRC cards, burndown charts and backlog items.} As the author intends to use an Extreme Programming methodology for their project, then providing CRC cards and story cards would be useful for the Final report deliverable to show how they accomplished the design phase. Additionally, burndown charts show progress and how well estimations have got over the 15 week period. Backlog items could also be aided in discussion of what could be achieved if we had more time.
+  \item \textbf{Story Card, CRC cards, burndown charts and backlog items.} As the author intends to use an Extreme Programming methodology for their project, then providing CRC cards and story cards would be useful for the final report deliverable to show the author's design decisions.
 
-  \item \textbf{A series of training data.} The OCR will need be learned on at least the authors handwriting so training data will need to be provided to show how the OCR tool has been trained to recognise handwriting for the application.
+  \item \textbf{OCR training data.} The OCR tool will need to be trained to recognise the author's handwriting. Any training data which aided with this learning stage should be provided.
+
+  \item \textbf{Weekly blogposts regarding progress.} There should be a weekly blog post to aid the author in analysing and reflecting on the week and any obstacles they may have overcome. This will be used and referenced in the final report.
 
   \item \textbf{Mid-project Demonstration.} There will be a mid project demonstration which should show current progress on the project.
 
