@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Showing image </title>
+  </head>
+
+  <body>
+    <h1> Original Image </h1>
+    <img src="{{url_for('static', filename = filename)}}" />
+    <h2> OpenCV's greyscale image </h2>
+    <img src="{{url_for('static', filename=modified)}}" />
+  </body>
+</html>
