@@ -1,0 +1,59 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: ryg1_OutlineProjectSpecification.aux
+The style file: IEEEannot.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: mmp.bib
+-- IEEEtranS.bst version 1.11 (2003/04/02) by Michael Shell.
+-- http://www.ctan.org/tex-archive/macros/latex/contrib/supported/IEEEtran/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+** Sorting version - not for use with work to be submitted to the IEEE.
+Warning--empty year in citeulike:13916924
+
+Done.
+You've used 6 entries,
+            4538 wiz_defined-function locations,
+            939 strings with 11135 characters,
+and the built_in function-call counts, 5195 in all, are:
+= -- 478
+> -- 111
+< -- 37
++ -- 56
+- -- 24
+* -- 294
+:= -- 861
+add.period$ -- 13
+call.type$ -- 6
+change.case$ -- 30
+chr.to.int$ -- 84
+cite$ -- 7
+duplicate$ -- 319
+empty$ -- 366
+format.name$ -- 29
+if$ -- 1125
+int.to.chr$ -- 0
+int.to.str$ -- 6
+missing$ -- 52
+newline$ -- 56
+num.names$ -- 12
+pop$ -- 122
+preamble$ -- 1
+purify$ -- 24
+quote$ -- 2
+skip$ -- 383
+stack$ -- 0
+substring$ -- 232
+swap$ -- 261
+text.length$ -- 9
+text.prefix$ -- 0
+top$ -- 6
+type$ -- 53
+warning$ -- 1
+while$ -- 28
+width$ -- 7
+write$ -- 100
+(There was 1 warning)
