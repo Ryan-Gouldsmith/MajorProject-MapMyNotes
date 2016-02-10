@@ -11,7 +11,6 @@ install:
   - git clone https://github.com/Itseez/opencv.git
   - cd opencv
   - git checkout 3.0.0
-  - cd ~/opencv
   - mkdir build
   - cd build
   - cmake -D CMAKE_BUILD_TYPE=RELEASE \
