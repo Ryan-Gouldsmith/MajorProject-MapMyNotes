@@ -22,7 +22,7 @@ def homepage():
 @app.route("/invert/<filename>", methods=["GET"])
 def invert_image(filename):
     testimage = TestImage()
-    modified_file = testimage.perform_greyscale(filename)
+    modified_file = testimage.binarise_image(filename)
 
     return render_template('show.html', filename = filename, modified = modified_file)
 
