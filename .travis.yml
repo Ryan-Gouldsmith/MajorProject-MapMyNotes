@@ -1,5 +1,7 @@
 language: python
 
+sudo: required
+
 before_install:
   - sudo apt-get install opencv-python
 
