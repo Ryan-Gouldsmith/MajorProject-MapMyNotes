@@ -4,6 +4,8 @@ import numpy as np
 import sys
 from matplotlib import pyplot as plt
 
+# BASED ON THE TUTORIAL http://docs.opencv.org/master/d7/d4d/tutorial_py_thresholding.html#gsc.tab=0
+
 img = cv2.imread(sys.argv[1],0)
 older = cv2.medianBlur(img, 5)
 
@@ -31,15 +33,18 @@ ret3, thresh9 = cv2.threshold(older, 127,255,cv2.ADAPTIVE_THRESH_MEAN_C+ cv2.THR
 
 titles = ['Original Image','BINARY','BINARY_INV','TRUNC','TOZERO','TOZERO_INV', "adaptive mean", "Adaptive gaussian", "Otsu", "Otsu + Gaussian"]
 images = [older, thresh1, thresh2, thresh3, thresh4, thresh5, thresh6, thresh7, thresh8, thresh9]
-
+"""
 for i in xrange(10):
   plt.subplot(2,5,i+1),plt.imshow(images[i],'gray')
   plt.title(titles[i])
   plt.xticks([]),plt.yticks([])
 
 plt.show()
+"""
 
-cv2.imshow("image", thresh7)
+#cv2.imshow("image", thresh7)
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+cv2.imwrite("image_test.tif", thresh7)
+
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
