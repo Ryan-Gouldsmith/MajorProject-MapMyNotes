@@ -24,7 +24,7 @@ class TestBlueLinedAdaptedThreshold(object):
     def test_reading_image(self):
         assert self.threshold.read_image(self.image_file) is not None
 
-    def test_grayscale_is_an_array(self):
+    def test_image_is_an_array(self):
         coloured_image = self.threshold.read_image(self.image_file)
 
         assert len(coloured_image) is not 0
@@ -90,7 +90,7 @@ class TestBlueLinedAdaptedThreshold(object):
 
         self.threshold.convert_text_extraction_to_mask()
 
-        # has transfered the colour over to the array.
+        # has transfered the colour over to the array. TODO I don't think this test is acually good enough and it doesn't filter all the 255 like I thought the manual said.
         assert len(np.in1d(self.threshold.mask, 255)) > 0
 
 
