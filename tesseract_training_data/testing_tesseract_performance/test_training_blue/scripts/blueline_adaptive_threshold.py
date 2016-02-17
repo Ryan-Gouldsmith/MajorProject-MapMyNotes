@@ -8,6 +8,8 @@ import sys
 
 class Blueline_Adaptive_Threshold(object):
 
+    # Based upon and adaptive from methods found on the open cv tutorial page http://docs.opencv.org/3.1.0/d7/d4d/tutorial_py_thresholding.html about adaptive thresholding.
+
     GRAYSCALE_VALUE = 0
     SMALL_KERNEL_SIZE = 2
     ERODE_ITERATION = 1
@@ -19,6 +21,14 @@ class Blueline_Adaptive_Threshold(object):
     UPPER_BLACK_HUE = 175
     UPPER_BLACK_SATURATION = 20
     UPPER_BLACK_VALUE = 95
+
+    BLACK_VALUE = 255
+    WHITE_VALUE = 0
+
+    ADAPTIVE_THRESHOLD_BLOCK_SIZE = 13
+    ADAPTIVE_THRESHOLD_WEIGHTED_MEAN = 2
+
+    IMAGE_EXTENSION = ".tiff"
 
 
     def image_file_exists(self, filename):
@@ -41,6 +51,7 @@ class Blueline_Adaptive_Threshold(object):
         return self.grayscale_image
 
     def get_kernel(self, kernel_size):
+        # Used to learn how to smooth an image http://docs.opencv.org/master/d4/d13/tutorial_py_filtering.html#gsc.tab=0
         return np.ones((kernel_size,kernel_size),np.uint8)
 
     def erode_image(self, greyscale_image, kernel_size):
@@ -69,7 +80,22 @@ class Blueline_Adaptive_Threshold(object):
         return self.mask
 
     def convert_text_extraction_to_mask(self):
-        self.mask[np.where(self.black_text == 0)] = 255
+        self.mask[np.where(self.black_text == self.WHITE_VALUE)] = self.BLACK_VALUE
+
+    def apply_threshold(self):
+        self.threshold_image = cv2.adaptiveThreshold(self.mask, self.BLACK_VALUE, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, self.ADAPTIVE_THRESHOLD_BLOCK_SIZE, self.ADAPTIVE_THRESHOLD_WEIGHTED_MEAN)
+
+        return self.threshold_image
+
+    def save_adaptive_threshold_image(self, filename):
+        filename, file_extension = os.path.splitext(filename)
+        print filename
+
+        image_path = filename + self.IMAGE_EXTENSION
+
+        cv2.imwrite(image_path, self.threshold_image)
+
+
 
 
 

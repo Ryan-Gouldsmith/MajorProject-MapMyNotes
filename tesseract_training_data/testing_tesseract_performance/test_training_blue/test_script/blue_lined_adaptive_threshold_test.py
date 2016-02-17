@@ -92,3 +92,41 @@ class TestBlueLinedAdaptedThreshold(object):
 
         # has transfered the colour over to the array.
         assert len(np.in1d(self.threshold.mask, 255)) > 0
+
+
+    def test_apply_adaptive_threshold_to_image(self):
+        image = self.threshold.read_image(self.image_file)
+        greyscale_image = self.threshold.convert_to_grayscale(image)
+        kernel = self.threshold.get_kernel(2)
+
+        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
+
+        mask = self.threshold.get_blank_image_mask()
+        black_text = self.threshold.black_text_extraction(eroding_image)
+
+        self.threshold.convert_text_extraction_to_mask()
+
+        threshold_image = self.threshold.apply_threshold()
+
+        assert threshold_image is not None
+
+    def test_saves_new_tiff_image(self):
+        image = self.threshold.read_image(self.image_file)
+        greyscale_image = self.threshold.convert_to_grayscale(image)
+        kernel = self.threshold.get_kernel(2)
+
+        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
+
+        mask = self.threshold.get_blank_image_mask()
+        black_text = self.threshold.black_text_extraction(eroding_image)
+
+        self.threshold.convert_text_extraction_to_mask()
+
+        threshold_image = self.threshold.apply_threshold()
+
+        self.threshold.save_adaptive_threshold_image(self.image_file)
+
+        test_root = os.path.dirname(__file__)
+
+        filename = "test_image.tiff"
+        assert True is os.path.isfile(os.path.join(test_root, filename))
