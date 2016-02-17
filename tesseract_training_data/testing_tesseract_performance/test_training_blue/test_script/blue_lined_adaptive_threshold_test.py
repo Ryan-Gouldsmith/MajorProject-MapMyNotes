@@ -38,6 +38,7 @@ class TestBlueLinedAdaptedThreshold(object):
     def test_get_kernel_type(self):
         kernel = self.threshold.get_kernel(2)
 
+        # Is instance stuff http://stackoverflow.com/questions/12569452/how-to-identify-numpy-types-in-python
         assert isinstance(kernel, np.ndarray) is True
 
     def test_erroding_image(self):
@@ -48,3 +49,46 @@ class TestBlueLinedAdaptedThreshold(object):
         eroding_image = self.threshold.erode_image(greyscale_image, kernel)
 
         assert eroding_image is not None
+
+    def test_black_text_extraction(self):
+        image = cv2.imread(self.image_file)
+        greyscale_image = self.threshold.convert_to_grayscale(image)
+        kernel = self.threshold.get_kernel(2)
+
+        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
+
+        assert self.threshold.black_text_extraction(eroding_image) is not None
+
+    def test_get_image_dimensions(self):
+        image = cv2.imread(self.image_file)
+        image_height, image_width, image_depth = image.shape
+        test_dimensions = (image_height, image_width, image_depth)
+
+        self.threshold.read_image(self.image_file)
+
+        assert test_dimensions == (self.threshold.get_image_dimensions())
+
+    def test_get_blank_mask(self):
+        image = cv2.imread(self.image_file)
+        image_height, image_width, image_depth = image.shape
+        image_mask = np.zeros((image_height, image_width),np.uint8)
+
+        self.threshold.read_image(self.image_file)
+
+        # checks to see all the values are the same
+        assert image_mask.all() == self.threshold.get_blank_image_mask().all()
+
+    def test_convert_text_extraction_to_mask(self):
+        image = self.threshold.read_image(self.image_file)
+        greyscale_image = self.threshold.convert_to_grayscale(image)
+        kernel = self.threshold.get_kernel(2)
+
+        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
+
+        mask = self.threshold.get_blank_image_mask()
+        black_text = self.threshold.black_text_extraction(eroding_image)
+
+        self.threshold.convert_text_extraction_to_mask()
+
+        # has transfered the colour over to the array.
+        assert len(np.in1d(self.threshold.mask, 255)) > 0
