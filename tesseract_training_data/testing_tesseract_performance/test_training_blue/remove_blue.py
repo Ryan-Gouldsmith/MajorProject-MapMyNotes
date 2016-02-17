@@ -37,6 +37,8 @@ mask = cv2.erode(mask,kernel,iterations = 1)
 
 thresh7 = cv2.adaptiveThreshold(mask, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 13, 2)
 
+
+
 filename, file_extension = os.path.splitext(sys.argv[1])
 
 image_path = filename + ".tiff"
