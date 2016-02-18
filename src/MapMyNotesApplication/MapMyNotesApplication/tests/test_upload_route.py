@@ -20,7 +20,7 @@ class TestUploadRoute(object):
         upload_file = open("tests/ryan_test_1.jpg", "r")
         resource = self.app.post("/upload", data={"file": upload_file})
 
-        assert "bad file" is not in resource.data
+        assert "bad file" is not resource.data
 
         assert resource.status_code is 200
 
