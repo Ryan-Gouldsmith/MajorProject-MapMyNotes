@@ -8,3 +8,5 @@
 **/.log
 **/.synctex.gz
 **/venv
+**/__pycache__
+**/.cache
