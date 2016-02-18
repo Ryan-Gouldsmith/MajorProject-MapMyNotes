@@ -9,6 +9,8 @@ def file_upload_index_route():
         if not file:
             return "bad file"
 
+        #file.save("upload/")
+
         #file.save("tests/test_image_upload.jpg")
 
     return render_template('/file_upload/index.html')
