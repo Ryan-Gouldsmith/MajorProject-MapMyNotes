@@ -75,15 +75,17 @@ class Blueline_Adaptive_Threshold(object):
     def get_blank_image_mask(self):
         height, width, depth = self.get_image_dimensions()
         # Zeros Adapted from http://stackoverflow.com/questions/16235955/create-a-multichannel-zeros-mat-in-python-with-cv2
-        self.mask = np.zeros((height,width),np.uint8)
+        self.blank_mask = np.zeros((height,width),np.uint8)
 
-        return self.mask
+        return self.blank_mask
 
     def convert_text_extraction_to_mask(self):
-        self.mask[np.where(self.black_text == self.WHITE_VALUE)] = self.BLACK_VALUE
+        self.blank_mask[np.where(self.black_text == self.WHITE_VALUE)] = self.BLACK_VALUE
 
-    def apply_threshold(self):
-        self.threshold_image = cv2.adaptiveThreshold(self.mask, self.BLACK_VALUE, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, self.ADAPTIVE_THRESHOLD_BLOCK_SIZE, self.ADAPTIVE_THRESHOLD_WEIGHTED_MEAN)
+        return self.blank_mask
+
+    def apply_threshold(self, mask):
+        self.threshold_image = cv2.adaptiveThreshold(mask, self.BLACK_VALUE, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, self.ADAPTIVE_THRESHOLD_BLOCK_SIZE, self.ADAPTIVE_THRESHOLD_WEIGHTED_MEAN)
 
         return self.threshold_image
 
@@ -108,13 +110,36 @@ class Blueline_Adaptive_Threshold(object):
 
 if __name__ == "__main__":
 
+
+    threshold = Blueline_Adaptive_Threshold()
     # Read in an image as colour
-    image = read_image(sys.argv[1])
+    image = threshold.read_image(sys.argv[1])
 
     # Take an image from the input and convert it to grayscale
-    grayscale_image = convert_to_grayscale(image)
+    grayscale_image = threshold.convert_to_grayscale(image)
 
     # Clear up the image by eroding.
+    kernel = threshold.get_kernel(2)
+
+    eroded_image = threshold.erode_image(grayscale_image, kernel)
+
+    black_text = threshold.black_text_extraction(eroded_image)
+
+    mask = threshold.get_blank_image_mask()
+
+    mask = threshold.convert_text_extraction_to_mask()
+
+    kernel = threshold.get_kernel(5)
+
+    eroded_mask = threshold.erode_image(mask, kernel)
+
+    threshold.apply_threshold(eroded_mask)
+
+    threshold.save_adaptive_threshold_image(sys.argv[1])
+
+    
+
+
 
 
 

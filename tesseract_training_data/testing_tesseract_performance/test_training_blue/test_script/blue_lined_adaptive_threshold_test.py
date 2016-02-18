@@ -88,10 +88,10 @@ class TestBlueLinedAdaptedThreshold(object):
         mask = self.threshold.get_blank_image_mask()
         black_text = self.threshold.black_text_extraction(eroding_image)
 
-        self.threshold.convert_text_extraction_to_mask()
+        mask = self.threshold.convert_text_extraction_to_mask()
 
         # has transfered the colour over to the array. TODO I don't think this test is acually good enough and it doesn't filter all the 255 like I thought the manual said.
-        assert len(np.in1d(self.threshold.mask, 255)) > 0
+        assert len(np.in1d(mask, 255)) > 0
 
 
     def test_apply_adaptive_threshold_to_image(self):
@@ -104,9 +104,12 @@ class TestBlueLinedAdaptedThreshold(object):
         mask = self.threshold.get_blank_image_mask()
         black_text = self.threshold.black_text_extraction(eroding_image)
 
-        self.threshold.convert_text_extraction_to_mask()
+        kernel = self.threshold.get_kernel(5)
+        eroding_image = self.threshold.erode_image(black_text, kernel)
 
-        threshold_image = self.threshold.apply_threshold()
+        mask = self.threshold.convert_text_extraction_to_mask()
+
+        threshold_image = self.threshold.apply_threshold(mask)
 
         assert threshold_image is not None
 
@@ -120,13 +123,19 @@ class TestBlueLinedAdaptedThreshold(object):
         mask = self.threshold.get_blank_image_mask()
         black_text = self.threshold.black_text_extraction(eroding_image)
 
-        self.threshold.convert_text_extraction_to_mask()
+        kernel = self.threshold.get_kernel(5)
+        eroding_image = self.threshold.erode_image(black_text, kernel)
 
-        threshold_image = self.threshold.apply_threshold()
+        mask = self.threshold.convert_text_extraction_to_mask()
+
+        threshold_image = self.threshold.apply_threshold(mask)
+
+        threshold_image = self.threshold.apply_threshold(mask)
 
         self.threshold.save_adaptive_threshold_image(self.image_file)
 
         test_root = os.path.dirname(__file__)
 
         filename = "test_image.tiff"
+
         assert True is os.path.isfile(os.path.join(test_root, filename))
