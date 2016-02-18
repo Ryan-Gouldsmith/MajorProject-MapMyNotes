@@ -90,8 +90,10 @@ class TestBlueLinedAdaptedThreshold(object):
 
         mask = self.threshold.convert_text_extraction_to_mask()
 
-        # has transfered the colour over to the array. TODO I don't think this test is acually good enough and it doesn't filter all the 255 like I thought the manual said.
-        assert len(np.in1d(mask, 255)) > 0
+        # gets the black values and checks that it has converted some.
+        black_array = mask[np.where(mask == 255)]
+
+        assert len(black_array) > 0
 
 
     def test_apply_adaptive_threshold_to_image(self):
