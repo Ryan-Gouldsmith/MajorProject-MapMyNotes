@@ -1,2 +1,9 @@
-<h1>{{note}}</h1>
-<h1> TEst redirect </h1>
+<html>
+  <head>
+    <title> Showing your note </title>
+  </head>
+  <body>
+    <h1> Showing note {{note_image}} </h1>
+    <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" />
+  </body>
+</html>
