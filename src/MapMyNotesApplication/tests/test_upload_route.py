@@ -42,3 +42,21 @@ class TestUploadRoute(object):
         assert resource.status_code is 200
 
         assert True is os.path.isfile("MapMyNotesApplication/upload/ryan_test_1.jpg")
+
+    def test_uploading_right_file_extension(self):
+        upload_file = open("tests/ryan_test_1.jpg", "r")
+
+        resource = self.app.post("/upload", data={"file": upload_file})
+
+        assert resource.status_code is 200
+
+        assert "Error: Wrong file extention in uploaded file" not in resource.data
+
+    def test_uploading_wrong_file_extension(self):
+        upload_file = open("tests/ryan_test_1.pdf", "r")
+
+        resource = self.app.post("/upload", data={"file": upload_file})
+
+        assert resource.status_code is 200
+
+        assert "Error: Wrong file extention in uploaded file"  in resource.data

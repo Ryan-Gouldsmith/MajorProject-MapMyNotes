@@ -14,8 +14,13 @@ def file_upload_index_route():
 
         file_upload_service = FileUploadService()
         filename = file.filename
+
+        if not file_upload_service.accepted_file_extension(filename):
+            return "Error: Wrong file extention in uploaded file"
+
         if file_upload_service.is_forward_slash_in_filename(filename):
             filename = file_upload_service.prepare_file_path_file(filename)
+
 
 
         filename = secure_filename(filename)
