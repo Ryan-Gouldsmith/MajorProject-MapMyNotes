@@ -1,6 +1,8 @@
 from MapMyNotesApplication import application
 import pytest
 import os
+from flask import request
+
 
 
 class TestUploadRoute(object):
@@ -23,14 +25,14 @@ class TestUploadRoute(object):
     def test_uploading_file_status(self):
         # Adapted from http://stackoverflow.com/questions/20080123/testing-file-upload-with-flask-and-python-3
         upload_file = open("tests/ryan_test_1.jpg", "r")
-        resource = self.app.post("/upload", data={"file": upload_file})
+        resource = self.app.post("/upload", data={"file": upload_file}, follow_redirects = False)
 
         assert "bad file" is not resource.data
 
-        assert resource.status_code is 200
+        assert resource.status_code == 302
 
     def test_uploading_without_file_attached(self):
-        resource = self.app.post("/upload", data={})
+        resource = self.app.post("/upload", data={}, follow_redirects = False)
 
         assert resource.status_code is not 200
 
@@ -39,7 +41,7 @@ class TestUploadRoute(object):
 
         resource = self.app.post("/upload", data={"file": upload_file})
 
-        assert resource.status_code is 200
+        assert resource.status_code == 302
 
         assert True is os.path.isfile("MapMyNotesApplication/upload/ryan_test_1.jpg")
 
@@ -48,15 +50,49 @@ class TestUploadRoute(object):
 
         resource = self.app.post("/upload", data={"file": upload_file})
 
-        assert resource.status_code is 200
+        assert resource.status_code == 302
 
         assert "Error: Wrong file extention in uploaded file" not in resource.data
 
     def test_uploading_wrong_file_extension(self):
         upload_file = open("tests/ryan_test_1.pdf", "r")
 
-        resource = self.app.post("/upload", data={"file": upload_file})
+
+        resource = self.app.post("/upload", data={"file": upload_file}, follow_redirects = False)
 
         assert resource.status_code is 200
 
         assert "Error: Wrong file extention in uploaded file"  in resource.data
+
+    def test_show_note_route(self):
+        file_list = 'tests/ryan_test_1.jpg'.split("/")
+
+        file_name = file_list[1]
+
+        print file_name
+        resource = self.app.get("/upload/show_note/" + file_name)
+
+        assert resource.status_code is 200
+
+    def test_should_not_allow_post_to_show_note_route(self):
+        file_list = 'tests/ryan_test_1.jpg'.split("/")
+
+        file_name = file_list[1]
+
+        print file_name
+        resource = self.app.post("/upload/show_note/" + file_name)
+
+        assert resource.status_code is not 200
+
+    def test_when_uploaded_file_redirects_to_show_note_route(self):
+        upload_file = open("tests/ryan_test_1.jpg", "r")
+
+        resource = self.app.post("/upload", data={"file": upload_file}, follow_redirects = False)
+
+        url_full = resource.headers.get("Location")
+        # Used their idea how to get the location as there was nothing in the documents to say. Modified it for my own splitting. http://stackoverflow.com/questions/22566627/flask-unit-testing-getting-the-responses-redirect-location
+        url_path = url_full.split("http://localhost")
+
+        expected_url = "/upload/show_note/ryan_test_1.jpg"
+
+        assert url_path[1] == expected_url

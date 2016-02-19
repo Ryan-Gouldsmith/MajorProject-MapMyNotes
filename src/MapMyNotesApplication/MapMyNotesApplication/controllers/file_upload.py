@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from werkzeug import secure_filename
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
 
@@ -21,10 +21,14 @@ def file_upload_index_route():
         if file_upload_service.is_forward_slash_in_filename(filename):
             filename = file_upload_service.prepare_file_path_file(filename)
 
-
-
         filename = secure_filename(filename)
 
         file_upload_service.save_users_file(filename, file)
 
+        return redirect(url_for("fileupload.show_note", note_image=filename))
+
     return render_template('/file_upload/index.html')
+
+@fileupload.route("/upload/show_note/<note_image>", methods=["GET"])
+def show_note(note_image):
+    return "testing"
