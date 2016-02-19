@@ -10,7 +10,7 @@ def file_upload_index_route():
     if request.method == "POST":
         file = request.files["file"]
         if not file:
-            return "bad file"
+            return "A bad file has been uploaded"
 
         file_upload_service = FileUploadService()
         filename = file.filename

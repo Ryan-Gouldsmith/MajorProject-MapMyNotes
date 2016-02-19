@@ -59,3 +59,23 @@ class TestFileUploadService(object):
         self.file_upload_service.save_users_file(prepared_filename, file)
 
         assert os.path.isfile(expected_file) is True
+
+    def test_only_allow_uploading_of_images(self):
+        upload_directory = "MapMyNotesApplication/upload/"
+        filename = "tests/ryan_test_1.jpg"
+        file_object = open(filename, 'r')
+        file = FileStorage(file_object)
+
+        accepted_file_extension = self.file_upload_service.accepted_file_extension(file.filename)
+
+        assert accepted_file_extension is True
+
+    def test_not_allow_uploading_of_images(self):
+        upload_directory = "MapMyNotesApplication/upload/"
+        filename = "tests/ryan_test_1.pdf"
+        file_object = open(filename, 'r')
+        file = FileStorage(file_object)
+
+        accepted_file_extension = self.file_upload_service.accepted_file_extension(file.filename)
+
+        assert accepted_file_extension is False
