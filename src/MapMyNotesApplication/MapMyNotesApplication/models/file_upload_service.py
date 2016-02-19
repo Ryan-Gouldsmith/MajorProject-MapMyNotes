@@ -7,7 +7,6 @@ class FileUploadService(object):
     def save_users_file(self, filename, file_object):
         upload_directory = "MapMyNotesApplication/upload/"
         users_file = upload_directory + filename
-        print users_file
         file_object.save(users_file)
 
     def is_forward_slash_in_filename(self, filename):

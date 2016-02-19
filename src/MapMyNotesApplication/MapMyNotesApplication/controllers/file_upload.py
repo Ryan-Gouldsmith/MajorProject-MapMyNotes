@@ -4,7 +4,7 @@ from MapMyNotesApplication.models.file_upload_service import FileUploadService
 
 fileupload = Blueprint('fileupload', __name__)
 
-# Reference http://flask.pocoo.org/docs/0.10/patterns/fileuploads/
+# Reference based upon but adapted to fit better into a more structured application.  http://flask.pocoo.org/docs/0.10/patterns/fileuploads/
 @fileupload.route("/upload", methods=["GET", "POST"])
 def file_upload_index_route():
     if request.method == "POST":
