@@ -65,12 +65,17 @@ class TestUploadRoute(object):
         assert "Error: Wrong file extention in uploaded file"  in resource.data
 
     def test_show_note_route(self):
-        file_list = 'tests/ryan_test_1.jpg'.split("/")
+        filename = 'tests/ryan_test_1.jpg'
+        upload_file = open(filename, "r")
+        file_list = filename.split("/")
 
         file_name = file_list[1]
 
-        print file_name
-        resource = self.app.get("/upload/show_note/" + file_name)
+        resource = self.app.post("/upload", data={"file": upload_file}, follow_redirects = False)
+
+        resource = self.app.get("/upload/show_note/" + file_name, follow_redirects = False)
+
+
 
         assert resource.status_code is 200
 
@@ -89,10 +94,26 @@ class TestUploadRoute(object):
 
         resource = self.app.post("/upload", data={"file": upload_file}, follow_redirects = False)
 
-        url_full = resource.headers.get("Location")
         # Used their idea how to get the location as there was nothing in the documents to say. Modified it for my own splitting. http://stackoverflow.com/questions/22566627/flask-unit-testing-getting-the-responses-redirect-location
+        url_full = resource.headers.get("Location")
+
         url_path = url_full.split("http://localhost")
 
         expected_url = "/upload/show_note/ryan_test_1.jpg"
 
         assert url_path[1] == expected_url
+
+    def test_should_return_200_error_on_404_page(self):
+        resource = self.app.get("/error/404")
+
+        assert resource.status_code is 200
+
+    def test_should_return_image(self):
+        upload_file = open("tests/ryan_test_1.jpg", "r")
+
+        resource = self.app.post("/upload", data={"file": upload_file}, follow_redirects = False)
+
+        resource = self.app.get('/img/ryan_test_1.jpg')
+
+        assert resource.headers.get("Content-Type") == "image/jpeg"
+        assert resource.status_code == 200
