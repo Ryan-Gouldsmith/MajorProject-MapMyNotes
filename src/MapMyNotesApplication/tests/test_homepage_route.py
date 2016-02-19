@@ -1,4 +1,4 @@
-from MapMyNotesApplication.MapMyNotesApplication import application
+from MapMyNotesApplication import application
 import pytest
 import os
 
