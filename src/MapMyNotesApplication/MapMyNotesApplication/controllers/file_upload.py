@@ -1,7 +1,10 @@
 from flask import Blueprint, render_template, request
+from werkzeug import secure_filename
+from MapMyNotesApplication.models.file_upload_service import FileUploadService
+
 fileupload = Blueprint('fileupload', __name__)
 
-
+# Reference http://flask.pocoo.org/docs/0.10/patterns/fileuploads/
 @fileupload.route("/upload", methods=["GET", "POST"])
 def file_upload_index_route():
     if request.method == "POST":
@@ -9,8 +12,14 @@ def file_upload_index_route():
         if not file:
             return "bad file"
 
-        #file.save("upload/")
+        file_upload_service = FileUploadService()
+        filename = file.filename
+        if file_upload_service.is_forward_slash_in_filename(filename):
+            filename = file_upload_service.prepare_file_path_file(filename)
 
-        #file.save("tests/test_image_upload.jpg")
+
+        filename = secure_filename(filename)
+
+        file_upload_service.save_users_file(filename, file)
 
     return render_template('/file_upload/index.html')
