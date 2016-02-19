@@ -1,5 +1,7 @@
-
+import os
 class FileUploadService(object):
+
+    ACCEPTED_FILE_EXTENSIONS = [".jpg",".png",".tiff"]
 
     def __init__(self):
         print "foo"
@@ -17,3 +19,9 @@ class FileUploadService(object):
         split_filename = filename.split("/")
         filename = split_filename[1]
         return filename
+
+    def accepted_file_extension(self, filename):
+        filename, file_extension = os.path.splitext(filename)
+        print file_extension
+
+        return file_extension in self.ACCEPTED_FILE_EXTENSIONS
