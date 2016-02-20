@@ -3,6 +3,9 @@ import pytest
 import os
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
 from werkzeug.datastructures import FileStorage
+import sys
+
+
 
 class TestFileUploadService(object):
 
@@ -45,6 +48,8 @@ class TestFileUploadService(object):
 
     def test_saving_a_filaname_to_uploads(self):
         upload_directory = "MapMyNotesApplication/upload/"
+        #test_dir = "src/MapMyNotesApplication/tests/"
+        #filename = test_dir + "ryan_test_1.jpg"
         filename = "tests/ryan_test_1.jpg"
         file_object = open(filename, 'r')
         # Found out I can use the File Storage object to mock the File used in the controller for Flask http://stackoverflow.com/questions/18249949/python-file-object-to-flasks-filestorage
