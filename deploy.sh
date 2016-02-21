@@ -1,5 +1,8 @@
 #!/bin/bash
 
+if [ "$TRAVIS_BRANCH" == "development"];
+
+
 ssh ryan@ryangouldsmith.uk "cd project
 
 # clone the repo
@@ -16,6 +19,8 @@ pip install requirements.txt
 
 # go to the application directory
 cd application "
+
+fi
 
 # start up the server
 #python setup.py
