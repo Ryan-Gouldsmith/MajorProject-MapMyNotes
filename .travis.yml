@@ -30,6 +30,4 @@ script:
   - "py.test src/MapMyNotesApplication/MapMyNotesApplication/tests/*.py "
 
 after_success:
-  if [ "$TRAVIS_BRANCH" == "development"];
-    ./deploy.sh
-  fi
+  - ./deploy.sh
