@@ -1,4 +1,4 @@
-from MapMyNotesApplication.MapMyNotesApplication import application
+from MapMyNotesApplication import application
 import pytest
 import os
 
@@ -10,4 +10,4 @@ class TestHomePageRoute(object):
 
     def test_home_route(self):
         resource = self.app.get("/")
-        assert resource.status_code == 402
+        assert resource.status_code == 200
