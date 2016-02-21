@@ -18,6 +18,8 @@ upper_black = np.array([175,20, 95])
 
 kernel = np.ones((2,2),np.uint8)
 
+
+
 # OpenCV library tutorials
 hsv = cv2.erode(hsv,kernel,iterations = 1)
 
@@ -40,6 +42,10 @@ mask = cv2.medianBlur(mask,3,0)
 
 thresh7 = cv2.adaptiveThreshold(mask, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 1)
 
+
+
+
+
 #kernel = np.ones((1,1),np.uint8)
 kernel = np.ones((7,7),np.uint8)
 
@@ -51,6 +57,9 @@ kernel = np.ones((2,2),np.uint8)
 
 thresh7 = cv2.morphologyEx(thresh7, cv2.MORPH_CLOSE, kernel)
 
+image_path = "test_new_blue.tiff"
+
+cv2.imwrite(image_path, thresh7)
 
 
 cv2.imshow("im", thresh7)
