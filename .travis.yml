@@ -27,7 +27,7 @@ python:
   - "2.7"
 
 script:
-  - "py.test src/MapMyNotesApplication/MapMyNotesApplication/tests/*.py "
+  - ./test_flask.sh
 
 after_success:
   - ./deploy.sh
