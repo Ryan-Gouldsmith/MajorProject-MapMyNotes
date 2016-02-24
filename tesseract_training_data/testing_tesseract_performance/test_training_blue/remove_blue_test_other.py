@@ -57,7 +57,10 @@ cv2.imshow("im", mask)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-image_path = "test_new_blue_1.tiff"
+
+filename, file_extension = os.path.splitext(sys.argv[1])
+
+image_path = filename + ".tiff"
 
 cv2.imwrite(image_path, mask)
 
