@@ -7,7 +7,6 @@ import os
 # REFERENCE Ideas considered from, but changed it to match the lines of my own text  http://stackoverflow.com/questions/10196198/how-to-remove-convexity-defects-in-a-sudoku-square
 
 # Excellent resource for extracting lines from music notes. Have been using as a template and how to consider my own line extraction. http://docs.opencv.org/trunk/d1/dee/tutorial_moprh_lines_detection.html#gsc.tab=0
-
 img = cv2.imread(sys.argv[1],0)
 
 #ret3,thresh7 = cv2.threshold(img,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
