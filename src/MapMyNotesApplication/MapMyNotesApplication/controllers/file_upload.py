@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, send_from_directory, send_file, safe_join
 from werkzeug import secure_filename
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
+from MapMyNotesApplication.models.note import Note
 import os
+
 
 fileupload = Blueprint('fileupload', __name__)
 
@@ -23,6 +25,9 @@ def file_upload_index_route():
             filename = file_upload_service.prepare_file_path_file(filename)
 
         filename = secure_filename(filename)
+        note = Note(filename)
+        note.save()
+
 
         file_upload_service.save_users_file(filename, file)
 
