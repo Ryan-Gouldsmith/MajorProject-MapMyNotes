@@ -1,4 +1,4 @@
-from MapMyNotesApplication import application
+from MapMyNotesApplication import application, database
 import pytest
 import os
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
