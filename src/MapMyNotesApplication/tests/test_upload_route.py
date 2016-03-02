@@ -1,14 +1,21 @@
-from MapMyNotesApplication import application
+from MapMyNotesApplication import application, database
 import pytest
 import os
 from flask import request
+from MapMyNotesApplication.models.note import Note
+
 
 
 
 class TestUploadRoute(object):
 
     def setup(self):
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
+        application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.app = application.test_client()
+        database.session.close()
+        database.drop_all()
+        database.create_all()
 
     def teardown(self):
         if os.path.isfile("MapMyNotesApplication/upload/ryan_test_1.jpg"):
@@ -87,6 +94,7 @@ class TestUploadRoute(object):
         print file_name
         resource = self.app.post("/upload/show_note/" + file_name)
 
+
         assert resource.status_code is not 200
 
     def test_when_uploaded_file_redirects_to_show_note_route(self):
@@ -100,7 +108,7 @@ class TestUploadRoute(object):
         url_path = url_full.split("http://localhost")
 
         expected_url = "/upload/show_note/ryan_test_1.jpg"
-
+        # checks the last part after the localhost.
         assert url_path[1] == expected_url
 
     def test_should_return_200_error_on_404_page(self):
@@ -117,3 +125,12 @@ class TestUploadRoute(object):
 
         assert resource.headers.get("Content-Type") == "image/jpeg"
         assert resource.status_code == 200
+
+    def test_should_save_a_note_to_database(self):
+        upload_file = open("tests/ryan_test_1.jpg", "r")
+
+        resource = self.app.post("/upload", data={"file": upload_file},
+        follow_redirects = False)
+
+        returned = Note.query.first()
+        assert returned.image_path == "ryan_test_1.jpg"
