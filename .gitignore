@@ -7,7 +7,7 @@
 **/.fls
 **/.log
 **/.synctex.gz
-**/venv/**
-**/.pyc
-**/.cache
+**/venv
 **/__pycache__
+**/.cache
+**/.pyc
