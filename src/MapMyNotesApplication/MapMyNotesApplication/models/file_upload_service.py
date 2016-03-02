@@ -3,13 +3,8 @@ class FileUploadService(object):
 
     ACCEPTED_FILE_EXTENSIONS = [".jpg",".png",".tiff"]
 
-    def __init__(self):
-        print "foo"
-
-    def save_users_file(self, filename, file_object):
-        upload_directory = "MapMyNotesApplication/upload/"
-        users_file = upload_directory + filename
-        file_object.save(users_file)
+    def save_users_file(self, file_path, file_object):
+        file_object.save(file_path)
 
     def is_forward_slash_in_filename(self, filename):
         return "/" in filename
@@ -25,3 +20,6 @@ class FileUploadService(object):
         print file_extension
 
         return file_extension in self.ACCEPTED_FILE_EXTENSIONS
+
+    def file_exists(self, filename):
+        return os.path.isfile(filename)

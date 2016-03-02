@@ -1,5 +1,5 @@
 """
-Based upon the Tutorial here. Flask out of the box does not give the migrations, but Migrations would be useful for this application, I think
+Based upon the Tutorial here. Flask out of the box does not give the migrations, but Migrations would be useful for this application
 https://flask-migrate.readthedocs.org/en/latest/ and
 https://realpython.com/blog/python/flask-by-example-part-2-postgres-sqlalchemy-and-alembic/
 This script has been modified to run with Postgresql and import the database from __init__.py of MapMyNotesApplication
@@ -18,8 +18,6 @@ migate = Migrate(application, database)
 manager = Manager(application)
 
 manager.add_command('db', MigrateCommand)
-
-
 
 if __name__ == "__main__":
     manager.run()

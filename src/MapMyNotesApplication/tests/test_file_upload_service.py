@@ -57,11 +57,11 @@ class TestFileUploadService(object):
 
         prepared_filename = self.file_upload_service.prepare_file_path_file(file.filename)
 
-        print prepared_filename
-
         expected_file = upload_directory + prepared_filename
 
-        self.file_upload_service.save_users_file(prepared_filename, file)
+        prepared_file_path = upload_directory + prepared_filename
+
+        self.file_upload_service.save_users_file(prepared_file_path, file)
 
         assert os.path.isfile(expected_file) is True
 
@@ -84,3 +84,13 @@ class TestFileUploadService(object):
         accepted_file_extension = self.file_upload_service.accepted_file_extension(file.filename)
 
         assert accepted_file_extension is False
+
+    def test_file_exists_fake_file(self):
+        filename = "tests/fakefile.jpg"
+        file_exists = self.file_upload_service.file_exists(filename)
+        assert file_exists is False
+
+    def test_file_exists_true_file(self):
+        filename = 'tests/ryan_test_1.jpg'
+        file_exists = self.file_upload_service.file_exists(filename)
+        assert file_exists is True
