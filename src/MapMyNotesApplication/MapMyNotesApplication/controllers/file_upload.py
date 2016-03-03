@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, send_f
 from werkzeug import secure_filename
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
 from MapMyNotesApplication.models.note import Note
+from MapMyNotesApplication.models.module_code import Module_Code
 import os
 
 
@@ -37,7 +38,13 @@ def file_upload_index_route():
         if not file_upload_service.file_exists(prepared_file):
             return "There was an error saving the file, please upload again."
 
-        note = Note(filename)
+        #TODO Move, just here to make it compile.
+        module_code = Module_Code('cs31310')
+        module_code.save()
+
+
+
+        note = Note(filename, module_code.id)
         note.save()
 
         return redirect(url_for("fileupload.show_note", note_image=filename))
