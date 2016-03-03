@@ -2,7 +2,7 @@ from MapMyNotesApplication import application, database
 import pytest
 from MapMyNotesApplication.models.note import Note
 from sqlalchemy import func
-import tempfile
+from MapMyNotesApplication.models.module_code import Module_Code
 
 class TestNote(object):
     def setup(self):
@@ -14,26 +14,43 @@ class TestNote(object):
         database.create_all()
 
     def test_saving_a_note(self):
-        note = Note('uploads/')
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        note = Note('uploads/', module_code.id)
         database.session.add(note)
         database.session.commit()
         assert note.id == 1
 
     def test_return_only_one_from_database(self):
-        note = Note('uploaddirectory/foo.jpg')
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        note = Note('uploaddirectory/foo.jpg',module_code.id)
         database.session.add(note)
         database.session.commit()
         assert len(Note.query.all()) == 1
 
     def test_only_returns_a_note(self):
-        note = Note('uploaddirectory/foo.jpg')
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        note = Note('uploaddirectory/foo.jpg',module_code.id)
         database.session.add(note)
         database.session.commit()
         assert type(Note.query.first()) is Note
 
     def test_it_returns_the_correct_file_path(self):
         file_path = "upload/test.png"
-        note = Note(file_path)
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        note = Note(file_path,module_code.id)
         database.session.add(note)
         database.session.commit()
         returned = Note.query.first()
@@ -41,8 +58,26 @@ class TestNote(object):
 
     def test_the_save_function_in_a_note(self):
         file_path = "upload/test.png"
-        note = Note(file_path)
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        note = Note(file_path,module_code.id)
         note.save()
         returned = Note.query.first()
         assert returned.image_path == file_path
         assert len(Note.query.all()) == 1
+
+    def test_getting_the_module_code_from_a_note(self):
+        file_path = "upload/test.png"
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        note = Note(file_path,module_code.id)
+        note.save()
+
+        assert note.image_path == file_path
+        assert note.module_code.module_code == "CS31310"
