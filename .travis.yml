@@ -28,6 +28,3 @@ python:
 
 script:
   - ./test_flask.sh
-
-after_success:
-  - ./deploy.sh
