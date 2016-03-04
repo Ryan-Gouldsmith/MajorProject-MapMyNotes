@@ -4,7 +4,7 @@ import pytest
 from flask import Flask
 from flask.ext.testing import LiveServerTestCase
 
-class TestIntegrtionHomepage(LiveServerTestCase):
+class TestIntegrationHomepage(LiveServerTestCase):
 
     def create_app(self):
         app = application
@@ -17,7 +17,7 @@ class TestIntegrtionHomepage(LiveServerTestCase):
         self.driver.implicitly_wait(3)
 
     def tearDown(self):
-        self.driver.close()
+        self.driver.quit()
 
 
     def test_should_display_correct_homepage_title(self):
