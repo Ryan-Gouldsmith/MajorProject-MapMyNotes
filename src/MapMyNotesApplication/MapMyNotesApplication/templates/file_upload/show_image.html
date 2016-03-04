@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title> Showing your note </title>
+  </head>
+  <body>
+    <h1> Showing note {{note_image}} </h1>
+    <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" height=100 width=100 />
+
+    <form action="{{ url_for('metadata.add_meta_data', note_image=note_image) }}" method="post">
+      <label class="module_label">Module Code:</label>
+      <input type="text" class="module_code_data" name="module_code_data" >
+      <input type="submit" class="submit" name="submit" >
+    </form>
+
+  </body>
+</html>
