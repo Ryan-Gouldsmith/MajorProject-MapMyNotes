@@ -19,10 +19,12 @@ class TestAddEditMetaDataRoute(object):
         database.create_all()
         file_list = 'tests/test.png'.split("/")
 
+        test_image_2 = "tests/test.png".split("/")
+
         self.image = file_list[1]
+        self.second_image = test_image_2[1]
 
     def test_add_meta_data_route_returns_302(self):
-        post_data = {"module_code_data":"CS31310"}
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
         resource = self.app.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
             data={"module_code_data":"CS31310"}, follow_redirects=False)
@@ -35,7 +37,6 @@ class TestAddEditMetaDataRoute(object):
         assert resource.status_code == 405
 
     def test_add_module_code_via_post_request_successfully(self):
-        post_data = {"module_code_data":"CS31310"}
         resource = self.app.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data={"module_code_data":"CS31310"}, follow_redirects=False)
@@ -43,7 +44,6 @@ class TestAddEditMetaDataRoute(object):
         assert len(Module_Code.query.all()) == 1
 
     def test_it_saves_a_note_object_once_the_meta_data_added(self):
-        post_data = {"module_code_data":"CS31310"}
         resource = self.app.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data={"module_code_data":"CS31310"}, follow_redirects=False)
@@ -53,7 +53,6 @@ class TestAddEditMetaDataRoute(object):
         assert note.module_code.module_code == "CS31310"
 
     def test_once_a_note_is_saved_it_redirects_to_show_note(self):
-        post_data = {"module_code_data":"CS31310"}
         resource = self.app.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data={"module_code_data":"CS31310"}, follow_redirects=False)
@@ -64,3 +63,40 @@ class TestAddEditMetaDataRoute(object):
         expected_url = "/show_note/1"
         # checks the last part after the localhost.
         assert url_path[1] == expected_url
+
+    def test_using_the_same_module_code_as_before_if_one_exists(self):
+        resource = self.app.post("/metadata/add/" + self.image,
+                content_type='multipart/form-data',
+                data={"module_code_data":"CS31310"}, follow_redirects=False)
+
+        second_resource = self.app.post("/metadata/add/" + self.second_image,
+                content_type='multipart/form-data',
+                data={"module_code_data":"CS31310"}, follow_redirects=False)
+
+
+        notes = Note.query.all()
+
+        note_one = notes[0]
+
+        note_two = notes[1]
+
+        expected_module_code_id = note_one.module_code.id
+
+        assert expected_module_code_id == note_two.module_code.id
+
+    def test_using_the_different_module_code_should_save_new_code(self):
+        resource = self.app.post("/metadata/add/" + self.image,
+                content_type='multipart/form-data',
+                data={"module_code_data":"SE31520"}, follow_redirects=False)
+
+        second_resource = self.app.post("/metadata/add/" + self.second_image,
+                content_type='multipart/form-data',
+                data={"module_code_data":"CS31310"}, follow_redirects=False)
+
+        notes = Note.query.all()
+
+        note_one = notes[0]
+
+        note_two = notes[1]
+
+        assert note_one.module_code.id != note_two.module_code.id

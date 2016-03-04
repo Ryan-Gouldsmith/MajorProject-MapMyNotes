@@ -18,3 +18,9 @@ class Module_Code(database.Model):
     def save(self):
         database.session.add(self)
         database.session.commit()
+
+    @staticmethod
+    def find_id_by_module_code(filename):
+        prepared_file = "%{0}%".format(filename)
+        #http://docs.sqlalchemy.org/en/latest/orm/query.html
+        return Module_Code.query.filter(Module_Code.module_code.like(prepared_file)).first()
