@@ -31,3 +31,19 @@ class TestNote(object):
         assert module_code.module_code == "CS31310"
 
         assert module_code.id == 1
+
+    def test_static_function_returning_same_module_code(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+
+        module_code_obj = Module_Code.find_id_by_module_code("CS31310")
+
+        assert module_code.id == module_code_obj.id
+
+    def test_static_function_returns_none_if_not_found(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+
+        module_code_obj = Module_Code.find_id_by_module_code("SE31520")
+
+        assert None is module_code_obj
