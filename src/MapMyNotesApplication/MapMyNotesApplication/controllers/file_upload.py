@@ -38,28 +38,20 @@ def file_upload_index_route():
         if not file_upload_service.file_exists(prepared_file):
             return "There was an error saving the file, please upload again."
 
-        #TODO Move, just here to make it compile.
-        module_code = Module_Code('cs31310')
-        module_code.save()
 
-
-
-        note = Note(filename, module_code.id)
-        note.save()
-
-        return redirect(url_for("fileupload.show_note", note_image=filename))
+        return redirect(url_for("fileupload.show_image", note_image=filename))
 
     return render_template('/file_upload/index.html')
 
 
-@fileupload.route("/upload/show_note/<note_image>", methods=[GET])
-def show_note(note_image):
+@fileupload.route("/upload/show_image/<note_image>", methods=[GET])
+def show_image(note_image):
     file_upload_service = FileUploadService()
     file_path = FILE_UPLOAD_PATH + note_image
     if not file_upload_service.file_exists(file_path):
         return redirect(url_for('fileupload.error_four_zero_four'))
 
-    return render_template("/file_upload/show_note.html",note_image=note_image)
+    return render_template("/file_upload/show_image.html",note_image=note_image)
 
 
 # Not happy with this function, I think it will need to be looked into further down the down. Surely there's a better way than this. For some reason the send from directory did not work.... here https://github.com/mitsuhiko/flask/issues/1169
