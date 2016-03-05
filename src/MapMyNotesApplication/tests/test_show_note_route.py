@@ -18,7 +18,7 @@ class TestShowNoteRoute(object):
         self.image = file_list[1]
 
     def test_route_returns_status_code_200(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", "location_data" : "C11 Hugh Owen"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", "location_data" : "C11 Hugh Owen", "date_data": "12th February 2015 14:00"}
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
         resource = self.app.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
             data=post_data, follow_redirects=False)

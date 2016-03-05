@@ -26,7 +26,7 @@ class TestAddEditMetaDataRoute(object):
 
     def test_add_meta_data_route_returns_302(self):
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
 
         resource = self.app.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -39,7 +39,7 @@ class TestAddEditMetaDataRoute(object):
         assert resource.status_code == 405
 
     def test_add_module_code_via_post_request_successfully(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
         resource = self.app.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -47,7 +47,7 @@ class TestAddEditMetaDataRoute(object):
         assert len(Module_Code.query.all()) == 1
 
     def test_it_saves_a_note_object_once_the_meta_data_added(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
         resource = self.app.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -59,7 +59,7 @@ class TestAddEditMetaDataRoute(object):
         assert note.meta_data.location == "C11 Hugh Owen"
 
     def test_once_a_note_is_saved_it_redirects_to_show_note(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
         resource = self.app.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
@@ -72,7 +72,7 @@ class TestAddEditMetaDataRoute(object):
         assert url_path[1] == expected_url
 
     def test_using_the_same_module_code_as_before_if_one_exists(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
         resource = self.app.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
@@ -93,12 +93,12 @@ class TestAddEditMetaDataRoute(object):
         assert expected_module_code_id == note_two.meta_data.module_code.id
 
     def test_using_the_different_module_code_should_save_new_code(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
         resource = self.app.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
 
-        post_data_second = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen"}
+        post_data_second = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00" }
         second_resource = self.app.post("/metadata/add/" + self.second_image,
                 content_type='multipart/form-data',
                 data=post_data_second, follow_redirects=False)

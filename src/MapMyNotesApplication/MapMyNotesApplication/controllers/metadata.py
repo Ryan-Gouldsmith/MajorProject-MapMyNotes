@@ -3,6 +3,7 @@ from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 import os
+from datetime import datetime
 metadata = Blueprint('metadata', __name__)
 
 @metadata.route("/metadata/add/<note_image>", methods=["POST"])
@@ -14,12 +15,17 @@ def add_meta_data(note_image):
             return "Failed to submit lecturer name data"
         if request.form['location_data'] is None:
             return "Failed to submit the location"
+        if request.form['date_data'] is None:
+            return "Failed to submit date data"
+
 
         module_code_data = request.form['module_code_data'].upper()
 
         lecturer_name_data = request.form['lecturer_name_data']
 
         location_data = request.form['location_data']
+
+        date_data = request.form['date_data']
 
         file_path = "MapMyNotesApplication/upload/" + note_image
 
@@ -32,7 +38,10 @@ def add_meta_data(note_image):
 
             module_code_id = module_code_obj.id
 
-            note_meta_data = Note_Meta_Data(lecturer_name_data, module_code_id, location_data)
+            date_time = datetime.strptime(date_data, "%dth %B %Y %H:%M")
+
+
+            note_meta_data = Note_Meta_Data(lecturer_name_data, module_code_id, location_data, date_time)
             note_meta_data.save()
 
 
