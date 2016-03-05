@@ -11,12 +11,13 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
     def create_app(self):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+
         return app
 
     def setUp(self):
         self.driver = webdriver.PhantomJS()
         self.driver.set_window_size(1024, 640 )
-        self.driver.implicitly_wait(3)
 
     def tearDown(self):
         self.driver.quit()
@@ -56,3 +57,8 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         expected_url = "/metadata/add/test.png"
 
         assert expected_url == path[1]
+
+    def test_form_has_lecturer_name_field(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        lecturer_field = self.driver.find_element_by_class_name("lecturer_name")
+        assert lecturer_field.is_displayed() is True

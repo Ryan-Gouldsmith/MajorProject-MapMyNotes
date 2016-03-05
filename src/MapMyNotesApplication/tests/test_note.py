@@ -3,6 +3,8 @@ import pytest
 from MapMyNotesApplication.models.note import Note
 from sqlalchemy import func
 from MapMyNotesApplication.models.module_code import Module_Code
+from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
+
 
 class TestNote(object):
     def setup(self):
@@ -18,7 +20,10 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note = Note('uploads/', module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data.save()
+
+        note = Note('uploads/', note_meta_data.id)
         database.session.add(note)
         database.session.commit()
         assert note.id == 1
@@ -28,7 +33,10 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note = Note('uploaddirectory/foo.jpg',module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data.save()
+
+        note = Note('uploaddirectory/foo.jpg',note_meta_data.id)
         database.session.add(note)
         database.session.commit()
         assert len(Note.query.all()) == 1
@@ -38,7 +46,10 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note = Note('uploaddirectory/foo.jpg',module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data.save()
+
+        note = Note('uploaddirectory/foo.jpg',note_meta_data.id)
         database.session.add(note)
         database.session.commit()
         assert type(Note.query.first()) is Note
@@ -50,7 +61,10 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note = Note(file_path,module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
         database.session.add(note)
         database.session.commit()
         returned = Note.query.first()
@@ -63,7 +77,10 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note = Note(file_path,module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
         note.save()
         returned = Note.query.first()
         assert returned.image_path == file_path
@@ -76,8 +93,13 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note = Note(file_path,module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
         note.save()
 
         assert note.image_path == file_path
-        assert note.module_code.module_code == "CS31310"
+        assert note.meta_data.lecturer == "Mr Foo"
+
+        assert note.meta_data.module_code.module_code == "CS31310"
