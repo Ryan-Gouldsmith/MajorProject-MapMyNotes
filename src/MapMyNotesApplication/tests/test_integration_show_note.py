@@ -30,6 +30,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
         lecturer_name.send_keys("Mr Foo")
 
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
 
@@ -45,6 +48,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
         lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
 
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
@@ -62,9 +68,31 @@ class TestIntegretationShowNote(LiveServerTestCase):
         lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
         lecturer_name.send_keys("Mr Foo")
 
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
 
         lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
 
         assert lecturer_name.text == "By Mr Foo"
+
+    def test_location_name_is_correct(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+
+        module_code = self.driver.find_element_by_class_name('module_code_data')
+        module_code.send_keys("CS31310")
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
+        submit_button = self.driver.find_element_by_class_name('submit')
+        submit_button.click()
+
+        location_name = self.driver.find_element_by_class_name("location_name")
+
+        assert location_name.text == "C11 Hugh Owen"
