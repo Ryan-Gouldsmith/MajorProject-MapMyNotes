@@ -12,10 +12,14 @@ def add_meta_data(note_image):
             return "Failed to submit module code data"
         if request.form['lecturer_name_data'] is None:
             return "Failed to submit lecturer name data"
+        if request.form['location_data'] is None:
+            return "Failed to submit the location"
 
         module_code_data = request.form['module_code_data'].upper()
 
         lecturer_name_data = request.form['lecturer_name_data']
+
+        location_data = request.form['location_data']
 
         file_path = "MapMyNotesApplication/upload/" + note_image
 
@@ -28,7 +32,7 @@ def add_meta_data(note_image):
 
             module_code_id = module_code_obj.id
 
-            note_meta_data = Note_Meta_Data(lecturer_name_data, module_code_id)
+            note_meta_data = Note_Meta_Data(lecturer_name_data, module_code_id, location_data)
             note_meta_data.save()
 
 

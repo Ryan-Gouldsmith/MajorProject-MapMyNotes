@@ -62,3 +62,9 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
         lecturer_field = self.driver.find_element_by_class_name("lecturer_name")
         assert lecturer_field.is_displayed() is True
+
+    def test_form_has_location_field(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        location_field = self.driver.find_element_by_class_name("location_name")
+
+        assert location_field.is_displayed() is True

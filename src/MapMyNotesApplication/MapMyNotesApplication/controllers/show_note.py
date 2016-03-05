@@ -13,4 +13,6 @@ def show_note(note_id):
     module_code = note.meta_data.module_code.module_code
 
     lecturer = note.meta_data.lecturer
-    return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer)
+
+    location = note.meta_data.location
+    return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer, location=location)

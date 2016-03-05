@@ -20,7 +20,7 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen')
         note_meta_data.save()
 
         note = Note('uploads/', note_meta_data.id)
@@ -33,7 +33,7 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen")
         note_meta_data.save()
 
         note = Note('uploaddirectory/foo.jpg',note_meta_data.id)
@@ -46,7 +46,7 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen")
         note_meta_data.save()
 
         note = Note('uploaddirectory/foo.jpg',note_meta_data.id)
@@ -61,7 +61,7 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -77,7 +77,7 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -93,7 +93,7 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen')
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -103,3 +103,18 @@ class TestNote(object):
         assert note.meta_data.lecturer == "Mr Foo"
 
         assert note.meta_data.module_code.module_code == "CS31310"
+
+    def test_getting_the_location_from_a_note(self):
+        file_path = "upload/test.png"
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen')
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+
+        assert note.meta_data.location == 'C11 Hugh Owen'

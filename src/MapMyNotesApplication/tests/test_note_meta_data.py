@@ -17,7 +17,7 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
         database.session.add(meta_data)
         database.session.commit()
 
@@ -29,7 +29,7 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
         meta_data.save()
 
         database_meta_data = Note_Meta_Data.query.first()
@@ -40,8 +40,8 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
 
-        too_long_lecturers_name = "a" * 100
-        meta_data = Note_Meta_Data(too_long_lecturers_name, module_code.id)
+        too_long_lecturers_name = "a" * 110
+        meta_data = Note_Meta_Data(too_long_lecturers_name, module_code.id, "C11 Hugh Owen")
         result = meta_data.save()
         assert False is result
 
@@ -50,7 +50,7 @@ class TestNoteMetaData(object):
         module_code.save()
 
         lecturer_name = "Dr Mark Foobar"
-        meta_data = Note_Meta_Data(lecturer_name, module_code.id)
+        meta_data = Note_Meta_Data(lecturer_name, module_code.id, "C11 Hugh Owen")
 
         result = meta_data.save()
 
@@ -60,7 +60,7 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
         meta_data.save()
 
         expected_id = 1
@@ -70,10 +70,27 @@ class TestNoteMetaData(object):
     def test_saves_a_module_code_as_part_of_a_foreign_key(self):
         module_code = Module_Code("CS31310")
         module_code.save()
-        meta_data = Note_Meta_Data("Dr Test", module_code.id)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
 
         meta_data.save()
 
         assert meta_data.module_code.module_code == "CS31310"
 
-    
+    def test_the_location_meta_data_returns_the_correct_value(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
+
+        meta_data.save()
+
+        assert meta_data.location == "C11 Hugh Owen"
+
+    def test_that_location_cant_be_over_100_characters(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+        location = "Seat" * 40
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, location)
+
+        result = meta_data.save()
+
+        assert result is False
