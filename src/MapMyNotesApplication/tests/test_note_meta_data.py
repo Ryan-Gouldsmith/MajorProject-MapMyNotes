@@ -3,6 +3,7 @@ import pytest
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 from sqlalchemy import func
 from MapMyNotesApplication.models.module_code import Module_Code
+from datetime import datetime
 
 class TestNoteMetaData(object):
     def setup(self):
@@ -17,7 +18,9 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
+        #http://www.tutorialspoint.com/python/time_strptime.htm Help from hereda
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
         database.session.add(meta_data)
         database.session.commit()
 
@@ -29,7 +32,8 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
         meta_data.save()
 
         database_meta_data = Note_Meta_Data.query.first()
@@ -41,7 +45,9 @@ class TestNoteMetaData(object):
         module_code.save()
 
         too_long_lecturers_name = "a" * 110
-        meta_data = Note_Meta_Data(too_long_lecturers_name, module_code.id, "C11 Hugh Owen")
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data(too_long_lecturers_name, module_code.id, "C11 Hugh Owen", date)
         result = meta_data.save()
         assert False is result
 
@@ -50,7 +56,9 @@ class TestNoteMetaData(object):
         module_code.save()
 
         lecturer_name = "Dr Mark Foobar"
-        meta_data = Note_Meta_Data(lecturer_name, module_code.id, "C11 Hugh Owen")
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data(lecturer_name, module_code.id, "C11 Hugh Owen", date)
 
         result = meta_data.save()
 
@@ -60,7 +68,9 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
         meta_data.save()
 
         expected_id = 1
@@ -70,7 +80,10 @@ class TestNoteMetaData(object):
     def test_saves_a_module_code_as_part_of_a_foreign_key(self):
         module_code = Module_Code("CS31310")
         module_code.save()
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
 
         meta_data.save()
 
@@ -79,7 +92,10 @@ class TestNoteMetaData(object):
     def test_the_location_meta_data_returns_the_correct_value(self):
         module_code = Module_Code("CS31310")
         module_code.save()
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen")
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
 
         meta_data.save()
 
@@ -89,8 +105,24 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
         location = "Seat" * 40
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, location)
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, location,date)
 
         result = meta_data.save()
 
         assert result is False
+
+    def test_the_date_returned_is_the_correct_date(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+        location = "Seat" * 40
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, location,date)
+
+        result = meta_data.save()
+
+        assert meta_data.date.strftime("%dth %B %Y %H:%M") == "20th January 2016 15:00"

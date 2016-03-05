@@ -4,6 +4,7 @@ from MapMyNotesApplication.models.note import Note
 from sqlalchemy import func
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
+from datetime import datetime
 
 
 class TestNote(object):
@@ -20,7 +21,8 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen')
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
         note_meta_data.save()
 
         note = Note('uploads/', note_meta_data.id)
@@ -33,7 +35,8 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen")
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date)
         note_meta_data.save()
 
         note = Note('uploaddirectory/foo.jpg',note_meta_data.id)
@@ -46,7 +49,8 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen")
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date)
         note_meta_data.save()
 
         note = Note('uploaddirectory/foo.jpg',note_meta_data.id)
@@ -61,7 +65,8 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen")
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date)
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -77,7 +82,8 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen")
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date)
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -93,7 +99,8 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen')
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -111,7 +118,8 @@ class TestNote(object):
         database.session.add(module_code)
         database.session.commit()
 
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen')
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)

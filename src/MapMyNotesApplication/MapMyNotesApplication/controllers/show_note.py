@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note import Note
+from datetime import datetime
 
 shownote = Blueprint('shownote', __name__)
 
@@ -15,4 +16,9 @@ def show_note(note_id):
     lecturer = note.meta_data.lecturer
 
     location = note.meta_data.location
-    return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer, location=location)
+
+    date = note.meta_data.date
+
+    formated_date = date.strftime("%dth %B %Y %H:%M")
+
+    return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer, location=location, date=formated_date)
