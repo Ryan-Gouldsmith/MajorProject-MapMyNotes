@@ -9,12 +9,13 @@ class TestIntegrationHomepage(LiveServerTestCase):
     def create_app(self):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+
         return app
 
     def setUp(self):
         self.driver = webdriver.PhantomJS()
         self.driver.set_window_size(1024, 640 )
-        self.driver.implicitly_wait(3)
 
     def tearDown(self):
         self.driver.quit()

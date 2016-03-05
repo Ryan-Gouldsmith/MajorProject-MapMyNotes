@@ -10,5 +10,7 @@ def show_note(note_id):
     note = Note.query.get(note_id)
 
     image_path = note.image_path
-    module_code = note.module_code.module_code
-    return render_template('/show_note/index.html', note_image=image_path, module_code=module_code)
+    module_code = note.meta_data.module_code.module_code
+
+    lecturer = note.meta_data.lecturer
+    return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer)
