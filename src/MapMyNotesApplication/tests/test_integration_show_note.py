@@ -11,12 +11,13 @@ class TestIntegretationShowNote(LiveServerTestCase):
     def create_app(self):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         return app
 
     def setUp(self):
+        # Ideas on how to create the driver and use it. https://realpython.com/blog/python/headless-selenium-testing-with-python-and-phantomjs/
         self.driver = webdriver.PhantomJS()
         self.driver.set_window_size(1024, 640 )
-        self.driver.implicitly_wait(3)
 
     def tearDown(self):
         self.driver.quit()
@@ -25,6 +26,16 @@ class TestIntegretationShowNote(LiveServerTestCase):
         self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
         module_code = self.driver.find_element_by_class_name('module_code_data')
         module_code.send_keys("CS31310")
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
+        date = self.driver.find_element_by_class_name("date")
+        date.send_keys("12th February 2016 16:00")
+
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
 
@@ -37,9 +48,85 @@ class TestIntegretationShowNote(LiveServerTestCase):
         self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
         module_code = self.driver.find_element_by_class_name('module_code_data')
         module_code.send_keys("CS31310")
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
+        date = self.driver.find_element_by_class_name("date")
+        date.send_keys("12th February 2016 16:00")
+
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
 
         module_code = self.driver.find_element_by_class_name("module_code")
 
         assert module_code.text == "Module Code: CS31310"
+
+    def test_lectuer_name_is_correct(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+
+        module_code = self.driver.find_element_by_class_name('module_code_data')
+        module_code.send_keys("CS31310")
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
+        date = self.driver.find_element_by_class_name("date")
+        date.send_keys("12th February 2016 16:00")
+
+        submit_button = self.driver.find_element_by_class_name('submit')
+        submit_button.click()
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+
+        assert lecturer_name.text == "By Mr Foo"
+
+    def test_location_name_is_correct(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+
+        module_code = self.driver.find_element_by_class_name('module_code_data')
+        module_code.send_keys("CS31310")
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
+        date = self.driver.find_element_by_class_name("date")
+        date.send_keys("12th February 2016 16:00")
+
+        submit_button = self.driver.find_element_by_class_name('submit')
+        submit_button.click()
+
+        location_name = self.driver.find_element_by_class_name("location_name")
+
+        assert location_name.text == "C11 Hugh Owen"
+
+    def test_date_values_are_correct(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+
+        module_code = self.driver.find_element_by_class_name('module_code_data')
+        module_code.send_keys("CS31310")
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
+        date = self.driver.find_element_by_class_name("date")
+        date.send_keys("12th February 2016 16:00")
+
+        submit_button = self.driver.find_element_by_class_name('submit')
+        submit_button.click()
+
+        date_value = self.driver.find_element_by_class_name("date")
+
+        assert date_value.text == "12th February 2016 16:00"

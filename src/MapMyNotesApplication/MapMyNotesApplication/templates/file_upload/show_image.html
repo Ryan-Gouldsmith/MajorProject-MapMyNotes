@@ -9,6 +9,9 @@
     <form action="{{ url_for('metadata.add_meta_data', note_image=note_image) }}" method="post">
       <label class="module_label">Module Code:</label>
       <input type="text" class="module_code_data" name="module_code_data" >
+      <input type="text" class="lecturer_name" name="lecturer_name_data" >
+      <input type="text" class="location_name" name="location_data">
+      <input type="text" class="date" name="date_data">
       <input type="submit" class="submit" name="submit" >
     </form>
 

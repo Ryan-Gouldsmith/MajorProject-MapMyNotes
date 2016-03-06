@@ -9,7 +9,8 @@ class Module_Code(database.Model):
     id = Column(Integer, primary_key = True)
     module_code = Column(String(50))
     #http://docs.sqlalchemy.org/en/latest/orm/relationships.html
-    notes = relationship("Note", backref="module_code")
+    #notes = relationship("Note", backref="module_code")
+    meta_data = relationship("Note_Meta_Data", backref="module_code")
 
 
     def __init__(self, module_code):
