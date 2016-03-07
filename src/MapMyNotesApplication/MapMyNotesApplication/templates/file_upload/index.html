@@ -1,12 +1,16 @@
-<html>
-  <head>
-    <title> Map My Notes </title>
-  </head>
-  <body>
-      <h1> File Upload </h1>
+{% extends "root.html" %}
+
+{% block head %}
+  {{super()}}
+  {# Template hierarchy and super and adding style sheets http://flask.pocoo.org/docs/0.10/patterns/templateinheritance/#}
+  <link href="{{ url_for('static', filename='stylesheet/file_upload.css')}}" rel="stylesheet" >
+
+{% endblock %}
+
+{% block content %}
+      <h1 class='strapline'> Upload your note </h1>
       <form enctype="multipart/form-data" method="post">
-        <input type="file" name="file" />
-        <input type="submit" />
+        <input type="file" name="file" class="file_upload" />
+        <input type="submit" class="submit" value="Upload Note"/>
       </form>
-  </body>
-</html>
+{% endblock %}

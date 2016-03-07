@@ -1,10 +1,14 @@
-<html>
-  <head>
-    <title> Showing your note </title>
-  </head>
-  <body>
-    <h1> Showing note {{note_image}} </h1>
-    <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" height=100 width=100 />
+{% extends "root.html" %}
+
+{% block head %}
+  {{super()}}
+  <link href="{{ url_for('static', filename='stylesheet/show_image.css')}}" rel="stylesheet" >
+
+{% endblock %}
+
+{% block content %}
+    <h1 class="strapline"> Showing note {{note_image}} </h1>
+    <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="temp_uploaded_image"/ class="temp_uploaded_note">
 
     <form action="{{ url_for('metadata.add_meta_data', note_image=note_image) }}" method="post">
       <label class="module_label">Module Code:</label>
@@ -14,6 +18,4 @@
       <input type="text" class="date" name="date_data">
       <input type="submit" class="submit" name="submit" >
     </form>
-
-  </body>
-</html>
+{% endblock %}

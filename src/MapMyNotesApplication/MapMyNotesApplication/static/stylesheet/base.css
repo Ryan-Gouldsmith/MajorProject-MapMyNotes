@@ -1,0 +1,38 @@
+/* Ideas from Flexbox from https://davidwalsh.name/flexbox-column */
+
+html{
+  height:100%;
+  width:100%;
+}
+
+body{
+  margin: 0;
+  height:100%;
+  width:100%;
+  display: -ms-flex;
+	display: -webkit-flex;
+	display: flex;
+}
+nav {
+  width:15%;
+  height:100%;
+  background-color:#DD2C00;
+}
+main {
+  width:85%;
+  height:100%;
+}
+nav a {
+  width:90%;
+  display:inherit;
+  margin-top:30%;
+  margin-left:10%;
+  text-decoration: none;
+  color:white;
+}
+nav a:hover{
+  color:#B0BEC5;
+}
+.strapline{
+  text-align: center;
+}
