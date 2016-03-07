@@ -11,11 +11,18 @@
     <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="temp_uploaded_image"/ class="temp_uploaded_note">
 
     <form action="{{ url_for('metadata.add_meta_data', note_image=note_image) }}" method="post">
-      <label class="module_label">Module Code:</label>
-      <input type="text" class="module_code_data" name="module_code_data" >
-      <input type="text" class="lecturer_name" name="lecturer_name_data" >
+      <label class="module_label">Module Code:
+        <input type="text" class="module_code_data" name="module_code_data" >
+      </label>
+      <label class='lecture_name_label'>Lecturer's Name:
+        <input type="text" class="lecturer_name" name="lecturer_name_data" >
+      </label>
+        <label class="location_name_label"> Location of the lecture:
       <input type="text" class="location_name" name="location_data">
-      <input type="text" class="date" name="date_data">
+      </label>
+      <label class='date_label'> Date of lecture
+        <input type="text" class="date" name="date_data">
+      </label>
       <input type="submit" class="submit" name="submit" >
     </form>
 {% endblock %}
