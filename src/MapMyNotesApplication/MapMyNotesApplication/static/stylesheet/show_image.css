@@ -1,0 +1,23 @@
+.temp_uploaded_image{
+  margin-left: 5%;
+  margin-right:auto;
+  display:inline-block;
+  padding-right:2%;
+  width:40%;
+  height:40%;
+}
+form {
+    margin-left: auto;
+    margin-right:auto;
+    width:40%;
+    padding-top:50px;
+    display:inline-block;
+}
+form label {
+  width:100%;
+  display:inline-block;
+}
+form input[type="text"]{
+  width:100%;
+  padding:10px;
+}
