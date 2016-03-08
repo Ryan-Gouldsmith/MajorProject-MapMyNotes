@@ -29,8 +29,8 @@ kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (75,1))
 
 lines = cv2.erode(lines,kernel,iterations = 1)
 lines = cv2.dilate(lines,kernel,iterations = 1)
+# SURELY THAT'S JUST DILATING AGAIN?
 close = cv2.morphologyEx(lines,cv2.MORPH_DILATE,kernel)
-
 
 
 thresh7[np.where(close == 255)] = 0
@@ -43,6 +43,7 @@ mask = cv2.dilate(mask,kernel,iterations = 1)
 
 
 # Reference, updated OpenCV meant that there ws an issue unpacking the variables. http://stackoverflow.com/questions/25504964/opencv-python-valueerror-too-many-values-to-unpack
+# here with the tests and script
 _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 cv2.drawContours(mask,contours,-1,(255,0,0),thickness=cv2.FILLED)
 
