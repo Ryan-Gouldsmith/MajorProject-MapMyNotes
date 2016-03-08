@@ -1,9 +1,18 @@
 {% extends "root.html" %}
 
+{% block head %}
+  {{super()}}
+  <link href="{{ url_for('static', filename='stylesheet/show_note.css')}}" rel="stylesheet" >
+
+{% endblock %}
+
 {% block content %}
     <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}"/>
-    <p class="module_code"> Module Code: {{module_code}} </p>
-    <p class="lecturer_name"> By {{lecturer}} </p>
-    <p class="location_name"> {{location}} </p>
-    <p class="date"> {{date}} </p>
+    <section class="meta-data-card">
+      <h3 class="main-intro"> Additional information </h3>
+      <p class="module_code"> Module Code: {{module_code}} </p>
+      <p class="lecturer_name"> By {{lecturer}} </p>
+      <p class="location_name"> {{location}} </p>
+      <p class="date"> {{date}} </p>
+    </section>
 {% endblock %}
