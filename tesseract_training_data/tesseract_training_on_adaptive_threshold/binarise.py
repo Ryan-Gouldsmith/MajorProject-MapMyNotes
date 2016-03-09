@@ -63,7 +63,7 @@ filename, file_extension = os.path.splitext(sys.argv[1])
 
 image_path = filename + ".tiff"
 
-#cv2.imwrite(image_path, mask)
+cv2.imwrite(image_path, mask)
 
 
 
