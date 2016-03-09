@@ -105,18 +105,13 @@ if __name__ == "__main__":
 
         final_output = binarise.erode_image(dilated_black_text_mask, ones_kernel)
 
+        path = binarise.prepare_image_to_save(sys.argv[1])
+
         cv2.imshow("im", final_output)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-
-
-
-
-
-
-
-
+        binarise.save_image(final_output)
 
     else:
         print "File doesn't exist sorry"
