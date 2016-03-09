@@ -45,6 +45,7 @@ mask = cv2.dilate(mask,kernel,iterations = 1)
 # Reference, updated OpenCV meant that there ws an issue unpacking the variables. http://stackoverflow.com/questions/25504964/opencv-python-valueerror-too-many-values-to-unpack
 # here with the tests and script
 _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
 cv2.drawContours(mask,contours,-1,(255,0,0),thickness=cv2.FILLED)
 
 kernel = np.ones((7,7),np.uint8)
@@ -62,7 +63,7 @@ filename, file_extension = os.path.splitext(sys.argv[1])
 
 image_path = filename + ".tiff"
 
-cv2.imwrite(image_path, mask)
+#cv2.imwrite(image_path, mask)
 
 
 
