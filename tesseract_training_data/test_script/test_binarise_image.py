@@ -6,12 +6,16 @@ import cv2
 import os
 import numpy as np
 
-import tesseract_training_on_adaptive_threshold.binarise_image as blueline
+import tesseract_training_data.tesseract_training_on_adaptive_threshold.binarise_image as blueline
 
 class TestBlueLinedAdaptedThreshold(object):
     def setup(self):
         self.threshold = blueline.BinariseImage()
-        self.image_file = "test_script/test_image.jpg"
+        self.image_file = "test_image.jpg"
+
+    def teardown(self):
+        if os.path.isfile("test_image.tiff"):
+            os.remove("test_image.tiff")
 
 
 
@@ -158,6 +162,7 @@ class TestBlueLinedAdaptedThreshold(object):
         mask = self.threshold.convert_white_to_black(new_mask, empty_mask)
 
         # gets the black values and checks that it has converted some.
+        # Found a better way than itterating over the whole pixels http://stackoverflow.com/questions/30331944/finding-red-color-using-python-opencv
         black_array = mask[np.where(mask == 255)]
 
         assert len(black_array) > 0
@@ -169,117 +174,73 @@ class TestBlueLinedAdaptedThreshold(object):
 
         assert len(kernel[0]) == 3
 
+    def test_finding_contours_of_mask_return_tuple(self):
+        width = 75
+        height = 1
+        read_in_image = self.threshold.read_image_as_grasycale(self.image_file)
+
+        median_blurred_image = self.threshold.apply_median_blur()
+
+        threshold_image = self.threshold.apply_adaptive_threshold()
 
 
+        lines = self.threshold.copy_image(threshold_image)
+        kernal_structure = self.threshold.get_structuring_element(width, height)
+
+        dilated_image = self.threshold.dilate_image(lines, kernal_structure)
+        new_mask = self.threshold.convert_black_threshold_to_white(dilated_image)
+
+        row_value = 100
+        column_value = 100
+        empty_mask = self.threshold.create_empty_mask(row_value, column_value)
+
+        mask = self.threshold.convert_white_to_black(new_mask, empty_mask)
+
+        tuple_contour_info = self.threshold.find_contours_in_mask(mask)
+
+        assert len(tuple_contour_info) == 3
+
+        assert type(tuple_contour_info[1]) is list
+
+    def test_drawing_on_contour_to_mask(self):
+        width = 75
+        height = 1
+        read_in_image = self.threshold.read_image_as_grasycale(self.image_file)
+
+        median_blurred_image = self.threshold.apply_median_blur()
+
+        threshold_image = self.threshold.apply_adaptive_threshold()
 
 
-    """
+        lines = self.threshold.copy_image(threshold_image)
+        kernal_structure = self.threshold.get_structuring_element(width, height)
 
+        dilated_image = self.threshold.dilate_image(lines, kernal_structure)
+        new_mask = self.threshold.convert_black_threshold_to_white(dilated_image)
 
-    def test_get_kernel_type(self):
-        kernel = self.threshold.get_kernel(2)
+        row_value = 100
+        column_value = 100
+        empty_mask = self.threshold.create_empty_mask(row_value, column_value)
 
-        # Is instance stuff http://stackoverflow.com/questions/12569452/how-to-identify-numpy-types-in-python
-        assert isinstance(kernel, np.ndarray) is True
+        mask = self.threshold.convert_white_to_black(new_mask, empty_mask)
 
-    def test_erroding_image(self):
-        image = cv2.imread(self.image_file)
-        greyscale_image = self.threshold.convert_to_grayscale(image)
-        kernel = self.threshold.get_kernel(2)
+        tuple_contour_info = self.threshold.find_contours_in_mask(mask)
 
-        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
+        returned_mask_with_contours = self.threshold.draw_contours(mask)
 
-        assert eroding_image is not None
+        assert returned_mask_with_contours is not tuple_contour_info
 
-    def test_black_text_extraction(self):
-        image = cv2.imread(self.image_file)
-        greyscale_image = self.threshold.convert_to_grayscale(image)
-        kernel = self.threshold.get_kernel(2)
+    def test_prepare_tiff_file_for_saving(self):
+        returned_tiff_file = self.threshold.prepare_image_to_save(self.image_file)
 
-        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
+        assert returned_tiff_file == "test_image.tiff"
 
-        assert self.threshold.black_text_extraction(eroding_image) is not None
+    def test_saving_image_file_to_filestore(self):
+        read_in_image = self.threshold.read_image_as_grasycale(self.image_file)
+        image = self.threshold.apply_median_blur()
 
-    def test_get_image_dimensions(self):
-        image = cv2.imread(self.image_file)
-        image_height, image_width, image_depth = image.shape
-        test_dimensions = (image_height, image_width, image_depth)
+        returned_tiff_file = self.threshold.prepare_image_to_save(self.image_file)
 
-        self.threshold.read_image(self.image_file)
+        self.threshold.save_image(image)
 
-        assert test_dimensions == (self.threshold.get_image_dimensions())
-
-    def test_get_blank_mask(self):
-        image = cv2.imread(self.image_file)
-        image_height, image_width, image_depth = image.shape
-        image_mask = np.zeros((image_height, image_width),np.uint8)
-
-        self.threshold.read_image(self.image_file)
-
-        # checks to see all the values are the same
-        assert image_mask.all() == self.threshold.get_blank_image_mask().all()
-
-    def test_convert_text_extraction_to_mask(self):
-        image = self.threshold.read_image(self.image_file)
-        greyscale_image = self.threshold.convert_to_grayscale(image)
-        kernel = self.threshold.get_kernel(2)
-
-        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
-
-        mask = self.threshold.get_blank_image_mask()
-        black_text = self.threshold.black_text_extraction(eroding_image)
-
-        mask = self.threshold.convert_text_extraction_to_mask()
-
-        # gets the black values and checks that it has converted some.
-        black_array = mask[np.where(mask == 255)]
-
-        assert len(black_array) > 0
-
-
-    def test_apply_adaptive_threshold_to_image(self):
-        image = self.threshold.read_image(self.image_file)
-        greyscale_image = self.threshold.convert_to_grayscale(image)
-        kernel = self.threshold.get_kernel(2)
-
-        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
-
-        mask = self.threshold.get_blank_image_mask()
-        black_text = self.threshold.black_text_extraction(eroding_image)
-
-        kernel = self.threshold.get_kernel(5)
-        eroding_image = self.threshold.erode_image(black_text, kernel)
-
-        mask = self.threshold.convert_text_extraction_to_mask()
-
-        threshold_image = self.threshold.apply_threshold(mask)
-
-        assert threshold_image is not None
-
-    def test_saves_new_tiff_image(self):
-        image = self.threshold.read_image(self.image_file)
-        greyscale_image = self.threshold.convert_to_grayscale(image)
-        kernel = self.threshold.get_kernel(2)
-
-        eroding_image = self.threshold.erode_image(greyscale_image, kernel)
-
-        mask = self.threshold.get_blank_image_mask()
-        black_text = self.threshold.black_text_extraction(eroding_image)
-
-        kernel = self.threshold.get_kernel(5)
-        eroding_image = self.threshold.erode_image(black_text, kernel)
-
-        mask = self.threshold.convert_text_extraction_to_mask()
-
-        threshold_image = self.threshold.apply_threshold(mask)
-
-        threshold_image = self.threshold.apply_threshold(mask)
-
-        self.threshold.save_adaptive_threshold_image(self.image_file)
-
-        test_root = os.path.dirname(__file__)
-
-        filename = "test_image.tiff"
-
-        assert True is os.path.isfile(os.path.join(test_root, filename))
-    """
+        assert os.path.isfile('test_image.tiff') is True
