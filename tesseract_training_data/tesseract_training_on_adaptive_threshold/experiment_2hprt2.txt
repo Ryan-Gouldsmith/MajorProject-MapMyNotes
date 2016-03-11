@@ -1,0 +1,24 @@
+-CS1140: Intro to 3ava
+
+Mrs Java 26/5/2016
+# Basic. head-"er informatz-on
+
+-There are variabl.es such as i=1.End
+
+of a sl-atement is 3iven bu a sem.'-colon (;) It
+
+has data stru ctures like, trees. hash -ma.ps and
+
+linked. lists Plus queues.
+$T.9'Other b-lts (,9et thejoke)
+
+HelP on forums- will help with s!!ntax. You
+onot need to be over zealous o" the semi . colons.
+one wZ.ll suftice - not 5-000. It ;-s ;mportan6 .
+
+to #x anl! errors warnin3s- f:rst! '(Aa Bb Cc
+Dd Ee Ff G9 Hh-.s:.. Jj K" LLmM NnOo Pp Qq
+r Ss/,t Uv vv Ww Xx Yy Zz,,1s a strin3
+
+ 
+
