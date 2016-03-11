@@ -22,6 +22,7 @@ class TestCalendarService(object):
 
     def test_building_the_discovery_in_calendar_service(self):
         calendar_service = Google_Calendar_Service()
+        # Discovery mock json was the response from their test disvoery api. TODO Cite this properly and get the appropriate data needed.
         http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
 
         service = calendar_service.build(http_mock)
