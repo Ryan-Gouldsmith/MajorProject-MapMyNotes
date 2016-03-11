@@ -24,30 +24,4 @@ def home_page_route():
 
     print calendar_service.events().list(calendarId='primary').execute()
 """
-
-
-
-
     return render_template('/homepage/index.html')
-"""
-@homepage.route("/oauthconfirm")
-def oauthconfirm():
-    client_secret_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'client_secrets.json')
-
-    flow = client.flow_from_clientsecrets(
-    client_secret_file,
-    scope='https://www.googleapis.com/auth/calendar.readonly',
-    redirect_uri="http://localhost:5000/oauthconfirm"
-    )
-    print request.args
-    if 'code' not in request.args:
-        auth_uri = flow.step1_get_authorize_url()
-        return redirect(auth_uri)
-    else:
-        auth_code = request.args.get('code')
-        credentials = flow.step2_exchange(auth_code)
-        #print credentials
-        session['credentials'] = credentials.to_json()
-        return redirect(url_for('homepage.home_page_route'))
-    return render_template('/file_upload/index.html')
-"""

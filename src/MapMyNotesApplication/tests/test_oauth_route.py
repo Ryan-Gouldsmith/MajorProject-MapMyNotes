@@ -9,7 +9,7 @@ class TestOAuthRoute(object):
         self.app = application.test_client()
 
     def test_call_back_route_returns_a_success_status(self):
-        response = self.app.post("/oauthsubmit")
+        response = self.app.get("/oauthsubmit")
         url_full = response.headers.get("Location")
 
         url_path = url_full

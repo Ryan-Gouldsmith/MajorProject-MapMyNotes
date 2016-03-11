@@ -16,7 +16,7 @@ class Oauth_Service(object):
         return client.flow_from_clientsecrets(
         self.client_secret_file,
         scope='https://www.googleapis.com/auth/calendar.readonly',
-        redirect_uri="http://localhost:5000/oauthconfirm"
+        redirect_uri="http://localhost:5000/oauthsubmit"
         )
 
     def get_authorisation_url(self, flow_object):
@@ -24,3 +24,9 @@ class Oauth_Service(object):
 
     def exchange_code(self, flow_object, code, http=None):
         return flow_object.step2_exchange(code, http=http)
+
+    def create_credentials_from_json(self, json_credentials):
+        return client.OAuth2Credentials.from_json(json_credentials)
+
+    def authorise(self, credentials, http):
+        return credentials.authorize(http)

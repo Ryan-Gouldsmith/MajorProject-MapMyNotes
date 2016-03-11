@@ -1,10 +1,14 @@
-from flask import Blueprint, render_template, request, url_for, redirect, current_app
+from flask import Blueprint, render_template, request, url_for, redirect, current_app, session
 
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 
 oauth = Blueprint('oauth', __name__)
 
-@oauth.route('/oauthsubmit', methods=["POST"])
+"""
+ Modified from the tutorial and documentation on google for the api client. I wrote the information into a service object instead and added associated tests.
+ https://developers.google.com/api-client-library/python/auth/web-app#example
+"""
+@oauth.route('/oauthsubmit', methods=["GET"])
 def oauthsubmit():
     oauth_service = Oauth_Service()
     client_secrets_file = current_app.config['secret_json_file']
