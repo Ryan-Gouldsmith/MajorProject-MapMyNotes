@@ -16,9 +16,11 @@ from controllers.file_upload import fileupload
 from controllers.metadata import metadata
 from controllers.show_note import shownote
 from controllers.oauth import oauth
+from controllers.user import user
 
 application.register_blueprint(homepage)
 application.register_blueprint(fileupload)
 application.register_blueprint(metadata)
 application.register_blueprint(shownote)
 application.register_blueprint(oauth)
+application.register_blueprint(user)

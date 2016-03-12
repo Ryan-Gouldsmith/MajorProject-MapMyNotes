@@ -26,6 +26,6 @@ def oauthsubmit():
             # DEFAULT HTTP
             credentials = oauth_service.exchange_code(flow, code)
             session['credentials'] = credentials.to_json()
-            return redirect(url_for('homepage.home_page_route'))
+            return redirect(url_for('user.signin'))
     else:
         return 'Error with the key, contact an admin'
