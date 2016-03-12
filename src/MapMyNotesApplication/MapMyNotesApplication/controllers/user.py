@@ -21,17 +21,22 @@ def signin():
     http_auth = service.authorise(credentials, httplib2.Http())
 
 
+
     google_plus_service = Google_Plus_Service()
+
+
 
     google_service = google_plus_service.build(http_auth)
 
     google_request = google_plus_service.get_request_user_authorised(google_service)
 
     google_plus_response = google_plus_service.execute(google_request, http_auth)
+    print google_plus_response
+    """
 
     email_address = google_plus_service.parse_response_for_email(google_plus_response)
 
     user = User(email_address)
     user.save()
-
+    """
     return redirect(url_for('homepage.home_page_route'))
