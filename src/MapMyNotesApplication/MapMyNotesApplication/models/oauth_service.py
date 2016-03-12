@@ -15,7 +15,7 @@ class Oauth_Service(object):
     def create_flow_from_clients_secret(self):
         return client.flow_from_clientsecrets(
         self.client_secret_file,
-        scope='https://www.googleapis.com/auth/calendar.readonly',
+        scope=['https://www.googleapis.com/auth/calendar.readonly', 'https://www.googleapis.com/auth/userinfo.email'],
         redirect_uri="http://localhost:5000/oauthsubmit"
         )
 
