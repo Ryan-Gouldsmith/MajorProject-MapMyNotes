@@ -15,4 +15,9 @@
       <p class="location_name"> {{location}} </p>
       <p class="date"> {{date}} </p>
     </section>
+    <section class="modify-note">
+      <form action="{{ url_for('shownote.delete_note', note_id=note_id) }}" method="post" class="delete_note_form">
+        <input type="submit" name="submit" class="delete_note delete" value="Delete Note">
+      </form>
+    </section>
 {% endblock %}
