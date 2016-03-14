@@ -126,3 +126,29 @@ class TestNote(object):
         note.save()
 
         assert note.meta_data.location == 'C11 Hugh Owen'
+
+    def test_deleting_a_note(self):
+        file_path = "upload/test.png"
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+
+        note_2 = Note(file_path,note_meta_data.id)
+        note_2.save()
+
+        assert note.id == 1
+        assert note_2.id == 2
+
+        assert len(Note.query.all()) is 2
+
+        note_2.delete()
+
+        assert len(Note.query.all()) is 1
