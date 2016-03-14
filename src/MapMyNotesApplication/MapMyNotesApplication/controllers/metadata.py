@@ -52,3 +52,17 @@ def add_meta_data(note_image):
 
 
     return redirect(url_for('fileupload.error_four_zero_four'))
+
+
+@metadata.route("/metadata/edit/<note_id>", methods=["GET", "POST"])
+def edit_meta_data(note_id):
+    if request.method == "GET":
+        note = Note.query.get(note_id)
+        module_code = note.meta_data.module_code.module_code
+        lecturer = note.meta_data.lecturer
+        location = note.meta_data.location
+        date = note.meta_data.date.strftime("%dth %B %Y %H:%M")
+
+        return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date)
+    elif request.method == "POST":
+        return "success"

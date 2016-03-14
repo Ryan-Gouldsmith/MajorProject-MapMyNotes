@@ -4,7 +4,8 @@ import os
 from flask import request
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.module_code import Module_Code
-
+from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
+from datetime import datetime
 
 
 
@@ -114,3 +115,36 @@ class TestAddEditMetaDataRoute(object):
         expected = note_two.meta_data.module_code.id
 
         assert actual != expected
+
+    def test_get_edit_note_information_returns_200_success(self):
+        file_path = "upload/test.png"
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+
+        resource = self.app.get("/metadata/edit/" + str(note.id), follow_redirects=False)
+
+        assert resource.status_code == 200
+
+    def test_post_to_edit_note_different_data_created_new_meta_data(self):
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+
+        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00" }
+
+        response = self.app.post("/metadata/edit" + str(note.id), )
