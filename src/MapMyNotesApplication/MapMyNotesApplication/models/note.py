@@ -17,3 +17,7 @@ class Note(database.Model):
     def save(self):
         database.session.add(self)
         database.session.commit()
+
+    def delete(self):
+        database.session.delete(self)
+        database.session.commit()
