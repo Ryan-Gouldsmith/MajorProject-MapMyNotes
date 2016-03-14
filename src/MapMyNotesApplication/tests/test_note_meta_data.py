@@ -126,3 +126,35 @@ class TestNoteMetaData(object):
         result = meta_data.save()
 
         assert meta_data.date.strftime("%dth %B %Y %H:%M") == "20th January 2016 15:00"
+
+    def test_find_existing_meta_data_should_return_that_instance(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+
+        result = meta_data.save()
+
+        found_example = Note_Meta_Data.find_meta_data(meta_data)
+
+        assert type(found_example) is Note_Meta_Data
+
+        assert found_example == meta_data
+
+    def test_find_exisitig_meta_data_should_return_none_bad_data(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+
+        result = meta_data.save()
+
+        bad_meta_data = Note_Meta_Data("Dr Bad", module_code.id, "C11 Hugh Owen", date)
+
+        found_example = Note_Meta_Data.find_meta_data(bad_meta_data)
+
+        assert found_example is None
