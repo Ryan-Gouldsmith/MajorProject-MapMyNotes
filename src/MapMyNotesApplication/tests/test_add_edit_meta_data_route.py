@@ -134,6 +134,7 @@ class TestAddEditMetaDataRoute(object):
         assert resource.status_code == 200
 
     def test_post_to_edit_note_different_data_created_new_meta_data(self):
+        file_path = "upload/test.png"
         module_code = Module_Code('CS31310')
         database.session.add(module_code)
         database.session.commit()
@@ -147,4 +148,86 @@ class TestAddEditMetaDataRoute(object):
 
         meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00" }
 
-        response = self.app.post("/metadata/edit" + str(note.id), )
+        response = self.app.post("/metadata/edit/" + str(note.id), content_type='multipart/form-data',
+        data=meta_data_change, follow_redirects=False)
+
+
+        note_meta_data = Note_Meta_Data.query.all()
+        assert len(note_meta_data) is 2
+
+    def test_post_to_edit_note_changes_the_foreign_key_association(self):
+        file_path = "upload/test.png"
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+        note_id = note.id
+
+        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00" }
+
+        response = self.app.post("/metadata/edit/" + str(note.id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
+
+        note_found = Note.query.get(note_id)
+        assert note_found.note_meta_data_id is 2
+
+    def test_post_with_already_existing_meta_data_should_return_instance(self):
+        file_path = "upload/test.png"
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+        note_id = note.id
+
+
+        module_code_two = Module_Code('CS361010')
+        database.session.add(module_code_two)
+        database.session.commit()
+        module_code_id = module_code_two.id
+
+        date = datetime.strptime("24th January 2016 16:00", "%dth %B %Y %H:%M")
+
+        changed_meta_data= Note_Meta_Data("Changed Text", module_code_id, 'Test room', date)
+        changed_meta_data.save()
+        changed_meta_data_id = changed_meta_data.id
+
+        meta_data_change = {"module_code_data":"CS361010", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00" }
+
+        response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
+
+        note_found = Note.query.get(note_id)
+
+        assert note_found.meta_data.id == changed_meta_data_id
+
+    def test_posting_exisiting_module_code_new_meta_data_new_instance(self):
+        file_path = "upload/test.png"
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+        note_id = note.id
+
+        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00" }
+
+        response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
+
+        note_found = Note.query.get(note_id)
+
+        assert note_found.meta_data.id is 2
