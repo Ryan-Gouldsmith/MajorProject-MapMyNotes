@@ -31,6 +31,11 @@ class Note_Meta_Data(database.Model):
         database.session.commit()
         return True
 
+    def update_module_code_id(self, module_code_id):
+        self.module_code_id = module_code_id
+        self.save()
+        
+
     @staticmethod
     def find_meta_data(meta_data):
         lecturer = meta_data.lecturer

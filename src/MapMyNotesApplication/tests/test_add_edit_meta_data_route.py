@@ -231,3 +231,25 @@ class TestAddEditMetaDataRoute(object):
         note_found = Note.query.get(note_id)
 
         assert note_found.meta_data.id is 2
+
+    def test_posting_redirects_back_to_show_note(self):
+        file_path = "upload/test.png"
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+        note_id = note.id
+
+        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00" }
+
+        response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
+
+        assert response.status_code == 302
+        location = response.headers.get("Location").split("http://localhost/")
+        assert location[1] == "show_note/1"

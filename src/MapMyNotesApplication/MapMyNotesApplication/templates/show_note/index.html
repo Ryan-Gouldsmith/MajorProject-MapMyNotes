@@ -19,5 +19,9 @@
       <form action="{{ url_for('shownote.delete_note', note_id=note_id) }}" method="post" class="delete_note_form">
         <input type="submit" name="submit" class="delete_note delete" value="Delete Note">
       </form>
+      <form action="{{ url_for('metadata.edit_meta_data', note_id=note_id) }}"
+      method="get" class="edit_note_form">
+        <input type="submit" name='sumbit' class="edit_note" value='Edit Note Meta Data'>
+      </form>
     </section>
 {% endblock %}
