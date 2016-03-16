@@ -158,3 +158,18 @@ class TestNoteMetaData(object):
         found_example = Note_Meta_Data.find_meta_data(bad_meta_data)
 
         assert found_example is None
+
+    def test_saving_a_new_module_code_updates_current_object_module_code(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        result = meta_data.save()
+
+        module_code_new = Module_Code("SE31520")
+        module_code_new.save()
+
+        meta_data.update_module_code_id(module_code_new.id)
+
+        assert meta_data.module_code_id == 2
+        assert meta_data.module_code.module_code == "SE31520"
