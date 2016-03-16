@@ -29,24 +29,15 @@ def add_meta_data(note_image):
                 module_code_obj = Module_Code(module_code_data)
                 module_code_obj.save()
 
-
             module_code_id = module_code_obj.id
-
             date_time = datetime.strptime(date_data, "%dth %B %Y %H:%M")
-
-
             note_meta_data = Note_Meta_Data(lecturer_name_data, module_code_id, location_data, date_time)
             note_meta_data.save()
-
 
             note = Note(note_image, note_meta_data.id)
             note.save()
             return redirect(url_for('shownote.show_note',note_id=note.id))
-
-
-
     return redirect(url_for('fileupload.error_four_zero_four'))
-
 
 @metadata.route("/metadata/edit/<note_id>", methods=["GET", "POST"])
 def edit_meta_data(note_id):
@@ -58,12 +49,10 @@ def edit_meta_data(note_id):
         date = note.meta_data.date.strftime("%dth %B %Y %H:%M")
 
         return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date)
-        
-    elif request.method == "POST":
 
+    elif request.method == "POST":
         if not check_all_params_exist(request.form):
             return 'Some fields are missing'
-
 
         module_code_data = request.form['module_code_data'].upper()
 
@@ -74,30 +63,24 @@ def edit_meta_data(note_id):
         date = request.form['date_data']
 
         module_code = Module_Code.find_id_by_module_code(module_code_data)
-
+        date_time = convert_string_date_to_datetime(date)
 
         if module_code is not None:
-            module_code_id = module_code.id
-            date_time = datetime.strptime(date, "%dth %B %Y %H:%M")
-
-            meta_data = Note_Meta_Data(lecturer_name, module_code_id, location, date_time)
+            meta_data = Note_Meta_Data(lecturer_name, module_code.id, location, date_time)
 
             found_meta_data = Note_Meta_Data.find_meta_data(meta_data)
+
             note = Note.query.get(note_id)
             if found_meta_data is not None:
                 note.update_meta_data_id(found_meta_data.id)
             else:
                 meta_data.save()
                 note.update_meta_data_id(meta_data.id)
-
         else:
             module_code_obj = Module_Code(module_code_data)
             module_code_obj.save()
-            module_code_id = module_code_obj.id
 
-            date_time = datetime.strptime(date, "%dth %B %Y %H:%M")
-
-            note_meta_data = Note_Meta_Data(lecturer_name, module_code_id, location, date_time)
+            note_meta_data = Note_Meta_Data(lecturer_name, module_code_obj.id, location, date_time)
             response = note_meta_data.save()
 
             note = Note.query.get(note_id)
@@ -111,3 +94,6 @@ def check_all_params_exist(params):
         return False
 
     return True
+
+def convert_string_date_to_datetime(date):
+    return datetime.strptime(date, "%dth %B %Y %H:%M")
