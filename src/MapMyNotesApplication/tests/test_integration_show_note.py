@@ -160,3 +160,29 @@ class TestIntegretationShowNote(LiveServerTestCase):
         assert delete_link.is_displayed() is True
 
         assert delete_form[1] == "/delete_note/1"
+
+    def test_edit_link_is_available(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+
+        module_code = self.driver.find_element_by_class_name('module_code_data')
+        module_code.send_keys("CS31310")
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
+        date = self.driver.find_element_by_class_name("date")
+        date.send_keys("12th February 2016 16:00")
+
+        submit_button = self.driver.find_element_by_class_name('submit')
+        submit_button.click()
+
+        edit_form = self.driver.find_element_by_class_name("edit_note_form").get_attribute("action").split("http://localhost:5000")
+
+        edit_link = self.driver.find_element_by_class_name('edit_note')
+
+        assert edit_link.is_displayed() is True
+
+        assert edit_form[1] == "/metadata/edit/1"

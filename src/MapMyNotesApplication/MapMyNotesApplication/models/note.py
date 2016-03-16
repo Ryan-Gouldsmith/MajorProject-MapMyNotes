@@ -21,3 +21,8 @@ class Note(database.Model):
     def delete(self):
         database.session.delete(self)
         database.session.commit()
+
+    def update_meta_data_id(self, meta_data_id):
+        #http://stackoverflow.com/questions/9667138/how-to-update-sqlalchemy-row-entry
+        self.note_meta_data_id = meta_data_id
+        self.save()

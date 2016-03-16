@@ -152,3 +152,25 @@ class TestNote(object):
         note_2.delete()
 
         assert len(Note.query.all()) is 1
+
+    def test_updating_meta_data_foreign_key_successfully(self):
+        file_path = "upload/test.png"
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+
+        note_meta_data_new = Note_Meta_Data("Test", module_code.id, 'Testy', date)
+        note_meta_data_new.save()
+
+        note.update_meta_data_id(note_meta_data_new.id)
+
+        assert note.note_meta_data_id == 2
+        assert note.meta_data.lecturer == "Test"
