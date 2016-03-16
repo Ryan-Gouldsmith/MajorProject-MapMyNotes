@@ -1,5 +1,5 @@
 from MapMyNotesApplication import database
-from sqlalchemy import Column, Integer, String, ForeignKey, exc, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, exc, DateTime, and_
 from MapMyNotesApplication.models.module_code import Module_Code
 from sqlalchemy.orm import relationship
 
@@ -30,3 +30,17 @@ class Note_Meta_Data(database.Model):
         database.session.add(self)
         database.session.commit()
         return True
+
+    def update_module_code_id(self, module_code_id):
+        self.module_code_id = module_code_id
+        self.save()
+        
+
+    @staticmethod
+    def find_meta_data(meta_data):
+        lecturer = meta_data.lecturer
+        location = meta_data.location
+        module_code = meta_data.module_code_id
+        date = meta_data.date
+
+        return Note_Meta_Data.query.filter(Note_Meta_Data.lecturer == lecturer, Note_Meta_Data.location == location, Note_Meta_Data.module_code_id == module_code, Note_Meta_Data.date == date).first()
