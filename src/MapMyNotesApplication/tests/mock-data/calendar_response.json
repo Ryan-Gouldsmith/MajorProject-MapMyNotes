@@ -1,0 +1,57 @@
+{
+"accessRole": "owner",
+"defaultReminders": [
+ {
+  "method": "email",
+  "minutes": 30
+ },
+ {
+  "method": "popup",
+  "minutes": 30
+ }
+],
+"etag": "\"1234567891012345\"",
+"items": [
+ {
+
+  "kind": "calendar#event",
+  "etag": "\"1234567891012345\"",
+  "id": "ideventcalendaritem1",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?testtest",
+  "created": "2014-09-10T14:53:25.000Z",
+  "updated": "2014-09-10T14:54:12.748Z",
+  "summary": "Test Example",
+  "creator": {
+   "email": "test@gmail.com",
+   "displayName": "Tester",
+   "self": true
+  },
+  "organizer": {
+   "email": "test@gmail.com",
+   "displayName": "Test",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2014-09-10T19:00:00+01:00"
+  },
+  "end": {
+   "dateTime": "2014-09-10T20:30:00+01:00"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "123456789@google.com",
+  "sequence": 0,
+  "guestsCanInviteOthers": false,
+  "guestsCanSeeOtherGuests": false,
+  "reminders": {
+   "useDefault": true
+  }
+}
+ ],
+"kind": "calendar#events",
+"nextSyncToken": "synctokenasbebebe=",
+"summary": "test@gmail.com",
+"timeZone": "Europe/London",
+"updated": "2016-03-16T15:13:26.416Z"
+}
