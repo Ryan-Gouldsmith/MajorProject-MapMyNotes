@@ -10,3 +10,19 @@ class Google_Calendar_Service(object):
 
     def build(self,http):
         return discovery.build(self.API, self.VERSION, http=http)
+
+    def get_list_of_events(self, service, start=None, end=None):
+
+        if start is not None and end is not None:
+            if self.check_dates_are_correct(start=start, end=end) is False:
+                return None
+
+            return service.events().list(calendarId="primary", timeMin=start, timeMax=end)
+
+        return service.events().list(calendarId="primary")
+
+    def execute_request(self, request, http):
+        return request.execute(http=http)
+
+    def check_dates_are_correct(self, start, end):
+        return start < end
