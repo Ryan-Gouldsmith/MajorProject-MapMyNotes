@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
-from oauth2client import client
 import httplib2
-from apiclient import discovery
+
+from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
+from MapMyNotesApplication.models.oauth_service import Oauth_Service
+from datetime import datetime, timedelta
 
 
 import json
@@ -11,33 +13,27 @@ homepage = Blueprint('homepage', __name__)
 
 @homepage.route("/")
 def home_page_route():
-    """
-    if 'credentials' not in session:
+    if cookie_in_session() is False:
         return redirect(url_for('oauth.oauthsubmit'))
-    credentials = client.OAuth2Credentials.from_json(session['credentials'])
 
+    service = Oauth_Service()
+    session_credentials = session['credentials']
+    credentials = service.create_credentials_from_json(session_credentials)
+    http_auth = service.authorise(credentials, httplib2.Http())
 
-    http_auth = credentials.authorize(httplib2.Http())
+    google_calendar_service = Google_Calendar_Service()
+    google_service = google_calendar_service.build(http_auth)
 
-    calendar_service = discovery.build('calendar', 'v3', http_auth)
+    # Google requires it to be in  RFC 3339 format. http://stackoverflow.com/questions/8556398/generate-rfc-3339-timestamp-in-python Reference.
+    end_date = datetime.utcnow().isoformat("T") + "Z"
+    start_date = (datetime.utcnow() - timedelta(days=7)).isoformat("T") + "Z"
+    google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
 
+    google_calendar_response = google_calendar_service.execute_request(google_request, http_auth)
 
+    events = google_calendar_response['items']
 
-    #print calendar_service.events().list(calendarId='primary').execute()
+    return render_template('/homepage/index.html', events=events)
 
-
-
-    
-    print session
-    if 'credentials' not in session:
-        return redirect(url_for('homepage.oauthconfirm'))
-
-    credentials = client.OAuth2Credentials.from_json(session['credentials'])
-
-    http_auth = credentials.authorize(httplib2.Http())
-
-    calendar_service = discovery.build('calendar', 'v3', http_auth)
-
-    print calendar_service.events().list(calendarId='primary').execute()
-"""
-    return render_template('/homepage/index.html')
+def cookie_in_session():
+    return "credentials" in session
