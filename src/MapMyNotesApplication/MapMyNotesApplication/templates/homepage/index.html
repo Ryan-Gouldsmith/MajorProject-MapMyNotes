@@ -1,6 +1,14 @@
 {% extends "root.html" %}
-
 {% block content %}
     <h1 class="title"> Welcome to the home page </h1>
     <a href="{{ url_for('oauth.oauthsubmit')}}"> Authorise to use Google </a>
+    <h3> Events in the last week from your calendar </h3>
+    <section class="events">
+    {% for event in events %}
+      <div class="event">
+        <p class="summary">{{event.summary}}</p>
+        <a href="{{ event.htmlLink}}">View event</a>
+      </div>
+    {% endfor %}
+  </section>
 {% endblock %}
