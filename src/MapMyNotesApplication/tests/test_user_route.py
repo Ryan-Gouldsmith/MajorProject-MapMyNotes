@@ -38,6 +38,7 @@ class TestUploadRoute(object):
     @mock.patch.object(Google_Plus_Service, 'execute')
     def test_user_route(self, http, google):
 
+        #http://flask.pocoo.org/docs/0.10/testing/
         with self.app.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
             oauth_service = Oauth_Service()
