@@ -1,0 +1,13 @@
+{% extends "root.html" %}
+{% block content %}
+  <section class="notes">
+  {% for note in notes %}
+    <div class="note">
+      <p class="note_module">{{ note.meta_data.module_code.module_code  }} </p>
+      <p class="lecturer"> By {{ note.meta_data.lecturer }} </p>
+      <a href="{{ url_for('shownote.show_note',note_id=note.id) }}" class="note_link">View Note </a>
+    </div>
+  {% endfor %}
+  </section>
+
+{% endblock %}
