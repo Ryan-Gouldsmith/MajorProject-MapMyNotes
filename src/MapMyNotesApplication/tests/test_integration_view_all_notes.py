@@ -53,6 +53,12 @@ class TestIntegretationShowNote(LiveServerTestCase):
         for link in note_module_link:
             note_links.append(link.get_attribute("href").split("http://localhost:5000")[1])
 
+        note_lecturers = self.driver.find_elements_by_class_name("lecturer")
+        lecturers = []
+        for lecturer in note_lecturers:
+            lecturers.append(lecturer.text)
+
         assert len(notes) is 1
         assert "CS31310" in module_codes
         assert "/show_note/1" in note_links
+        assert "By Mr Foo" in lecturers
