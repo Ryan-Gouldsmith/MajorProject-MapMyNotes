@@ -21,7 +21,7 @@ class TestShowNoteRoute(object):
         self.image = file_list[1]
 
     def test_route_returns_status_code_200(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", "location_data" : "C11 Hugh Owen", "date_data": "12th February 2015 14:00"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", "location_data" : "C11 Hugh Owen", "date_data": "12th February 2015 14:00", "title_data": "A Title"}
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
         resource = self.app.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -35,7 +35,7 @@ class TestShowNoteRoute(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Title")
         note_meta_data.save()
 
         note = Note('uploads/', note_meta_data.id)
@@ -51,7 +51,7 @@ class TestShowNoteRoute(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Title")
         note_meta_data.save()
 
         note = Note('uploads/', note_meta_data.id)

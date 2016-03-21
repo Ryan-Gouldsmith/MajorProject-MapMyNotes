@@ -26,7 +26,7 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Title")
         note_meta_data.save()
 
         self.note = Note(file_path,note_meta_data.id)
