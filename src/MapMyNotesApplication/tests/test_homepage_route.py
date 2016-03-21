@@ -1,15 +1,20 @@
-from MapMyNotesApplication import application
+from MapMyNotesApplication import application, database
 import pytest
 import os
 import mock
 from googleapiclient.http import HttpMock, HttpRequest
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
+from MapMyNotesApplication.models.user import User
 
 
 class TestHomePageRoute(object):
 
     def setup(self):
+        application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        database.session.close()
+        database.drop_all()
+        database.create_all()
         self.app = application.test_client()
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
@@ -17,6 +22,9 @@ class TestHomePageRoute(object):
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
     def test_home_route(self, authorise, execute_request):
+        user = User("test@gmail.com")
+        database.session.add(user)
+        database.session.commit()
         #http://flask.pocoo.org/docs/0.10/testing/
         with self.app.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
@@ -31,6 +39,8 @@ class TestHomePageRoute(object):
             cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
 
             session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
+
 
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
         oauth_return = Oauth_Service.authorise(cred_obj, auth)
