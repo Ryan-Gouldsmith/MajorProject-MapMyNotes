@@ -32,5 +32,6 @@ def signin():
 
     user = User(email_address)
     user.save()
+    session['user_id'] = user.id
 
     return redirect(url_for('homepage.home_page_route'))
