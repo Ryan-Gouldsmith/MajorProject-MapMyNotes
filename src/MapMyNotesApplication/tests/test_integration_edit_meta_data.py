@@ -56,5 +56,5 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         assert module_code_field == 'CS31310'
         assert lecturer_field == "Mr Foo"
         assert location == "C11 Hugh Owen"
-        assert date == "20th January 2016 15:00"
+        assert date == "20 January 2016 15:00"
         assert title == "Title"
