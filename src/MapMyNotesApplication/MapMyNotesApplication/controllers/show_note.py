@@ -18,8 +18,7 @@ def show_note(note_id):
     location = note.meta_data.location
 
     date = note.meta_data.date
-
-    formated_date = date.strftime("%dth %B %Y %H:%M")
+    formated_date = date.strftime("%d %B %Y %H:%M")
 
     title = note.meta_data.title
 

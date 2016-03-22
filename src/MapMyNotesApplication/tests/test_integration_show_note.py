@@ -38,7 +38,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12th February 2016 16:00")
+        date.send_keys("12 February 2016 16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -63,7 +63,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12th February 2016 16:00")
+        date.send_keys("12 February 2016 16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -88,7 +88,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12th February 2016 16:00")
+        date.send_keys("12 February 2016 16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -113,7 +113,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12th February 2016 16:00")
+        date.send_keys("12 February 2016 16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -138,7 +138,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12th February 2016 16:00")
+        date.send_keys("12 February 2016 16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -148,7 +148,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         date_value = self.driver.find_element_by_class_name("date")
 
-        assert date_value.text == "12th February 2016 16:00"
+        assert date_value.text == "12 February 2016 16:00"
 
     def test_title_value_are_correct(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
@@ -163,7 +163,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12th February 2016 16:00")
+        date.send_keys("12 February 2016 16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -189,7 +189,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12th February 2016 16:00")
+        date.send_keys("12 February 2016 16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -218,7 +218,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12th February 2016 16:00")
+        date.send_keys("12 February 2016 16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
