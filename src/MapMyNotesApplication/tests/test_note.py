@@ -22,7 +22,7 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "title")
         note_meta_data.save()
 
         note = Note('uploads/', note_meta_data.id)
@@ -36,7 +36,7 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date, "Title")
         note_meta_data.save()
 
         note = Note('uploaddirectory/foo.jpg',note_meta_data.id)
@@ -50,7 +50,7 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date, "Title")
         note_meta_data.save()
 
         note = Note('uploaddirectory/foo.jpg',note_meta_data.id)
@@ -66,7 +66,7 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date, "Title")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -83,7 +83,7 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, "C11 Hugh Owen", date, "Title")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -100,7 +100,7 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, 'Title')
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -119,7 +119,7 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, 'Title')
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -135,7 +135,7 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, 'Title')
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -161,13 +161,13 @@ class TestNote(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, 'Title')
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
         note.save()
 
-        note_meta_data_new = Note_Meta_Data("Test", module_code.id, 'Testy', date)
+        note_meta_data_new = Note_Meta_Data("Test", module_code.id, 'Testy', date, 'Title Other')
         note_meta_data_new.save()
 
         note.update_meta_data_id(note_meta_data_new.id)

@@ -34,7 +34,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Some title")
         note_meta_data.save()
 
         note = Note('uploads/', note_meta_data.id)
@@ -58,7 +58,13 @@ class TestIntegretationShowNote(LiveServerTestCase):
         for lecturer in note_lecturers:
             lecturers.append(lecturer.text)
 
+        note_titles = self.driver.find_elements_by_class_name("title")
+        titles = []
+        for title in note_titles:
+            titles.append(title.text)
+
         assert len(notes) is 1
         assert "CS31310" in module_codes
         assert "/show_note/1" in note_links
         assert "By Mr Foo" in lecturers
+        assert "Some title" in titles
