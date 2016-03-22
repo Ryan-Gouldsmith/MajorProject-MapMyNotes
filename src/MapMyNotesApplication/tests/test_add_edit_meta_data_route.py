@@ -27,7 +27,7 @@ class TestAddEditMetaDataRoute(object):
 
     def test_add_meta_data_route_returns_302(self):
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
 
         resource = self.app.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -40,7 +40,7 @@ class TestAddEditMetaDataRoute(object):
         assert resource.status_code == 405
 
     def test_add_module_code_via_post_request_successfully(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
         resource = self.app.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -48,7 +48,7 @@ class TestAddEditMetaDataRoute(object):
         assert len(Module_Code.query.all()) == 1
 
     def test_it_saves_a_note_object_once_the_meta_data_added(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
         resource = self.app.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -60,7 +60,7 @@ class TestAddEditMetaDataRoute(object):
         assert note.meta_data.location == "C11 Hugh Owen"
 
     def test_once_a_note_is_saved_it_redirects_to_show_note(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
         resource = self.app.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
@@ -73,7 +73,7 @@ class TestAddEditMetaDataRoute(object):
         assert url_path[1] == expected_url
 
     def test_using_the_same_module_code_as_before_if_one_exists(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
         resource = self.app.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
@@ -94,12 +94,12 @@ class TestAddEditMetaDataRoute(object):
         assert expected_module_code_id == note_two.meta_data.module_code.id
 
     def test_using_the_different_module_code_should_save_new_code(self):
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
         resource = self.app.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
 
-        post_data_second = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00" }
+        post_data_second = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
         second_resource = self.app.post("/metadata/add/" + self.second_image,
                 content_type='multipart/form-data',
                 data=post_data_second, follow_redirects=False)
@@ -123,7 +123,7 @@ class TestAddEditMetaDataRoute(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "A Title")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -140,13 +140,13 @@ class TestAddEditMetaDataRoute(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "note title")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
         note.save()
 
-        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00" }
+        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
 
         response = self.app.post("/metadata/edit/" + str(note.id), content_type='multipart/form-data',
         data=meta_data_change, follow_redirects=False)
@@ -162,14 +162,14 @@ class TestAddEditMetaDataRoute(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Note title")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
         note.save()
         note_id = note.id
 
-        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00" }
+        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th February 2016 16:00", "title_data": "A Title"}
 
         response = self.app.post("/metadata/edit/" + str(note.id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
@@ -183,7 +183,7 @@ class TestAddEditMetaDataRoute(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Note title")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
@@ -198,11 +198,11 @@ class TestAddEditMetaDataRoute(object):
 
         date = datetime.strptime("24th January 2016 16:00", "%dth %B %Y %H:%M")
 
-        changed_meta_data= Note_Meta_Data("Changed Text", module_code_id, 'Test room', date)
+        changed_meta_data= Note_Meta_Data("Changed Text", module_code_id, 'Test room', date, "Another note title")
         changed_meta_data.save()
         changed_meta_data_id = changed_meta_data.id
 
-        meta_data_change = {"module_code_data":"CS361010", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00" }
+        meta_data_change = {"module_code_data":"CS361010", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00", "title_data": "A Title"}
 
         response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
@@ -217,14 +217,14 @@ class TestAddEditMetaDataRoute(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, 'Another note title')
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
         note.save()
         note_id = note.id
 
-        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00" }
+        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00", "title_data": "A Title"}
 
         response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
@@ -239,14 +239,14 @@ class TestAddEditMetaDataRoute(object):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Note title")
         note_meta_data.save()
 
         note = Note(file_path,note_meta_data.id)
         note.save()
         note_id = note.id
 
-        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00" }
+        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24th January 2016 16:00", "title_data": "A Title"}
 
         response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 

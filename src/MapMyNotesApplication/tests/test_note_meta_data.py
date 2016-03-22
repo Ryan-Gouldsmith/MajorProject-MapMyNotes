@@ -20,7 +20,7 @@ class TestNoteMetaData(object):
 
         #http://www.tutorialspoint.com/python/time_strptime.htm Help from hereda
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "Title")
         database.session.add(meta_data)
         database.session.commit()
 
@@ -33,7 +33,7 @@ class TestNoteMetaData(object):
         module_code.save()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "Title")
         meta_data.save()
 
         database_meta_data = Note_Meta_Data.query.first()
@@ -47,7 +47,7 @@ class TestNoteMetaData(object):
         too_long_lecturers_name = "a" * 110
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data(too_long_lecturers_name, module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data(too_long_lecturers_name, module_code.id, "C11 Hugh Owen", date, "Title")
         result = meta_data.save()
         assert False is result
 
@@ -58,7 +58,7 @@ class TestNoteMetaData(object):
         lecturer_name = "Dr Mark Foobar"
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data(lecturer_name, module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data(lecturer_name, module_code.id, "C11 Hugh Owen", date, "Title")
 
         result = meta_data.save()
 
@@ -70,7 +70,7 @@ class TestNoteMetaData(object):
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "title")
         meta_data.save()
 
         expected_id = 1
@@ -83,7 +83,7 @@ class TestNoteMetaData(object):
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "Title")
 
         meta_data.save()
 
@@ -95,7 +95,7 @@ class TestNoteMetaData(object):
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "title")
 
         meta_data.save()
 
@@ -108,7 +108,7 @@ class TestNoteMetaData(object):
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, location,date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, location,date, 'Title')
 
         result = meta_data.save()
 
@@ -121,7 +121,7 @@ class TestNoteMetaData(object):
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, location,date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, location,date, "title")
 
         result = meta_data.save()
 
@@ -133,7 +133,7 @@ class TestNoteMetaData(object):
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "title")
 
         result = meta_data.save()
 
@@ -149,11 +149,11 @@ class TestNoteMetaData(object):
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
 
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "title")
 
         result = meta_data.save()
 
-        bad_meta_data = Note_Meta_Data("Dr Bad", module_code.id, "C11 Hugh Owen", date)
+        bad_meta_data = Note_Meta_Data("Dr Bad", module_code.id, "C11 Hugh Owen", date, 'A Title')
 
         found_example = Note_Meta_Data.find_meta_data(bad_meta_data)
 
@@ -163,7 +163,7 @@ class TestNoteMetaData(object):
         module_code = Module_Code("CS31310")
         module_code.save()
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date)
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "title")
         result = meta_data.save()
 
         module_code_new = Module_Code("SE31520")
@@ -173,3 +173,12 @@ class TestNoteMetaData(object):
 
         assert meta_data.module_code_id == 2
         assert meta_data.module_code.module_code == "SE31520"
+
+    def test_saving_title_with_meta_data_returns_the_correct_title(self):
+        module_code = Module_Code("CS31310")
+        module_code.save()
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        meta_data = Note_Meta_Data("Dr Test", module_code.id, "C11 Hugh Owen", date, "title")
+        result = meta_data.save()
+
+        assert meta_data.title == "title"

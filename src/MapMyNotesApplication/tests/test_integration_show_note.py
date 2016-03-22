@@ -40,6 +40,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         date = self.driver.find_element_by_class_name("date")
         date.send_keys("12th February 2016 16:00")
 
+        title = self.driver.find_element_by_class_name("title")
+        title.send_keys("Title")
+
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
 
@@ -61,6 +64,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         date = self.driver.find_element_by_class_name("date")
         date.send_keys("12th February 2016 16:00")
+
+        title = self.driver.find_element_by_class_name("title")
+        title.send_keys("Title")
 
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
@@ -84,6 +90,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         date = self.driver.find_element_by_class_name("date")
         date.send_keys("12th February 2016 16:00")
 
+        title = self.driver.find_element_by_class_name("title")
+        title.send_keys("Title")
+
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
 
@@ -105,6 +114,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         date = self.driver.find_element_by_class_name("date")
         date.send_keys("12th February 2016 16:00")
+
+        title = self.driver.find_element_by_class_name("title")
+        title.send_keys("Title")
 
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
@@ -128,12 +140,41 @@ class TestIntegretationShowNote(LiveServerTestCase):
         date = self.driver.find_element_by_class_name("date")
         date.send_keys("12th February 2016 16:00")
 
+        title = self.driver.find_element_by_class_name("title")
+        title.send_keys("Title")
+
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
 
         date_value = self.driver.find_element_by_class_name("date")
 
         assert date_value.text == "12th February 2016 16:00"
+
+    def test_title_value_are_correct(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+
+        module_code = self.driver.find_element_by_class_name('module_code_data')
+        module_code.send_keys("CS31310")
+
+        lecturer_name = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer_name.send_keys("Mr Foo")
+
+        location_name = self.driver.find_element_by_class_name('location_name')
+        location_name.send_keys("C11 Hugh Owen")
+
+        date = self.driver.find_element_by_class_name("date")
+        date.send_keys("12th February 2016 16:00")
+
+        title = self.driver.find_element_by_class_name("title")
+        title.send_keys("Title")
+
+        submit_button = self.driver.find_element_by_class_name('submit')
+        submit_button.click()
+
+        title = self.driver.find_element_by_class_name("title")
+
+        assert title.text == "Title"
+
 
     def test_delete_link_is_available(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
@@ -149,6 +190,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         date = self.driver.find_element_by_class_name("date")
         date.send_keys("12th February 2016 16:00")
+
+        title = self.driver.find_element_by_class_name("title")
+        title.send_keys("Title")
 
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()
@@ -175,6 +219,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         date = self.driver.find_element_by_class_name("date")
         date.send_keys("12th February 2016 16:00")
+
+        title = self.driver.find_element_by_class_name("title")
+        title.send_keys("Title")
 
         submit_button = self.driver.find_element_by_class_name('submit')
         submit_button.click()

@@ -26,7 +26,7 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         database.session.commit()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date)
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Title")
         note_meta_data.save()
 
         self.note = Note(file_path,note_meta_data.id)
@@ -51,7 +51,10 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
 
         date = self.driver.find_element_by_class_name("date").get_attribute("value")
 
+        title = self.driver.find_element_by_class_name("title").get_attribute("value")
+
         assert module_code_field == 'CS31310'
         assert lecturer_field == "Mr Foo"
         assert location == "C11 Hugh Owen"
         assert date == "20th January 2016 15:00"
+        assert title == "Title"

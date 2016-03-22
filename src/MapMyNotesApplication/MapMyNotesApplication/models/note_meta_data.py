@@ -12,16 +12,18 @@ class Note_Meta_Data(database.Model):
     location = Column(String(100))
     module_code_id = Column(Integer, ForeignKey(Module_Code.id))
     date = Column(DateTime)
+    title = Column(String(100))
 
     meta_data = relationship("Note", backref="meta_data")
 
 
 
-    def __init__(self, lecturer_name, module_code, location, date):
+    def __init__(self, lecturer_name, module_code, location, date, title):
         self.lecturer = lecturer_name
         self.module_code_id = module_code
         self.location = location
         self.date = date
+        self.title = title
 
     def save(self):
         if len(self.lecturer) > 100 or len(self.location) > 100:
@@ -34,7 +36,7 @@ class Note_Meta_Data(database.Model):
     def update_module_code_id(self, module_code_id):
         self.module_code_id = module_code_id
         self.save()
-        
+
 
     @staticmethod
     def find_meta_data(meta_data):
