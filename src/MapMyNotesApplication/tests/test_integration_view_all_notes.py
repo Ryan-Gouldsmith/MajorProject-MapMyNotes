@@ -58,7 +58,13 @@ class TestIntegretationShowNote(LiveServerTestCase):
         for lecturer in note_lecturers:
             lecturers.append(lecturer.text)
 
+        note_titles = self.driver.find_elements_by_class_name("title")
+        titles = []
+        for title in note_titles:
+            titles.append(title.text)
+
         assert len(notes) is 1
         assert "CS31310" in module_codes
         assert "/show_note/1" in note_links
         assert "By Mr Foo" in lecturers
+        assert "Some title" in titles
