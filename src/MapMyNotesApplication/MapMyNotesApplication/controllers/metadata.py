@@ -32,7 +32,7 @@ def add_meta_data(note_image):
                 module_code_obj.save()
 
             module_code_id = module_code_obj.id
-            date_time = datetime.strptime(date_data, "%dth %B %Y %H:%M")
+            date_time = convert_string_date_to_datetime(date_data)
             note_meta_data = Note_Meta_Data(lecturer_name_data, module_code_id, location_data, date_time, title_data)
             note_meta_data.save()
 
@@ -48,7 +48,7 @@ def edit_meta_data(note_id):
         module_code = note.meta_data.module_code.module_code
         lecturer = note.meta_data.lecturer
         location = note.meta_data.location
-        date = note.meta_data.date.strftime("%dth %B %Y %H:%M")
+        date = note.meta_data.date.strftime("%d %B %Y %H:%M")
         title = note.meta_data.title
 
         return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, title=title)
@@ -101,4 +101,4 @@ def check_all_params_exist(params):
     return True
 
 def convert_string_date_to_datetime(date):
-    return datetime.strptime(date, "%dth %B %Y %H:%M")
+    return datetime.strptime(date, "%d %B %Y %H:%M")
