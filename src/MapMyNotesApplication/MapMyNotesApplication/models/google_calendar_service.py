@@ -8,8 +8,8 @@ class Google_Calendar_Service(object):
     API = "calendar"
     VERSION = "v3"
 
-    def build(self,http):
-        return discovery.build(self.API, self.VERSION, http=http)
+    def build(self,http_auth):
+        return discovery.build(self.API, self.VERSION, http=http_auth)
 
     def get_list_of_events(self, service, start=None, end=None):
 
