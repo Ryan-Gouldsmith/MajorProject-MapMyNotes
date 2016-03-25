@@ -94,3 +94,13 @@ class TestFileUploadService(object):
         filename = 'tests/ryan_test_1.jpg'
         file_exists = self.file_upload_service.file_exists(filename)
         assert file_exists is True
+
+    def test_is_png_method_returns_true_when_its_a_png(self):
+        filename = 'tests/test.png'
+        file_png = self.file_upload_service.is_png(filename)
+        assert file_png is True
+
+    def test_is_png_method_returns_false_when_jpg(self):
+        filename= "test/fakefile.jpg"
+        file_jpg = self.file_upload_service.is_png(filename)
+        assert file_jpg is False

@@ -28,4 +28,14 @@
       </label>
       <input type="submit" class="submit" name="submit" >
     </form>
+      <section class="suggestions">
+        {% if suggested_date %}
+          <p class='suggested_date_label'> Our analysis seems to think that the note was taken on the: </p>
+          <p class="suggested_date"> {{ suggested_date }} </p>
+        {% else %}
+          <p class='suggested_date'> No suitable date was found from the note </p>
+        {% endif %}
+
+
+      </section>
 {% endblock %}

@@ -1,8 +1,16 @@
-from flask import Blueprint, render_template, request, redirect, url_for, send_from_directory, send_file, safe_join
+from flask import Blueprint, render_template, request, redirect, url_for, send_from_directory, send_file, safe_join, session
 from werkzeug import secure_filename
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.module_code import Module_Code
+from MapMyNotesApplication.models.exifparser import ExifParser
+
+from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
+from MapMyNotesApplication.models.session_helper import SessionHelper
+from MapMyNotesApplication.models.oauth_service import Oauth_Service
+import httplib2
+from datetime import datetime, timedelta
+import json
 import os
 
 
@@ -51,7 +59,32 @@ def show_image(note_image):
     if not file_upload_service.file_exists(file_path):
         return redirect(url_for('fileupload.error_four_zero_four'))
 
-    return render_template("/file_upload/show_image.html",note_image=note_image)
+    suggested_date = None
+    if not file_upload_service.is_png(file_path):
+        exif_parser = ExifParser(file_path)
+        exif_data = exif_parser.parse_exif()
+        suggested_date = exif_parser.get_image_date()
+
+    session_helper = SessionHelper()
+    if session_helper.check_if_session_contains_credentials() is True:
+        service = Oauth_Service()
+        session_credentials = session_helper.return_session_credentials()
+        credentials = service.create_credentials_from_json(session_credentials)
+        http_auth = service.authorise(credentials, httplib2.Http())
+        # https://developers.google.com/identity/protocols/OAuth2WebServer#example Reference for the access token expiration
+        #if credentials.access_token_expired is False:
+        google_calendar_service = Google_Calendar_Service()
+        google_service = google_calendar_service.build(http_auth)
+
+            # Google requires it to be in  RFC 3339 format. http://stackoverflow.com/questions/8556398/generate-rfc-3339-timestamp-in-python Reference.
+        end_date = datetime.utcnow().isoformat("T") + "Z"
+        start_date = (datetime.utcnow() - timedelta(days=7)).isoformat("T") + "Z"
+        google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
+
+        google_calendar_response =  google_calendar_service.execute_request(google_request, http_auth)
+
+    print "RESPONSE: {}".format(google_calendar_response)
+    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date)
 
 
 # Not happy with this function, I think it will need to be looked into further down the down. Surely there's a better way than this. For some reason the send from directory did not work.... here https://github.com/mitsuhiko/flask/issues/1169
