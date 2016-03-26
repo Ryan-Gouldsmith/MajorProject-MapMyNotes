@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, url_for, redirect, current_app, session
+
 import httplib2
 
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
 from MapMyNotesApplication.models.user import User
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from datetime import datetime, timedelta
-
 
 import json
 import os
@@ -14,7 +14,8 @@ homepage = Blueprint('homepage', __name__)
 
 @homepage.route("/")
 def home_page_route():
-    if cookie_in_session() is True:
+    if cookie_in_session() is  True:
+        email_address = "foo"
         service = Oauth_Service()
         session_credentials = session['credentials']
         credentials = service.create_credentials_from_json(session_credentials)
@@ -24,7 +25,7 @@ def home_page_route():
             google_calendar_service = Google_Calendar_Service()
             google_service = google_calendar_service.build(http_auth)
 
-            # Google requires it to be in  RFC 3339 format. http://stackoverflow.com/questions/8556398/generate-rfc-3339-timestamp-in-python Reference.
+        # Google requires it to be in  RFC 3339 format. http://stackoverflow.com/questions/8556398/generate-rfc-3339-timestamp-in-python Reference.
             end_date = datetime.utcnow().isoformat("T") + "Z"
             start_date = (datetime.utcnow() - timedelta(days=7)).isoformat("T") + "Z"
             google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
