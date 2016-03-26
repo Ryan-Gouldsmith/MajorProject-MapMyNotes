@@ -60,6 +60,7 @@ def show_image(note_image):
         return redirect(url_for('fileupload.error_four_zero_four'))
 
     suggested_date = None
+    events=None
     if not file_upload_service.is_png(file_path):
         exif_parser = ExifParser(file_path)
         exif_data = exif_parser.parse_exif()
@@ -72,19 +73,31 @@ def show_image(note_image):
         credentials = service.create_credentials_from_json(session_credentials)
         http_auth = service.authorise(credentials, httplib2.Http())
         # https://developers.google.com/identity/protocols/OAuth2WebServer#example Reference for the access token expiration
-        #if credentials.access_token_expired is False:
-        google_calendar_service = Google_Calendar_Service()
-        google_service = google_calendar_service.build(http_auth)
+        if credentials.access_token_expired is False and suggested_date is not None:
+            suggested_date = datetime.strptime(suggested_date, "%Y:%m:%d %H:%M:%S")
+            google_calendar_service = Google_Calendar_Service()
+            google_service = google_calendar_service.build(http_auth)
 
             # Google requires it to be in  RFC 3339 format. http://stackoverflow.com/questions/8556398/generate-rfc-3339-timestamp-in-python Reference.
-        end_date = datetime.utcnow().isoformat("T") + "Z"
-        start_date = (datetime.utcnow() - timedelta(days=7)).isoformat("T") + "Z"
-        google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
+            # Additional reference on how to concat two date times so that I can start the date from midnight-almost mid-ngiht the next day. Modified for my own usage. http://stackoverflow.com/questions/9578906/easiest-way-to-combine-date-and-time-strings-to-single-datetime-object-using-pyt
+            end_time = datetime.strptime('23:59', "%H:%M").time()
+            start_time = datetime.strptime("00:00", "%H:%M").time()
 
-        google_calendar_response =  google_calendar_service.execute_request(google_request, http_auth)
+            end_date = datetime.combine(suggested_date.date(), end_time).isoformat("T") + "Z"
+            start_date = datetime.combine(suggested_date.date(), start_time ).isoformat("T") + "Z"
+            print start_date
+            print end_date
+            #start_date = (datetime.utcnow() - timedelta(days=7)).isoformat("T") + "Z"
+            google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
 
-    print "RESPONSE: {}".format(google_calendar_response)
-    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date)
+            google_calendar_response =  google_calendar_service.execute_request(google_request, http_auth)
+
+            events = google_calendar_response['items']
+        elif credentials.access_token_expired is True:
+            return redirect(url_for("oauth.oauthsubmit"))
+
+
+    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date, events=events)
 
 
 # Not happy with this function, I think it will need to be looked into further down the down. Surely there's a better way than this. For some reason the send from directory did not work.... here https://github.com/mitsuhiko/flask/issues/1169
