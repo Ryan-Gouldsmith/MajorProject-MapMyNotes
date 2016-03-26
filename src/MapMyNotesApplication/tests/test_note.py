@@ -174,3 +174,40 @@ class TestNote(object):
 
         assert note.note_meta_data_id == 2
         assert note.meta_data.lecturer == "Test"
+
+    def test_find_note_by_module_code(self):
+        file_path = "upload/test.png"
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, 'Title')
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+
+        notes = Note.find_note_by_module_code("CS31310")
+
+        assert len(notes) is 1
+        assert notes[0].meta_data.lecturer == "Mr Foo"
+
+    def test_finding_a_note_by_module_code_when_it_doesnt_exist(self):
+        file_path = "upload/test.png"
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, 'Title')
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+
+        notes = Note.find_note_by_module_code("SE31520")
+
+        assert len(notes) is 0
