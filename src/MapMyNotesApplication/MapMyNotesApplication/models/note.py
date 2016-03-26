@@ -1,6 +1,7 @@
 from MapMyNotesApplication import database
 from sqlalchemy import Column, Integer, String, ForeignKey
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
+from MapMyNotesApplication.models.module_code import Module_Code
 
 class Note(database.Model):
 
@@ -26,3 +27,7 @@ class Note(database.Model):
         #http://stackoverflow.com/questions/9667138/how-to-update-sqlalchemy-row-entry
         self.note_meta_data_id = meta_data_id
         self.save()
+
+    @staticmethod
+    def find_note_by_module_code(module_code):
+        return Note.query.filter(Module_Code.module_code.like(module_code)).all()
