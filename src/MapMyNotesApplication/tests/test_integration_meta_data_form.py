@@ -92,35 +92,30 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
     def tearDown(self):
         self.driver.quit()
 
-        """
+
     def test_form_exists(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         form = self.driver.find_element_by_tag_name('form')
-        pass
         assert form.is_displayed() is True
 
     def test_submit_button_exists(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         submit_button = self.driver.find_element_by_class_name("submit")
-        pass
         assert submit_button.is_displayed() is True
 
     def test_module_field_label_exists(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         module_label = self.driver.find_element_by_class_name("module_label")
-        pass
         assert module_label.is_displayed() is True
 
     def test_module_field_label_content(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         module_label_content = self.driver.find_element_by_class_name("module_label")
-        pass
         assert module_label_content.text == "Module Code:"
 
     def test_form_has_module_field(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         module_field = self.driver.find_element_by_class_name("module_code_data")
-        pass
         assert module_field.is_displayed() is True
 
     def test_form_has_correct_url_action(self):
@@ -130,44 +125,48 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         path = form_action.split("http://localhost:5000")
 
         expected_url = "/metadata/add/test2.jpg"
-        pass
         assert expected_url == path[1]
 
     def test_form_has_lecturer_name_field(self):
-        pass
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         lecturer_field = self.driver.find_element_by_class_name("lecturer_name")
         assert lecturer_field.is_displayed() is True
 
     def test_form_has_location_field(self):
-        pass
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         location_field = self.driver.find_element_by_class_name("location_name")
 
         assert location_field.is_displayed() is True
 
     def test_form_has_date_of_lecturer_field(self):
-        pass
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         date_field = self.driver.find_element_by_class_name("date")
 
         assert date_field.is_displayed() is True
 
     def test_form_has_title_exists(self):
-        pass
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         title_field = self.driver.find_element_by_class_name('title')
         assert title_field.is_displayed() is True
 
     def test_form_shows_exif_data_from_image(self):
-        pass
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         suggested_date = self.driver.find_element_by_class_name('suggested_date')
         assert suggested_date.text == '2016:01:31 13:47:14'
 
-    """
     def test_form_does_not_show_exif_data_if_image_is_a_png(self):
-        self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
-        print self.driver.page_source
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
         suggested_date = self.driver.find_element_by_class_name('suggested_date')
         assert suggested_date.text == 'No suitable date was found from the note'
+
+    def test_google_calendar_event_shows_when_exif_data_matches(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
+        calendar_date = self.driver.find_element_by_class_name("suggested_calendar_event")
+        assert calendar_date.is_displayed() is True
+        calendar_event_title = self.driver.find_element_by_class_name("calendar_event_title")
+        calendar_event_date = self.driver.find_element_by_class_name("calendar_start_time")
+        view_event = self.driver.find_element_by_class_name("calendar_event_view")
+
+        assert "Test Example" in calendar_event_title.text
+        assert "01 December 2016 01:00:00" in calendar_event_date.text
+        assert "View event" in view_event.text
