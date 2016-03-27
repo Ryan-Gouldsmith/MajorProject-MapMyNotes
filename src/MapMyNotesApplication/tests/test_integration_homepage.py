@@ -18,6 +18,7 @@ class TestIntegrationHomepage(object):
         application.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
+        application.config['TESTING'] = True
         self.app = application.test_client()
         database.session.close()
         database.drop_all()
@@ -26,7 +27,7 @@ class TestIntegrationHomepage(object):
 
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
-    def test_should_display_the_correct_events_in_calendar(self, authorise, request):
+    def test_should_display_the_correct_events_in_calendar(self, execute_request, authorise):
         user = User("test@gmail.com")
         database.session.add(user)
         database.session.commit()
@@ -47,10 +48,9 @@ class TestIntegrationHomepage(object):
 
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
         oauth_return = Oauth_Service.authorise(cred_obj, auth)
-        Oauth_Service.authorise.return_value = oauth_return
+        authorise.return_value = oauth_return
 
-
-        Google_Calendar_Service.execute_request.return_value = {"items": [
+        execute_request.return_value = {"items": [
         {
         "kind": "calendar#event",
         "etag": "\"1234567891012345\"",
@@ -102,7 +102,7 @@ class TestIntegrationHomepage(object):
 
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
-    def test_signing_in_does_not_show_the_sign_in_button(self, authorise, request):
+    def test_signing_in_does_not_show_the_sign_in_button(self, execute_request, authorise):
             user = User("test@gmail.com")
             database.session.add(user)
             database.session.commit()
@@ -123,10 +123,10 @@ class TestIntegrationHomepage(object):
 
             auth = HttpMock(self.authorised_credentials, {'status' : 200})
             oauth_return = Oauth_Service.authorise(cred_obj, auth)
-            Oauth_Service.authorise.return_value = oauth_return
+            authorise.return_value = oauth_return
 
 
-            Google_Calendar_Service.execute_request.return_value = {"items": [
+            execute_request.return_value = {"items": [
             {
             "kind": "calendar#event",
             "etag": "\"1234567891012345\"",
@@ -178,7 +178,7 @@ class TestIntegrationHomepage(object):
 
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
-    def test_once_authorised_it_displays_users_email_address(self, authorise, request):
+    def test_once_authorised_it_displays_users_email_address(self, execute_request, authorise):
         user = User("test@gmail.com")
         database.session.add(user)
         database.session.commit()
@@ -199,10 +199,10 @@ class TestIntegrationHomepage(object):
 
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
         oauth_return = Oauth_Service.authorise(cred_obj, auth)
-        Oauth_Service.authorise.return_value = oauth_return
+        authorise.return_value = oauth_return
 
 
-        Google_Calendar_Service.execute_request.return_value = {"items": [
+        execute_request.return_value = {"items": [
         {
         "kind": "calendar#event",
         "etag": "\"1234567891012345\"",

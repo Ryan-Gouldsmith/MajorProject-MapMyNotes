@@ -6,18 +6,26 @@ from googleapiclient.http import HttpMock, HttpRequest
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
 from MapMyNotesApplication.models.user import User
+from flask.ext.testing import TestCase
+from flask import Flask
 
 
-class TestHomePageRoute(object):
+class TestHomePageRoute(TestCase):
 
-    def setup(self):
-        application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+    def create_app(self):
+        app = application
+        app.config['TESTING'] = True
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
+        self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
+        return app
+
+    def setUp(self):
         database.session.close()
         database.drop_all()
         database.create_all()
-        self.app = application.test_client()
-        self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
-        self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
+
 
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
@@ -26,7 +34,7 @@ class TestHomePageRoute(object):
         database.session.add(user)
         database.session.commit()
         #http://flask.pocoo.org/docs/0.10/testing/
-        with self.app.session_transaction() as session:
+        with self.client.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
             oauth_service = Oauth_Service()
             file_path = application.config['secret_json_file']
@@ -86,5 +94,5 @@ class TestHomePageRoute(object):
          ]
         }
 
-        resource = self.app.get("/")
+        resource = self.client.get("/")
         assert resource.status_code == 200

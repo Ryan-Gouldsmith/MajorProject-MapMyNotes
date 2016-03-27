@@ -1,11 +1,19 @@
 import pytest
 from MapMyNotesApplication import application, database
 from MapMyNotesApplication.models.exifparser import ExifParser
-class TestExifParsing(object):
+from flask.ext.testing import TestCase
+from flask import Flask
 
-    def setup(self):
-        self.app = application.test_client()
+class TestExifParsing(TestCase):
+
+    def create_app(self):
+        app = Flask(__name__)
+        app.config['TESTING'] = True
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        self.file_test_upload_path = "MapMyNotesApplication/upload/ryan_test_1.jpg"
         self.file_test_upload_path = "MapMyNotesApplication/upload/test2.jpg"
+        return app
 
     def test_returns_correct_exif_data(self):
         parser = ExifParser(self.file_test_upload_path)

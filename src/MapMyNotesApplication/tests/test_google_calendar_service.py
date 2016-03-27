@@ -8,20 +8,26 @@ from googleapiclient import discovery
 import os
 import json
 from datetime import datetime
+from flask.ext.testing import TestCase
+from flask import Flask
 """
     Help with mocking idea from the source code of the test client - in the tests they perform mocking. Looking at the code for the actual client I'd be using helped to work out how to go about testing oAuth stuff. https://github.com/google/oauth2client/blob/master/tests/test_client.py
 
     All Mock data is generated from https://developers.google.com/google-apps/calendar/v3/reference/events/list#examples using the authors oAuthAPI then modified.
 """
-class TestCalendarService(object):
+class TestCalendarService(TestCase):
 
-    def setup(self):
-        application.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
-        self.app = application.test_client()
+    def create_app(self):
+        app = Flask(__name__)
+        app.config['TESTING'] = True
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
+
         self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar-discovery.json")
         self.calendar_response_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar_response.json")
         self.calendar_week_response_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar_week_response.json")
-
+        return app
 
     def test_building_the_discovery_in_calendar_service(self):
         calendar_service = Google_Calendar_Service()

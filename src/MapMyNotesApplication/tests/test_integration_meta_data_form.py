@@ -12,39 +12,37 @@ from MapMyNotesApplication.models.session_helper import SessionHelper
 import os
 
 
-#https://books.google.co.uk/books?id=Xd0DCgAAQBAJ&pg=PA77&lpg=PA77&dq=flask-testing+liveservertestcase+selenium&source=bl&ots=fhCVat8wgm&sig=2ehfPK93v8fS2NQEq_vzdKYbc-U&hl=en&sa=X&ved=0ahUKEwiCr7ns6KLLAhVCUhQKHVO0DWoQ6AEIPTAF#v=onepage&q=flask-testing%20liveservertestcase%20selenium&f=false Docs are terrible this book may be good.
+"""https://books.google.co.uk/books?id=Xd0DCgAAQBAJ&pg=PA77&lpg=PA77&dq=flask-testing+liveservertestcase+selenium&source=bl&ots=fhCVat8wgm&sig=2ehfPK93v8fS2NQEq_vzdKYbc-U&hl=en&sa=X&ved=0ahUKEwiCr7ns6KLLAhVCUhQKHVO0DWoQ6AEIPTAF#v=onepage&q=flask-testing%20liveservertestcase%20selenium&f=false Docs are terrible this book may be good. http://www.voidspace.org.uk/python/mock/patch.html#patch-methods-start-and-stop This is great. Helped with the mocking and found it really useful part of the library. It meant that all the other tests passed and I could mock the functions for the acceptance tests.
+http://makina-corpus.com/blog/metier/2013/dry-up-mock-instanciation-with-addcleanup Was also a good reference for the testing with the mocks. I learnt a lot from this resource
+"""
 class TestIntegrationMetaDataForm(LiveServerTestCase):
 
     def create_app(self):
+        print "creating app"
+
         app = application
         app.config['LIVESERVER_PORT'] = 5000
         app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = 'sekrit!'
+        app.config['SECRET_KEY'] = 'Secret_pass_phrase'
+        app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
-        #app = application
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
+
         http_mock = HttpMock(self.credentials, {'status': 200})
         oauth_service = Oauth_Service()
-        file_path = application.config['secret_json_file']
+        file_path = app.config['secret_json_file']
 
         oauth_service.store_secret_file(file_path)
         flow = oauth_service.create_flow_from_clients_secret()
-        credentials = oauth_service.exchange_code(flow, "123code",
+        self.credentials_oauth = oauth_service.exchange_code(flow, "123code",
                     http=http_mock)
 
-        cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
-
-        SessionHelper.check_if_session_contains_credentials = mock.Mock(return_value = True)
-
-        SessionHelper.return_session_credentials = mock.Mock(return_value = credentials.to_json())
-
+        cred_obj = oauth_service.create_credentials_from_json(self.credentials_oauth.to_json())
 
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
-        oauth_return = oauth_service.authorise(cred_obj, auth)
-        Oauth_Service.authorise = mock.Mock(return_value=oauth_return)
-
-        Google_Calendar_Service.execute_request = mock.Mock(return_value={"items": [
+        self.oauth_return = oauth_service.authorise(cred_obj, auth)
+        self.google_response = {"items": [
          {
 
           "kind": "calendar#event",
@@ -66,10 +64,10 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
            "self": 'true'
           },
           "start": {
-           "dateTime": "2016-12-01T01:00:00+01:00"
+           "dateTime": "2016-12-01T01:00:00Z"
           },
           "end": {
-           "dateTime": "2016-12-01T02:30:00+01:00"
+           "dateTime": "2016-12-01T02:30:00Z"
           },
           "transparency": "transparent",
           "visibility": "private",
@@ -82,16 +80,40 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
           }
         }
          ]
-        })
+        }
+        #self.old_session = SessionHelper.check_if_session_contains_credentials
+        #SessionHelper.check_if_session_contains_credentials = mock.Mock(return_value=True)
+        #self.old_cred = SessionHelper.return_session_credentials
+        #SessionHelper.return_session_credentials = mock.Mock(return_value = self.credentials_oauth.to_json())
+
+        #Oauth_Service.authorise = mock.Mock(return_value = self.oauth_return )
+        self.patch = mock.patch.object(SessionHelper, "check_if_session_contains_credentials")
+        self.cred_mock = self.patch.start()
+        self.cred_mock.return_value = True
+
+        self.auth_patch = mock.patch.object(SessionHelper, "return_session_credentials")
+        self.auth_mock = self.auth_patch.start()
+        self.auth_mock.return_value = self.credentials_oauth.to_json()
+
+        self.oauth_patch = mock.patch.object(Oauth_Service, "authorise")
+        self.oauth_mock = self.oauth_patch.start()
+        self.oauth_mock.return_value = self.oauth_return
+
+        self.google_patch = mock.patch.object(Google_Calendar_Service, "execute_request")
+        self.google_mock = self.google_patch.start()
+        self.google_mock.return_value = self.google_response
+
         return app
 
     def setUp(self):
+        self.create_app()
         self.driver = webdriver.PhantomJS()
         self.driver.set_window_size(1024, 640 )
 
     def tearDown(self):
+        print "deleting"
         self.driver.quit()
-
+        mock.patch.stopall()
 
     def test_form_exists(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
@@ -152,21 +174,24 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
     def test_form_shows_exif_data_from_image(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
         suggested_date = self.driver.find_element_by_class_name('suggested_date')
-        assert suggested_date.text == '2016:01:31 13:47:14'
+        assert suggested_date.text == '2016-01-31 13:47:14'
 
     def test_form_does_not_show_exif_data_if_image_is_a_png(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
         suggested_date = self.driver.find_element_by_class_name('suggested_date')
         assert suggested_date.text == 'No suitable date was found from the note'
 
+
     def test_google_calendar_event_shows_when_exif_data_matches(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
-        calendar_date = self.driver.find_element_by_class_name("suggested_calendar_event")
+        print self.driver.page_source
+        calendar_date =  self.driver.find_element_by_class_name("suggested_calendar_event")
         assert calendar_date.is_displayed() is True
+
         calendar_event_title = self.driver.find_element_by_class_name("calendar_event_title")
         calendar_event_date = self.driver.find_element_by_class_name("calendar_start_time")
         view_event = self.driver.find_element_by_class_name("calendar_event_view")
 
         assert "Test Example" in calendar_event_title.text
-        assert "01 December 2016 01:00:00" in calendar_event_date.text
+        assert "01 December 2016 01:00" in calendar_event_date.text
         assert "View event" in view_event.text

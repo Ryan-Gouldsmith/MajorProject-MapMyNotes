@@ -5,13 +5,20 @@ from sqlalchemy import func
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 from datetime import datetime
+from flask.ext.testing import TestCase
+from flask import Flask
 
 
-class TestNote(object):
-    def setup(self):
+class TestOAuthRoute(TestCase):
+
+    def create_app(self):
+        app = Flask(__name__)
+        app.config['TESTING'] = True
         # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
-        application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
-        self.app = application.test_client()
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        return app
+
+    def setUp(self):
         database.session.close()
         database.drop_all()
         database.create_all()
