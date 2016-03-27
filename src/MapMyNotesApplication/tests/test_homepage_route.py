@@ -19,6 +19,7 @@ class TestHomePageRoute(TestCase):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
+        app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
         return app
 
     def setUp(self):
@@ -37,7 +38,7 @@ class TestHomePageRoute(TestCase):
         with self.client.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
             oauth_service = Oauth_Service()
-            file_path = application.config['secret_json_file']
+            file_path = self.app.config['secret_json_file']
 
             oauth_service.store_secret_file(file_path)
             flow = oauth_service.create_flow_from_clients_secret()
