@@ -1,47 +1,52 @@
 from MapMyNotesApplication import application, database
 import pytest
 import os
-from flask import request
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 from datetime import datetime
+from flask import Flask
+from flask.ext.testing import TestCase
 
+class TestAddEditMetaDataRoute(TestCase):
 
-
-class TestAddEditMetaDataRoute(object):
-
-    def setup(self):
+    def create_app(self):
+        app = application
+        app.config['TESTING'] = True
         # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
-        application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
-        self.app = application.test_client()
-        database.session.close()
-        database.drop_all()
-        database.create_all()
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
+        self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
         file_list = 'tests/test.png'.split("/")
 
         test_image_2 = "tests/test.png".split("/")
 
         self.image = file_list[1]
         self.second_image = test_image_2[1]
+        return app
+
+    def setUp(self):
+        database.session.close()
+        database.drop_all()
+        database.create_all()
 
     def test_add_meta_data_route_returns_302(self):
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
 
-        resource = self.app.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
+        resource = self.client.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
 
 
         assert resource.status_code == 302
 
     def test_add_meta_data_route_get_request_not_allowed(self):
-        resource = self.app.get('/metadata/add/' + self.image)
+        resource = self.client.get('/metadata/add/' + self.image)
         assert resource.status_code == 405
 
     def test_add_module_code_via_post_request_successfully(self):
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
-        resource = self.app.post("/metadata/add/" + self.image,
+        resource = self.client.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
 
@@ -49,7 +54,7 @@ class TestAddEditMetaDataRoute(object):
 
     def test_it_saves_a_note_object_once_the_meta_data_added(self):
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
-        resource = self.app.post("/metadata/add/" + self.image,
+        resource = self.client.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
 
@@ -61,7 +66,7 @@ class TestAddEditMetaDataRoute(object):
 
     def test_once_a_note_is_saved_it_redirects_to_show_note(self):
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
-        resource = self.app.post("/metadata/add/" + self.image,
+        resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
 
@@ -74,11 +79,11 @@ class TestAddEditMetaDataRoute(object):
 
     def test_using_the_same_module_code_as_before_if_one_exists(self):
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
-        resource = self.app.post("/metadata/add/" + self.image,
+        resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
 
-        second_resource = self.app.post("/metadata/add/" + self.second_image,
+        second_resource = self.client.post("/metadata/add/" + self.second_image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
 
@@ -95,12 +100,12 @@ class TestAddEditMetaDataRoute(object):
 
     def test_using_the_different_module_code_should_save_new_code(self):
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
-        resource = self.app.post("/metadata/add/" + self.image,
+        resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
 
         post_data_second = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
-        second_resource = self.app.post("/metadata/add/" + self.second_image,
+        second_resource = self.client.post("/metadata/add/" + self.second_image,
                 content_type='multipart/form-data',
                 data=post_data_second, follow_redirects=False)
 
@@ -129,7 +134,7 @@ class TestAddEditMetaDataRoute(object):
         note = Note(file_path,note_meta_data.id)
         note.save()
 
-        resource = self.app.get("/metadata/edit/" + str(note.id), follow_redirects=False)
+        resource = self.client.get("/metadata/edit/" + str(note.id), follow_redirects=False)
 
         assert resource.status_code == 200
 
@@ -148,7 +153,7 @@ class TestAddEditMetaDataRoute(object):
 
         meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
 
-        response = self.app.post("/metadata/edit/" + str(note.id), content_type='multipart/form-data',
+        response = self.client.post("/metadata/edit/" + str(note.id), content_type='multipart/form-data',
         data=meta_data_change, follow_redirects=False)
 
 
@@ -171,7 +176,7 @@ class TestAddEditMetaDataRoute(object):
 
         meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
 
-        response = self.app.post("/metadata/edit/" + str(note.id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
+        response = self.client.post("/metadata/edit/" + str(note.id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
         note_found = Note.query.get(note_id)
         assert note_found.note_meta_data_id is 2
@@ -204,7 +209,7 @@ class TestAddEditMetaDataRoute(object):
 
         meta_data_change = {"module_code_data":"CS361010", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016 16:00", "title_data": "A Title"}
 
-        response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
+        response = self.client.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
         note_found = Note.query.get(note_id)
 
@@ -226,7 +231,7 @@ class TestAddEditMetaDataRoute(object):
 
         meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016 16:00", "title_data": "A Title"}
 
-        response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
+        response = self.client.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
         note_found = Note.query.get(note_id)
 
@@ -248,7 +253,7 @@ class TestAddEditMetaDataRoute(object):
 
         meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016 16:00", "title_data": "A Title"}
 
-        response = self.app.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
+        response = self.client.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
         assert response.status_code == 302
         location = response.headers.get("Location").split("http://localhost/")

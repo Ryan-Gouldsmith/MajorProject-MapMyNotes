@@ -4,7 +4,7 @@ from MapMyNotesApplication.models.file_upload_service import FileUploadService
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.exifparser import ExifParser
-
+from MapMyNotesApplication.models.calendar_item import Calendar_Item
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
@@ -67,11 +67,13 @@ def show_image(note_image):
         suggested_date = exif_parser.get_image_date()
 
     session_helper = SessionHelper()
-    if session_helper.check_if_session_contains_credentials() is True:
+    print "RESPONSE {}".format(session_helper.check_if_session_contains_credentials(session))
+    if session_helper.check_if_session_contains_credentials(session) is True:
         service = Oauth_Service()
-        session_credentials = session_helper.return_session_credentials()
+        session_credentials = session_helper.return_session_credentials(session)
         credentials = service.create_credentials_from_json(session_credentials)
         http_auth = service.authorise(credentials, httplib2.Http())
+
         # https://developers.google.com/identity/protocols/OAuth2WebServer#example Reference for the access token expiration
         if credentials.access_token_expired is False and suggested_date is not None:
             suggested_date = datetime.strptime(suggested_date, "%Y:%m:%d %H:%M:%S")
@@ -85,14 +87,18 @@ def show_image(note_image):
 
             end_date = datetime.combine(suggested_date.date(), end_time).isoformat("T") + "Z"
             start_date = datetime.combine(suggested_date.date(), start_time ).isoformat("T") + "Z"
-            print start_date
-            print end_date
-            #start_date = (datetime.utcnow() - timedelta(days=7)).isoformat("T") + "Z"
             google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
 
             google_calendar_response =  google_calendar_service.execute_request(google_request, http_auth)
 
-            events = google_calendar_response['items']
+
+            cal_events = google_calendar_response['items']
+            events = []
+            for event in cal_events:
+                event = Calendar_Item(event)
+                events.append(event)
+
+
         elif credentials.access_token_expired is True:
             return redirect(url_for("oauth.oauthsubmit"))
 

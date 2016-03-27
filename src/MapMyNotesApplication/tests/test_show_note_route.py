@@ -1,18 +1,24 @@
 from MapMyNotesApplication import application, database
 import pytest
 import os
-from flask import request
+from flask import request, Flask
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 from datetime import datetime
+from flask.ext.testing import TestCase
 
-class TestShowNoteRoute(object):
 
-    def setup(self):
+class TestShowNoteRoute(TestCase):
+
+    def create_app(self):
+        app = application
+        app.config['TESTING'] = True
         # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
-        application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
-        self.app = application.test_client()
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        return app
+
+    def setUp(self):
         database.session.close()
         database.drop_all()
         database.create_all()
@@ -23,10 +29,10 @@ class TestShowNoteRoute(object):
     def test_route_returns_status_code_200(self):
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", "location_data" : "C11 Hugh Owen", "date_data": "12 February 2015 14:00", "title_data": "A Title"}
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
-        resource = self.app.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
+        resource = self.client.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
 
-        response = self.app.get('/show_note/1')
+        response = self.client.get('/show_note/1')
         assert response.status_code == 200
 
     def test_deleting_a_note_returns_status_code_200(self):
@@ -41,7 +47,7 @@ class TestShowNoteRoute(object):
         note = Note('uploads/', note_meta_data.id)
         note.save()
 
-        resource = self.app.post('/delete_note/'+str(note.id))
+        resource = self.client.post('/delete_note/'+str(note.id))
 
         assert resource.status_code == 302
 
@@ -57,7 +63,7 @@ class TestShowNoteRoute(object):
         note = Note('uploads/', note_meta_data.id)
         note.save()
 
-        resource = self.app.post('/delete_note/'+str(note.id))
+        resource = self.client.post('/delete_note/'+str(note.id))
 
         notes = Note.query.all()
 
