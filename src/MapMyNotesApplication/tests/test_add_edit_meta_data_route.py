@@ -38,7 +38,7 @@ class TestAddEditMetaDataRoute(TestCase):
 
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
-    def test_add_meta_data_route_returns_302(self, execute_request, authorise):
+    def test_add_meta_data_route_returns_302(self, authorise, execute_request):
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
         with self.client.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
@@ -111,7 +111,7 @@ class TestAddEditMetaDataRoute(TestCase):
 
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
-    def test_add_module_code_via_post_request_successfully(self, execute_request, authorise):
+    def test_add_module_code_via_post_request_successfully(self, authorise, execute_request):
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
         with self.client.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
