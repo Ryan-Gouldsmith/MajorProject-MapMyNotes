@@ -26,6 +26,7 @@ def show_note(note_id):
     title = note.meta_data.title
 
     note_id = note.id
+    print saved
     return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer, location=location, date=formated_date, note_id=note_id, title=title, saved=saved)
 
 @shownote.route("/delete_note/<note_id>", methods=["POST"])

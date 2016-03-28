@@ -372,5 +372,6 @@ class TestIntegretationShowNote(LiveServerTestCase):
         submit_button.click()
 
         saved_to_cal = self.driver.find_element_by_class_name("saved_to_cal")
+        print self.driver.page_source
 
         assert "Successfully saved to calendar" in saved_to_cal.text
