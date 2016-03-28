@@ -35,6 +35,10 @@ class TestAddEditMetaDataRoute(TestCase):
         self.image = file_list[1]
         self.second_image = test_image_2[1]
 
+        calendar_service = Google_Calendar_Service()
+        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
+        service = calendar_service.build(http_mock)
+
         database.session.close()
         database.drop_all()
         database.create_all()
@@ -60,11 +64,8 @@ class TestAddEditMetaDataRoute(TestCase):
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
         oauth_return = Oauth_Service.authorise(cred_obj, auth)
         authorise.return_value = oauth_return
-        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
-        calendar_service = Google_Calendar_Service()
-        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
-        service = calendar_service.build(http_mock)
-        #authorise.return_value = oauth_return
+
+        authorise.return_value = oauth_return
         Google_Calendar_Service.execute_request.return_value = {"items": [
          {
 
@@ -111,7 +112,6 @@ class TestAddEditMetaDataRoute(TestCase):
 
         assert resource.status_code == 302
 
-    """
     def test_add_meta_data_route_get_request_not_allowed(self):
         resource = self.client.get('/metadata/add/' + self.image)
         assert resource.status_code == 405
@@ -636,4 +636,3 @@ class TestAddEditMetaDataRoute(TestCase):
         assert response.status_code == 302
         location = response.headers.get("Location").split("http://localhost/")
         assert location[1] == "show_note/1"
-    """

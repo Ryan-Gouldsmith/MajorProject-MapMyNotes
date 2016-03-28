@@ -42,6 +42,13 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
 
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
         self.oauth_return = oauth_service.authorise(cred_obj, auth)
+
+        self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar-discovery.json")
+        calendar_service = Google_Calendar_Service()
+
+        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
+        service = calendar_service.build(http_mock)
+
         self.google_response = {"items": [
          {
 
