@@ -1,6 +1,8 @@
 from MapMyNotesApplication import application, database
 import pytest
 import os
+import mock
+from googleapiclient.http import HttpMock, HttpRequest
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
@@ -9,8 +11,6 @@ from MapMyNotesApplication.models.google_calendar_service import Google_Calendar
 from datetime import datetime
 from flask import Flask
 from flask.ext.testing import TestCase
-import mock
-from googleapiclient.http import HttpMock, HttpRequest
 
 
 class TestAddEditMetaDataRoute(TestCase):
