@@ -218,3 +218,24 @@ class TestOAuthRoute(TestCase):
         notes = Note.find_note_by_module_code("SE31520")
 
         assert len(notes) is 0
+
+    def test_add_a_calendar_url_to_an_existing_object_successfully(self):
+        file_path = "upload/test.png"
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, 'Title')
+        note_meta_data.save()
+
+        note = Note(file_path,note_meta_data.id)
+        note.save()
+        note_id = note.id
+
+        note.update_calendar_url("http://localhost/test")
+
+        note = Note.query.get(note_id)
+
+        assert note.calendar_url == "http://localhost/test"

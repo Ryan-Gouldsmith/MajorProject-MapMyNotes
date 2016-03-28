@@ -42,7 +42,7 @@
                 <div class="suggested_calendar_event">
                   <p class="calendar_event_title"> {{event.item.summary}} </p>
                   <p class="calendar_start_time"> {{ event.format_start_date() }} </p>
-                  <a class="calendar_event_view" href="{{ event.htmlLink }}">View event</a>
+                  <a class="calendar_event_view" href="{{ event.item.htmlLink }}">View event</a>
                 </div>
               {% endfor %}
           </div>

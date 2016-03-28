@@ -9,6 +9,7 @@ class Note(database.Model):
     id = Column(Integer, primary_key = True)
     image_path = Column(String(150))
     note_meta_data_id = Column(Integer, ForeignKey(Note_Meta_Data.id))
+    calendar_url = Column(String(256))
 
 
     def __init__(self, path, meta_data_id):
@@ -28,6 +29,10 @@ class Note(database.Model):
         self.note_meta_data_id = meta_data_id
         self.save()
 
+    def update_calendar_url(self, calendar_url):
+        self.calendar_url = calendar_url
+        self.save()
+        
     @staticmethod
     def find_note_by_module_code(module_code):
         return Note.query.filter(Module_Code.module_code.like(module_code)).all()
