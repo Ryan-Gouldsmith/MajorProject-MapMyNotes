@@ -22,6 +22,7 @@ class TestAddEditMetaDataRoute(TestCase):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
+        app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
         file_list = 'tests/test.png'.split("/")
 
         test_image_2 = "tests/test.png".split("/")
