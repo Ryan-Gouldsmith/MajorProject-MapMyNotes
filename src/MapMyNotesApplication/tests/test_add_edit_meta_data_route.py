@@ -23,43 +23,49 @@ class TestAddEditMetaDataRoute(TestCase):
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
         app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
+        self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar-discovery.json")
+
+        return app
+
+    def setUp(self):
         file_list = 'tests/test.png'.split("/")
 
         test_image_2 = "tests/test.png".split("/")
 
         self.image = file_list[1]
         self.second_image = test_image_2[1]
-        return app
 
-    def setUp(self):
         database.session.close()
         database.drop_all()
         database.create_all()
 
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
-    def test_add_meta_data_route_returns_302(self, authorise, execute_request):
-        #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
+    def test_add_meta_data_route_returns_302(self, execute_request, authorise):
         with self.client.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
             oauth_service = Oauth_Service()
-            file_path = self.app.config['secret_json_file']
+            file_path = application.config['secret_json_file']
 
             oauth_service.store_secret_file(file_path)
             flow = oauth_service.create_flow_from_clients_secret()
             credentials = oauth_service.exchange_code(flow, "123code",
             http=http_mock)
-
             cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
 
             session['credentials'] = credentials.to_json()
             session['user_id'] = 1
 
+
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
         oauth_return = Oauth_Service.authorise(cred_obj, auth)
         authorise.return_value = oauth_return
-
-        execute_request.return_value = {"items": [
+        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
+        calendar_service = Google_Calendar_Service()
+        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
+        service = calendar_service.build(http_mock)
+        #authorise.return_value = oauth_return
+        Google_Calendar_Service.execute_request.return_value = {"items": [
          {
 
           "kind": "calendar#event",
@@ -105,6 +111,7 @@ class TestAddEditMetaDataRoute(TestCase):
 
         assert resource.status_code == 302
 
+    """
     def test_add_meta_data_route_get_request_not_allowed(self):
         resource = self.client.get('/metadata/add/' + self.image)
         assert resource.status_code == 405
@@ -629,3 +636,4 @@ class TestAddEditMetaDataRoute(TestCase):
         assert response.status_code == 302
         location = response.headers.get("Location").split("http://localhost/")
         assert location[1] == "show_note/1"
+    """
