@@ -21,7 +21,9 @@ POST = "POST"
 FILE_UPLOAD_PATH = "MapMyNotesApplication/upload/"
 
 # Reference based upon but adapted to fit better into a more structured application.  http://flask.pocoo.org/docs/0.10/patterns/fileuploads/
-@fileupload.route("/upload", methods=[GET,POST])
+
+
+@fileupload.route("/upload", methods=[GET, POST])
 def file_upload_index_route():
     if request.method == POST:
         file = request.files["file"]
@@ -46,7 +48,6 @@ def file_upload_index_route():
         if not file_upload_service.file_exists(prepared_file):
             return "There was an error saving the file, please upload again."
 
-
         return redirect(url_for("fileupload.show_image", note_image=filename))
 
     return render_template('/file_upload/index.html')
@@ -60,14 +61,13 @@ def show_image(note_image):
         return redirect(url_for('fileupload.error_four_zero_four'))
 
     suggested_date = None
-    events=None
+    events = None
     if not file_upload_service.is_png(file_path):
         exif_parser = ExifParser(file_path)
         exif_data = exif_parser.parse_exif()
         suggested_date = exif_parser.get_image_date()
 
     session_helper = SessionHelper()
-    print "RESPONSE {}".format(session_helper.check_if_session_contains_credentials(session))
     if session_helper.check_if_session_contains_credentials(session) is True:
         service = Oauth_Service()
         session_credentials = session_helper.return_session_credentials(session)
@@ -86,18 +86,16 @@ def show_image(note_image):
             start_time = datetime.strptime("00:00", "%H:%M").time()
 
             end_date = datetime.combine(suggested_date.date(), end_time).isoformat("T") + "Z"
-            start_date = datetime.combine(suggested_date.date(), start_time ).isoformat("T") + "Z"
+            start_date = datetime.combine(suggested_date.date(), start_time).isoformat("T") + "Z"
             google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
 
             google_calendar_response =  google_calendar_service.execute_request(google_request, http_auth)
-
 
             cal_events = google_calendar_response['items']
             events = []
             for event in cal_events:
                 event = Calendar_Item(event)
                 events.append(event)
-
 
         elif credentials.access_token_expired is True:
             return redirect(url_for("oauth.oauthsubmit"))

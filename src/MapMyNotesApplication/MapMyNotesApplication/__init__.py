@@ -10,6 +10,7 @@ application = Flask(__name__)
 application.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/mapmynotes'
 database = SQLAlchemy(application)
 application.secret_key = "Superduperdupersecretkey"
+application.config["root_url"] = "http://localhost:5000"
 
 #Blueprint reference http://flask.pocoo.org/docs/0.10/blueprints/
 #Structure for larger applications modified http://flask.pocoo.org/docs/0.10/patterns/packages/

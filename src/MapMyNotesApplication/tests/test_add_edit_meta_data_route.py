@@ -4,9 +4,14 @@ import os
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
+from MapMyNotesApplication.models.oauth_service import Oauth_Service
+from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
 from datetime import datetime
 from flask import Flask
 from flask.ext.testing import TestCase
+import mock
+from googleapiclient.http import HttpMock, HttpRequest
+
 
 class TestAddEditMetaDataRoute(TestCase):
 
@@ -30,13 +35,72 @@ class TestAddEditMetaDataRoute(TestCase):
         database.drop_all()
         database.create_all()
 
-    def test_add_meta_data_route_returns_302(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_add_meta_data_route_returns_302(self, execute_request, authorise):
         #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
+        with self.client.session_transaction() as session:
+            http_mock = HttpMock(self.credentials, {'status': 200})
+            oauth_service = Oauth_Service()
+            file_path = self.app.config['secret_json_file']
+
+            oauth_service.store_secret_file(file_path)
+            flow = oauth_service.create_flow_from_clients_secret()
+            credentials = oauth_service.exchange_code(flow, "123code",
+            http=http_mock)
+
+            cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
+
+            session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
+
+        auth = HttpMock(self.authorised_credentials, {'status' : 200})
+        oauth_return = Oauth_Service.authorise(cred_obj, auth)
+        authorise.return_value = oauth_return
+
+        execute_request.return_value = {"items": [
+         {
+
+          "kind": "calendar#event",
+          "etag": "\"1234567891012345\"",
+          "id": "ideventcalendaritem1",
+          "status": "confirmed",
+          "htmlLink": "https://www.google.com/calendar/event?testtest",
+          "created": "2014-09-10T14:53:25.000Z",
+          "updated": "2014-09-10T14:54:12.748Z",
+          "summary": "Test Example",
+          "creator": {
+           "email": "test@gmail.com",
+           "displayName": "Tester",
+           "self": 'true'
+          },
+          "organizer": {
+           "email": "test@gmail.com",
+           "displayName": "Test",
+           "self": 'true'
+          },
+          "start": {
+           "dateTime": "2016-12-01T01:00:00+01:00"
+          },
+          "end": {
+           "dateTime": "2016-12-01T02:30:00+01:00"
+          },
+          "transparency": "transparent",
+          "visibility": "private",
+          "iCalUID": "123456789@google.com",
+          "sequence": 0,
+          "guestsCanInviteOthers": 'false',
+          "guestsCanSeeOtherGuests": 'false',
+          "reminders": {
+           "useDefault": 'true'
+          }
+        }
+         ]
+        }
+
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
 
-        resource = self.client.post('/metadata/add/' + self.image,       content_type='multipart/form-data',
-            data=post_data, follow_redirects=False)
-
+        resource = self.client.post('/metadata/add/' + self.image,       content_type='multipart/form-data', data=post_data, follow_redirects=False)
 
         assert resource.status_code == 302
 
@@ -44,7 +108,68 @@ class TestAddEditMetaDataRoute(TestCase):
         resource = self.client.get('/metadata/add/' + self.image)
         assert resource.status_code == 405
 
-    def test_add_module_code_via_post_request_successfully(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_add_module_code_via_post_request_successfully(self, execute_request, authorise):
+        #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
+        with self.client.session_transaction() as session:
+            http_mock = HttpMock(self.credentials, {'status': 200})
+            oauth_service = Oauth_Service()
+            file_path = self.app.config['secret_json_file']
+
+            oauth_service.store_secret_file(file_path)
+            flow = oauth_service.create_flow_from_clients_secret()
+            credentials = oauth_service.exchange_code(flow, "123code",
+            http=http_mock)
+
+            cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
+
+            session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
+
+        auth = HttpMock(self.authorised_credentials, {'status' : 200})
+        oauth_return = Oauth_Service.authorise(cred_obj, auth)
+        authorise.return_value = oauth_return
+
+        execute_request.return_value = {"items": [
+         {
+
+          "kind": "calendar#event",
+          "etag": "\"1234567891012345\"",
+          "id": "ideventcalendaritem1",
+          "status": "confirmed",
+          "htmlLink": "https://www.google.com/calendar/event?testtest",
+          "created": "2014-09-10T14:53:25.000Z",
+          "updated": "2014-09-10T14:54:12.748Z",
+          "summary": "Test Example",
+          "creator": {
+           "email": "test@gmail.com",
+           "displayName": "Tester",
+           "self": 'true'
+          },
+          "organizer": {
+           "email": "test@gmail.com",
+           "displayName": "Test",
+           "self": 'true'
+          },
+          "start": {
+           "dateTime": "2016-12-01T01:00:00+01:00"
+          },
+          "end": {
+           "dateTime": "2016-12-01T02:30:00+01:00"
+          },
+          "transparency": "transparent",
+          "visibility": "private",
+          "iCalUID": "123456789@google.com",
+          "sequence": 0,
+          "guestsCanInviteOthers": 'false',
+          "guestsCanSeeOtherGuests": 'false',
+          "reminders": {
+           "useDefault": 'true'
+          }
+        }
+         ]
+        }
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
@@ -52,7 +177,68 @@ class TestAddEditMetaDataRoute(TestCase):
 
         assert len(Module_Code.query.all()) == 1
 
-    def test_it_saves_a_note_object_once_the_meta_data_added(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_it_saves_a_note_object_once_the_meta_data_added(self, execute_request, authorise):
+        #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
+        with self.client.session_transaction() as session:
+            http_mock = HttpMock(self.credentials, {'status': 200})
+            oauth_service = Oauth_Service()
+            file_path = self.app.config['secret_json_file']
+
+            oauth_service.store_secret_file(file_path)
+            flow = oauth_service.create_flow_from_clients_secret()
+            credentials = oauth_service.exchange_code(flow, "123code",
+            http=http_mock)
+
+            cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
+
+            session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
+
+        auth = HttpMock(self.authorised_credentials, {'status' : 200})
+        oauth_return = Oauth_Service.authorise(cred_obj, auth)
+        authorise.return_value = oauth_return
+
+        execute_request.return_value = {"items": [
+         {
+
+          "kind": "calendar#event",
+          "etag": "\"1234567891012345\"",
+          "id": "ideventcalendaritem1",
+          "status": "confirmed",
+          "htmlLink": "https://www.google.com/calendar/event?testtest",
+          "created": "2014-09-10T14:53:25.000Z",
+          "updated": "2014-09-10T14:54:12.748Z",
+          "summary": "Test Example",
+          "creator": {
+           "email": "test@gmail.com",
+           "displayName": "Tester",
+           "self": 'true'
+          },
+          "organizer": {
+           "email": "test@gmail.com",
+           "displayName": "Test",
+           "self": 'true'
+          },
+          "start": {
+           "dateTime": "2016-12-01T01:00:00+01:00"
+          },
+          "end": {
+           "dateTime": "2016-12-01T02:30:00+01:00"
+          },
+          "transparency": "transparent",
+          "visibility": "private",
+          "iCalUID": "123456789@google.com",
+          "sequence": 0,
+          "guestsCanInviteOthers": 'false',
+          "guestsCanSeeOtherGuests": 'false',
+          "reminders": {
+           "useDefault": 'true'
+          }
+        }
+         ]
+        }
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
@@ -64,7 +250,68 @@ class TestAddEditMetaDataRoute(TestCase):
         assert note.meta_data.lecturer == "Mr Foo"
         assert note.meta_data.location == "C11 Hugh Owen"
 
-    def test_once_a_note_is_saved_it_redirects_to_show_note(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_once_a_note_is_saved_it_redirects_to_show_note(self, execute_request, authorise):
+        #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
+        with self.client.session_transaction() as session:
+            http_mock = HttpMock(self.credentials, {'status': 200})
+            oauth_service = Oauth_Service()
+            file_path = self.app.config['secret_json_file']
+
+            oauth_service.store_secret_file(file_path)
+            flow = oauth_service.create_flow_from_clients_secret()
+            credentials = oauth_service.exchange_code(flow, "123code",
+            http=http_mock)
+
+            cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
+
+            session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
+
+        auth = HttpMock(self.authorised_credentials, {'status' : 200})
+        oauth_return = Oauth_Service.authorise(cred_obj, auth)
+        authorise.return_value = oauth_return
+
+        execute_request.return_value = {"items": [
+         {
+
+          "kind": "calendar#event",
+          "etag": "\"1234567891012345\"",
+          "id": "ideventcalendaritem1",
+          "status": "confirmed",
+          "htmlLink": "https://www.google.com/calendar/event?testtest",
+          "created": "2014-09-10T14:53:25.000Z",
+          "updated": "2014-09-10T14:54:12.748Z",
+          "summary": "Test Example",
+          "creator": {
+           "email": "test@gmail.com",
+           "displayName": "Tester",
+           "self": 'true'
+          },
+          "organizer": {
+           "email": "test@gmail.com",
+           "displayName": "Test",
+           "self": 'true'
+          },
+          "start": {
+           "dateTime": "2016-12-01T01:00:00+01:00"
+          },
+          "end": {
+           "dateTime": "2016-12-01T02:30:00+01:00"
+          },
+          "transparency": "transparent",
+          "visibility": "private",
+          "iCalUID": "123456789@google.com",
+          "sequence": 0,
+          "guestsCanInviteOthers": 'false',
+          "guestsCanSeeOtherGuests": 'false',
+          "reminders": {
+           "useDefault": 'true'
+          }
+        }
+         ]
+        }
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
@@ -75,9 +322,70 @@ class TestAddEditMetaDataRoute(TestCase):
 
         expected_url = "/show_note/1"
         # checks the last part after the localhost.
-        assert url_path[1] == expected_url
+        assert expected_url in url_path[1]
 
-    def test_using_the_same_module_code_as_before_if_one_exists(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_using_the_same_module_code_as_before_if_one_exists(self, execute_request, authorise):
+        #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
+        with self.client.session_transaction() as session:
+            http_mock = HttpMock(self.credentials, {'status': 200})
+            oauth_service = Oauth_Service()
+            file_path = self.app.config['secret_json_file']
+
+            oauth_service.store_secret_file(file_path)
+            flow = oauth_service.create_flow_from_clients_secret()
+            credentials = oauth_service.exchange_code(flow, "123code",
+            http=http_mock)
+
+            cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
+
+            session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
+
+        auth = HttpMock(self.authorised_credentials, {'status' : 200})
+        oauth_return = Oauth_Service.authorise(cred_obj, auth)
+        authorise.return_value = oauth_return
+
+        execute_request.return_value = {"items": [
+         {
+
+          "kind": "calendar#event",
+          "etag": "\"1234567891012345\"",
+          "id": "ideventcalendaritem1",
+          "status": "confirmed",
+          "htmlLink": "https://www.google.com/calendar/event?testtest",
+          "created": "2014-09-10T14:53:25.000Z",
+          "updated": "2014-09-10T14:54:12.748Z",
+          "summary": "Test Example",
+          "creator": {
+           "email": "test@gmail.com",
+           "displayName": "Tester",
+           "self": 'true'
+          },
+          "organizer": {
+           "email": "test@gmail.com",
+           "displayName": "Test",
+           "self": 'true'
+          },
+          "start": {
+           "dateTime": "2016-12-01T01:00:00+01:00"
+          },
+          "end": {
+           "dateTime": "2016-12-01T02:30:00+01:00"
+          },
+          "transparency": "transparent",
+          "visibility": "private",
+          "iCalUID": "123456789@google.com",
+          "sequence": 0,
+          "guestsCanInviteOthers": 'false',
+          "guestsCanSeeOtherGuests": 'false',
+          "reminders": {
+           "useDefault": 'true'
+          }
+        }
+         ]
+        }
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
@@ -98,7 +406,68 @@ class TestAddEditMetaDataRoute(TestCase):
 
         assert expected_module_code_id == note_two.meta_data.module_code.id
 
-    def test_using_the_different_module_code_should_save_new_code(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_using_the_different_module_code_should_save_new_code(self, execute_request, authorise):
+        #http://stackoverflow.com/questions/28908167/cant-upload-file-and-data-in-same-request-in-flask-test Got the content-type idea for the form here
+        with self.client.session_transaction() as session:
+            http_mock = HttpMock(self.credentials, {'status': 200})
+            oauth_service = Oauth_Service()
+            file_path = self.app.config['secret_json_file']
+
+            oauth_service.store_secret_file(file_path)
+            flow = oauth_service.create_flow_from_clients_secret()
+            credentials = oauth_service.exchange_code(flow, "123code",
+            http=http_mock)
+
+            cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
+
+            session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
+
+        auth = HttpMock(self.authorised_credentials, {'status' : 200})
+        oauth_return = Oauth_Service.authorise(cred_obj, auth)
+        authorise.return_value = oauth_return
+
+        execute_request.return_value = {"items": [
+         {
+
+          "kind": "calendar#event",
+          "etag": "\"1234567891012345\"",
+          "id": "ideventcalendaritem1",
+          "status": "confirmed",
+          "htmlLink": "https://www.google.com/calendar/event?testtest",
+          "created": "2014-09-10T14:53:25.000Z",
+          "updated": "2014-09-10T14:54:12.748Z",
+          "summary": "Test Example",
+          "creator": {
+           "email": "test@gmail.com",
+           "displayName": "Tester",
+           "self": 'true'
+          },
+          "organizer": {
+           "email": "test@gmail.com",
+           "displayName": "Test",
+           "self": 'true'
+          },
+          "start": {
+           "dateTime": "2016-12-01T01:00:00+01:00"
+          },
+          "end": {
+           "dateTime": "2016-12-01T02:30:00+01:00"
+          },
+          "transparency": "transparent",
+          "visibility": "private",
+          "iCalUID": "123456789@google.com",
+          "sequence": 0,
+          "guestsCanInviteOthers": 'false',
+          "guestsCanSeeOtherGuests": 'false',
+          "reminders": {
+           "useDefault": 'true'
+          }
+        }
+         ]
+        }
         post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
@@ -122,6 +491,7 @@ class TestAddEditMetaDataRoute(TestCase):
         assert actual != expected
 
     def test_get_edit_note_information_returns_200_success(self):
+
         file_path = "upload/test.png"
         module_code = Module_Code('CS31310')
         database.session.add(module_code)

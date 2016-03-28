@@ -7,6 +7,11 @@
 {% endblock %}
 
 {% block content %}
+    {% if saved %}
+      <p class="saved_to_cal">Successfully saved to calendar</p>
+    {% else %}
+      <p class="saved_to_cal">Unable to save to calendar</p>
+    {% endif %}
     <h1 class="title"> {{ title }} </h1>
     <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}"/>
     <section class="meta-data-card">

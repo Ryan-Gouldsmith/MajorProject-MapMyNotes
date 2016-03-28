@@ -1,10 +1,14 @@
-from flask import Blueprint, render_template, request, url_for, redirect
+from flask import Blueprint, render_template, request, url_for, redirect, session
+import httplib2
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
+from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
+from MapMyNotesApplication.models.oauth_service import Oauth_Service
 import os
 from datetime import datetime
 from MapMyNotesApplication import database
+from MapMyNotesApplication.models.session_helper import SessionHelper
 metadata = Blueprint('metadata', __name__)
 
 @metadata.route("/metadata/add/<note_image>", methods=["POST"])
@@ -38,7 +42,54 @@ def add_meta_data(note_image):
 
             note = Note(note_image, note_meta_data.id)
             note.save()
-            return redirect(url_for('shownote.show_note',note_id=note.id))
+            #TODO Add saving to a calendar here
+            """
+                Algorithm:
+                Create a calendar service
+                Prepare url from saved note
+                Build the HTTP request
+                Find an Event for that day from the min start time as given
+                Parse the events and get the first
+                Check to see if the summary contains module code
+
+                If it does then update
+                check the response to see if description includes url
+                return true
+
+                if it cant find one return false
+            """
+            service = Oauth_Service()
+            session_helper = SessionHelper()
+            session_credentials = session_helper.return_session_credentials(session)
+            credentials = service.create_credentials_from_json(session_credentials)
+            http_auth = service.authorise(credentials, httplib2.Http())
+
+            google_calendar_service = Google_Calendar_Service()
+            note_url = google_calendar_service.prepare_url_for_event(note)
+            google_service = google_calendar_service.build(http_auth)
+
+            start_date = (date_time).isoformat("T") + "Z"
+            end_time =  datetime.strptime('23:59', "%H:%M").time()
+
+            end_date = datetime.combine(date_time.date(), end_time).isoformat("T") + "Z"
+
+            google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
+
+            google_calendar_response = google_calendar_service.execute_request(google_request, http_auth)
+            module_code = module_code_obj.module_code
+            saved = False
+            print "google_response {}".format(google_calendar_response)
+            for event in google_calendar_response['items']:
+                if module_code in event['summary']:
+                    print "FOUND MODULE CODE"
+                    google_request = google_calendar_service.add_url_to_event_description(google_service, note_url, event)
+                    response = google_calendar_service.execute_request(google_request, http_auth)
+                    print "Single response{}".format(response)
+                    if note_url in response['description']:
+                        saved = True
+
+            print saved
+            return redirect(url_for('shownote.show_note',note_id=note.id, saved=saved))
     return redirect(url_for('fileupload.error_four_zero_four'))
 
 @metadata.route("/metadata/edit/<note_id>", methods=["GET", "POST"])

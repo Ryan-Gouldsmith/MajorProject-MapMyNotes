@@ -1,8 +1,12 @@
 import os
 from oauth2client import client
 from apiclient import discovery
+from flask import url_for, current_app
 
-
+"""
+Although update wasn't used I saw how to make a request to change an event. Therefore it should be given an honourable reference.
+https://developers.google.com/google-apps/calendar/v3/reference/events/update
+"""
 class Google_Calendar_Service(object):
 
     API = "calendar"
@@ -26,3 +30,10 @@ class Google_Calendar_Service(object):
 
     def check_dates_are_correct(self, start, end):
         return start < end
+
+    def prepare_url_for_event(self, note):
+        return current_app.config['root_url'] + "/show_note/{}".format(note.id)
+
+    def add_url_to_event_description(self, service, note_url, event):
+        event["description"] = note_url
+        return service.events().patch(calendarId='primary', eventId=event['id'], body=event)

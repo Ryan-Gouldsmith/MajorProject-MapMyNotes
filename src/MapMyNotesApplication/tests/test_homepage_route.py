@@ -53,9 +53,9 @@ class TestHomePageRoute(TestCase):
 
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
         oauth_return = Oauth_Service.authorise(cred_obj, auth)
-        Oauth_Service.authorise.return_value = oauth_return
+        authorise.return_value = oauth_return
 
-        Google_Calendar_Service.execute_request.return_value = {"items": [
+        execute_request.return_value = {"items": [
          {
 
           "kind": "calendar#event",
