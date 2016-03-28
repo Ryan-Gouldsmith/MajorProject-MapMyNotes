@@ -23,6 +23,11 @@ class TestHomePageRoute(TestCase):
         return app
 
     def setUp(self):
+        self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar-discovery.json")
+        calendar_service = Google_Calendar_Service()
+        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
+        service = calendar_service.build(http_mock)
+
         database.session.close()
         database.drop_all()
         database.create_all()

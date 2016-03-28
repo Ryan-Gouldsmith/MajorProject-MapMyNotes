@@ -39,6 +39,10 @@ class TestUploadRoute(TestCase):
         return app
 
     def setUp(self):
+        google_service = Google_Plus_Service()
+        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
+        service = google_service.build(http_mock)
+        
         database.session.close()
         database.drop_all()
         database.create_all()

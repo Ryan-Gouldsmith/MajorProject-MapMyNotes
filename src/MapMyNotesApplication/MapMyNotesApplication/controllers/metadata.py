@@ -70,8 +70,7 @@ def add_meta_data(note_image):
 
                     if note_url in response['description']:
                         saved = True
-
-            print saved
+                        note.update_calendar_url(response['htmlLink'])
             return redirect(url_for('shownote.show_note',note_id=note.id, saved=saved))
     return redirect(url_for('fileupload.error_four_zero_four'))
 

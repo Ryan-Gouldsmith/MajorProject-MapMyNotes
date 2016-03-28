@@ -24,6 +24,8 @@ class TestIntegretationShowNote(LiveServerTestCase):
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
 
+        self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar-discovery.json")
+
         http_mock = HttpMock(self.credentials, {'status': 200})
         oauth_service = Oauth_Service()
         file_path = app.config['secret_json_file']
@@ -37,6 +39,10 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         auth = HttpMock(self.authorised_credentials, {'status' : 200})
         self.oauth_return = oauth_service.authorise(cred_obj, auth)
+
+        calendar_service = Google_Calendar_Service()
+        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
+        service = calendar_service.build(http_mock)
 
         self.google_response = {"items": [
          {
@@ -82,7 +88,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
          "etag": "\"12334455667\"",
          "id": "123456789",
          "status": "confirmed",
-         "htmlLink": "https://test",
+         "htmlLink": "http://localhost/show_note/1",
          "created": "2016-03-24T08:59:46.000Z",
          "updated": "2016-03-27T22:42:07.278Z",
          "summary": "Test To Show Hannah",
@@ -372,6 +378,8 @@ class TestIntegretationShowNote(LiveServerTestCase):
         submit_button.click()
 
         saved_to_cal = self.driver.find_element_by_class_name("saved_to_cal")
-        print self.driver.page_source
+
+        calendar_link = self.driver.find_element_by_class_name('calendar_link').get_attribute("href")
 
         assert "Successfully saved to calendar" in saved_to_cal.text
+        assert "http://localhost/show_note/1" in calendar_link
