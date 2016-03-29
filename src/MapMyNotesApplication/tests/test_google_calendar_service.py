@@ -5,6 +5,7 @@ from MapMyNotesApplication.models.google_calendar_service import Google_Calendar
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 from MapMyNotesApplication.models.note import Note
+from MapMyNotesApplication.models.user import User
 from oauth2client import client
 from googleapiclient.http import HttpMock
 from googleapiclient import discovery
@@ -41,6 +42,21 @@ class TestCalendarService(TestCase):
         database.session.close()
         database.drop_all()
         database.create_all()
+
+        module_code = Module_Code('CS31310')
+        database.session.add(module_code)
+        database.session.commit()
+        self.module_code_id = module_code.id
+
+        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
+        note_meta_data = Note_Meta_Data("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "title")
+        note_meta_data.save()
+        self.meta_data_id = note_meta_data.id
+
+        user = User("test@gmail.com")
+        database.session.add(user)
+        database.session.commit()
+        self.user_id = user.id
 
     def test_building_the_discovery_in_calendar_service(self):
         calendar_service = Google_Calendar_Service()
@@ -128,15 +144,9 @@ class TestCalendarService(TestCase):
         assert request is None
 
     def test_preparing_a_link_to_add_an_events_description(self):
-        module_code = Module_Code('CS31310')
-        database.session.add(module_code)
-        database.session.commit()
 
-        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "title")
-        note_meta_data.save()
 
-        note = Note('uploads/', note_meta_data.id)
+        note = Note('uploads/', self.meta_data_id, self.user_id)
         database.session.add(note)
         database.session.commit()
 
@@ -146,15 +156,7 @@ class TestCalendarService(TestCase):
         assert note_url == "http://localhost:5000/show_note/1"
 
     def test_adding_note_url_to_calendar_event(self):
-        module_code = Module_Code('CS31310')
-        database.session.add(module_code)
-        database.session.commit()
-
-        date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "title")
-        note_meta_data.save()
-
-        note = Note('uploads/', note_meta_data.id)
+        note = Note('uploads/', self.meta_data_id, self.user_id)
         database.session.add(note)
         database.session.commit()
 

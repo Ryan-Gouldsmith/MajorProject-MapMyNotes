@@ -10,7 +10,7 @@ from googleapiclient.http import HttpMock, HttpRequest
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
-
+from MapMyNotesApplication.models.user import User
 
 
 class TestIntegretationShowNote(LiveServerTestCase):
@@ -32,8 +32,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         oauth_service.store_secret_file(file_path)
         flow = oauth_service.create_flow_from_clients_secret()
-        self.credentials_oauth = oauth_service.exchange_code(flow, "123code",
-                        http=http_mock)
+        self.credentials_oauth = oauth_service.exchange_code(flow, "123code", http=http_mock)
 
         cred_obj = oauth_service.create_credentials_from_json(self.credentials_oauth.to_json())
 
@@ -124,6 +123,17 @@ class TestIntegretationShowNote(LiveServerTestCase):
         self.auth_mock = self.auth_patch.start()
         self.auth_mock.return_value = self.credentials_oauth.to_json()
 
+        self.user_id = User.query.first().id
+
+        self.user_patch = mock.patch.object(SessionHelper, 'return_user_id')
+        self.user_mock = self.user_patch.start()
+        self.user_mock.return_value = self.user_id
+
+        self.user_in_session = mock.patch.object(SessionHelper,
+        'is_user_id_in_session')
+        self.user_in_session_mock = self.user_in_session.start()
+        self.user_in_session_mock.return_value = True
+
         self.oauth_patch = mock.patch.object(Oauth_Service, "authorise")
         self.oauth_mock = self.oauth_patch.start()
         self.oauth_mock.return_value = self.oauth_return
@@ -137,13 +147,16 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
     def setUp(self):
         # Ideas on how to create the driver and use it. https://realpython.com/blog/python/headless-selenium-testing-with-python-and-phantomjs/
-        mock.patch.stopall()
-        self.create_app()
         self.driver = webdriver.PhantomJS()
         self.driver.set_window_size(1024, 640)
         database.session.close()
         database.drop_all()
         database.create_all()
+        user = User("test@gmail.com")
+        database.session.add(user)
+        database.session.commit()
+        mock.patch.stopall()
+        self.create_app()
 
     def tearDown(self):
         self.driver.quit()

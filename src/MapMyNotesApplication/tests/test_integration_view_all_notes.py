@@ -9,6 +9,7 @@ from MapMyNotesApplication.models.note import Note
 from sqlalchemy import func
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
+from MapMyNotesApplication.models.user import User
 from datetime import datetime
 
 
@@ -28,18 +29,26 @@ class TestIntegretationShowNote(LiveServerTestCase):
         database.drop_all()
         database.create_all()
 
-    def test_to_view_all_notes(self):
         module_code = Module_Code('CS31310')
         database.session.add(module_code)
         database.session.commit()
+        self.module_code_id = module_code.id
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Some title")
+        note_meta_data = Note_Meta_Data("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Some title")
         note_meta_data.save()
+        self.note_meta_data_id = note_meta_data.id
 
-        note = Note('uploads/', note_meta_data.id)
+        user = User("test@gmail.com")
+        database.session.add(user)
+        database.session.commit()
+        self.user_id = user.id
+
+        note = Note('uploads/', self.note_meta_data_id, self.user_id)
         database.session.add(note)
         database.session.commit()
+
+    def test_to_view_all_notes(self):
 
         self.driver.get(self.get_server_url() + "/view_notes")
         notes = self.driver.find_elements_by_class_name("notes")
