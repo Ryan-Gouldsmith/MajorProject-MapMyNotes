@@ -9,6 +9,8 @@ import os
 from datetime import datetime
 from MapMyNotesApplication import database
 from MapMyNotesApplication.models.session_helper import SessionHelper
+from dateutil import parser, tz
+
 metadata = Blueprint('metadata', __name__)
 
 
@@ -53,10 +55,13 @@ def add_meta_data(note_image):
             note_url = google_calendar_service.prepare_url_for_event(note)
             google_service = google_calendar_service.build(http_auth)
 
-            start_date = (date_time).isoformat("T") + "Z"
-            end_time =  datetime.strptime('23:59', "%H:%M").time()
 
-            end_date = datetime.combine(date_time.date(), end_time).isoformat("T") + "Z"
+            # Great API https://docs.python.org/2/library/datetime.html#datetime.datetime.replace Had issue with the BST. Had to supply the timezone offset to Google API.
+            date_time = date_time.replace(tzinfo=tz.gettz('Europe/London'))
+            start_date = (date_time).isoformat("T")
+            end_time = datetime.strptime('23:59', "%H:%M").time()
+
+            end_date = datetime.combine(date_time.date(), end_time).replace(tzinfo=tz.gettz('Europe/London')).isoformat("T")
 
             google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
 
