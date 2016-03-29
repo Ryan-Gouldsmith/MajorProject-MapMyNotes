@@ -9,6 +9,9 @@ from MapMyNotesApplication.models.note import Note
 from sqlalchemy import func
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
+from MapMyNotesApplication.models.user import User
+from MapMyNotesApplication.models.session_helper import SessionHelper
+import mock
 from datetime import datetime
 
 
@@ -18,6 +21,15 @@ class TestIntegretationShowNote(LiveServerTestCase):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+
+        self.user_patch = mock.patch.object(SessionHelper, 'return_user_id')
+        self.user_mock = self.user_patch.start()
+        self.user_mock.return_value = 1
+
+        self.user_in_session = mock.patch.object(SessionHelper,
+        'is_user_id_in_session')
+        self.user_in_session_mock = self.user_in_session.start()
+        self.user_in_session_mock.return_value = True
         return app
 
     def setUp(self):
@@ -28,18 +40,31 @@ class TestIntegretationShowNote(LiveServerTestCase):
         database.drop_all()
         database.create_all()
 
-    def test_to_view_all_notes(self):
         module_code = Module_Code('CS31310')
         database.session.add(module_code)
         database.session.commit()
+        self.module_code_id = module_code.id
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", module_code.id, 'C11 Hugh Owen', date, "Some title")
+        note_meta_data = Note_Meta_Data("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Some title")
         note_meta_data.save()
+        self.note_meta_data_id = note_meta_data.id
 
-        note = Note('uploads/', note_meta_data.id)
+        user = User("test@gmail.com")
+        database.session.add(user)
+        database.session.commit()
+        self.user_id = user.id
+
+        note = Note('uploads/', self.note_meta_data_id, self.user_id)
         database.session.add(note)
         database.session.commit()
+        self.create_app()
+
+    def tearDown(self):
+        self.driver.quit()
+        mock.patch.stopall()
+
+    def test_to_view_all_notes(self):
 
         self.driver.get(self.get_server_url() + "/view_notes")
         notes = self.driver.find_elements_by_class_name("notes")

@@ -36,10 +36,7 @@ def home_page_route():
 
             email_address = User.query.get(session['user_id']).email_address
 
-        else:
-            return redirect(url_for("oauth.oauthsubmit"))
-
-        return render_template('/homepage/index.html', events=events, email_address=email_address)
+            return render_template('/homepage/index.html', events=events, email_address=email_address)
 
     return render_template('/homepage/index.html')
 def cookie_in_session():
