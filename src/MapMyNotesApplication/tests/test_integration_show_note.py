@@ -66,7 +66,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
            "self": 'true'
           },
           "start": {
-           "dateTime": "2016-12-01T01:00:00Z"
+           "dateTime": "2016-12-01T01:00:00+00:00"
           },
           "end": {
            "dateTime": "2016-12-01T02:30:00Z"
@@ -369,7 +369,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("1 December 2016 01:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")

@@ -69,10 +69,9 @@ def add_meta_data(note_image):
             module_code = module_code_obj.module_code
             saved = False
             for event in google_calendar_response['items']:
-                if module_code in event['summary']:
+                if module_code in event['summary'] and start_date == event['start']['dateTime']:
                     google_request = google_calendar_service.add_url_to_event_description(google_service, note_url, event)
                     response = google_calendar_service.execute_request(google_request, http_auth)
-
                     if note_url in response['description']:
                         saved = True
                         note.update_calendar_url(response['htmlLink'])
