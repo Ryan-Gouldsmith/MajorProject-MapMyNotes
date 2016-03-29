@@ -11,6 +11,7 @@ from datetime import datetime
 #https://books.google.co.uk/books?id=Xd0DCgAAQBAJ&pg=PA77&lpg=PA77&dq=flask-testing+liveservertestcase+selenium&source=bl&ots=fhCVat8wgm&sig=2ehfPK93v8fS2NQEq_vzdKYbc-U&hl=en&sa=X&ved=0ahUKEwiCr7ns6KLLAhVCUhQKHVO0DWoQ6AEIPTAF#v=onepage&q=flask-testing%20liveservertestcase%20selenium&f=false Docs are terrible this book may be good.
 class TestIntegrationEditMetaData(LiveServerTestCase):
 
+
     def create_app(self):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
