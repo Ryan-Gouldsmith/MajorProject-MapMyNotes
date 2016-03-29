@@ -126,10 +126,11 @@ class TestOAuthRoute(TestCase):
         note = Note(file_path, self.meta_data_id, self.user_id)
         note.save()
 
-        notes = Note.find_note_by_module_code("CS31310")
+        notes = Note.find_note_by_module_code("CS31310", self.user_id)
 
         assert len(notes) is 1
         assert notes[0].meta_data.lecturer == "Mr Foo"
+        assert notes[0].user_id == self.user_id
 
     def test_finding_a_note_by_module_code_when_it_doesnt_exist(self):
         file_path = "upload/test.png"
@@ -137,7 +138,7 @@ class TestOAuthRoute(TestCase):
         note = Note(file_path, self.meta_data_id, self.user_id)
         note.save()
 
-        notes = Note.find_note_by_module_code("SE31520")
+        notes = Note.find_note_by_module_code("SE31520", self.user_id)
 
         assert len(notes) is 0
 

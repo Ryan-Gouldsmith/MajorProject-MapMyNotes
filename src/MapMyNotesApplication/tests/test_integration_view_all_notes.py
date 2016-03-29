@@ -10,6 +10,8 @@ from sqlalchemy import func
 from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 from MapMyNotesApplication.models.user import User
+from MapMyNotesApplication.models.session_helper import SessionHelper
+import mock
 from datetime import datetime
 
 
@@ -19,6 +21,15 @@ class TestIntegretationShowNote(LiveServerTestCase):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+
+        self.user_patch = mock.patch.object(SessionHelper, 'return_user_id')
+        self.user_mock = self.user_patch.start()
+        self.user_mock.return_value = 1
+
+        self.user_in_session = mock.patch.object(SessionHelper,
+        'is_user_id_in_session')
+        self.user_in_session_mock = self.user_in_session.start()
+        self.user_in_session_mock.return_value = True
         return app
 
     def setUp(self):
@@ -47,6 +58,11 @@ class TestIntegretationShowNote(LiveServerTestCase):
         note = Note('uploads/', self.note_meta_data_id, self.user_id)
         database.session.add(note)
         database.session.commit()
+        self.create_app()
+
+    def tearDown(self):
+        self.driver.quit()
+        mock.patch.stopall()
 
     def test_to_view_all_notes(self):
 
