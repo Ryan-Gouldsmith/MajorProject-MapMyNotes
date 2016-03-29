@@ -5,6 +5,7 @@ from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
+from MapMyNotesApplication.models.user import User
 import os
 from datetime import datetime
 from MapMyNotesApplication import database
@@ -16,6 +17,11 @@ metadata = Blueprint('metadata', __name__)
 
 @metadata.route("/metadata/add/<note_image>", methods=["POST"])
 def add_meta_data(note_image):
+    session_helper = SessionHelper()
+    print session
+    if session_helper.is_user_id_in_session(session) is False:
+        return redirect(url_for('homepage.home_page_route'))
+
     if request.method == "POST":
         if check_all_params_exist(request.form) is False:
             return 'Some fields are missing'
@@ -43,11 +49,12 @@ def add_meta_data(note_image):
             note_meta_data = Note_Meta_Data(lecturer_name_data, module_code_id, location_data, date_time, title_data)
             note_meta_data.save()
 
-            note = Note(note_image, note_meta_data.id)
+            user_id = session_helper.return_user_id(session)
+            user = User.query.get(user_id)
+            note = Note(note_image, note_meta_data.id, user.id)
             note.save()
 
             service = Oauth_Service()
-            session_helper = SessionHelper()
             session_credentials = session_helper.return_session_credentials(session)
             credentials = service.create_credentials_from_json(session_credentials)
             http_auth = service.authorise(credentials, httplib2.Http())
@@ -64,12 +71,9 @@ def add_meta_data(note_image):
 
             event = get_event_containing_module_code(module_code, google_calendar_response, start_date)
 
-            print event
-
             saved_response = None
             if event is not None:
                 saved_response = add_url_to_event(google_calendar_service, google_service, note_url, event, http_auth)
-
 
             if saved_response is not None and note_url in saved_response['description']:
                 note.update_calendar_url(saved_response['htmlLink'])
