@@ -4,17 +4,23 @@ import os
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
 from werkzeug.datastructures import FileStorage
 import sys
+from flask.ext.testing import TestCase
+from flask import Flask
 
-
-
-class TestFileUploadService(object):
-
-    def setup(self):
-        self.app = application.test_client()
-        self.file_upload_service = FileUploadService()
+class TestFileUploadService(TestCase):
+    def create_app(self):
+        app = Flask(__name__)
+        app.config['TESTING'] = True
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.file_test_upload_path = "MapMyNotesApplication/upload/ryan_test_1.jpg"
+        return app
 
-    def teardown(self):
+
+    def setUp(self):
+        self.file_upload_service = FileUploadService()
+
+    def tearDown(self):
         if os.path.isfile(self.file_test_upload_path):
             os.remove(self.file_test_upload_path)
 
@@ -94,3 +100,13 @@ class TestFileUploadService(object):
         filename = 'tests/ryan_test_1.jpg'
         file_exists = self.file_upload_service.file_exists(filename)
         assert file_exists is True
+
+    def test_is_png_method_returns_true_when_its_a_png(self):
+        filename = 'tests/test.png'
+        file_png = self.file_upload_service.is_png(filename)
+        assert file_png is True
+
+    def test_is_png_method_returns_false_when_jpg(self):
+        filename= "test/fakefile.jpg"
+        file_jpg = self.file_upload_service.is_png(filename)
+        assert file_jpg is False

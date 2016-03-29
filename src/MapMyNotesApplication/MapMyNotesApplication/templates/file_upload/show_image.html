@@ -28,4 +28,28 @@
       </label>
       <input type="submit" class="submit" name="submit" >
     </form>
+      <section class="suggestions">
+        {% if suggested_date %}
+          <p class='suggested_date_label'> Our analysis seems to think that the note was taken on the: </p>
+          <p class="suggested_date"> {{ suggested_date }} </p>
+        {% else %}
+          <p class='suggested_date'> No suitable date was found from the note </p>
+        {% endif %}
+        {% if events %}
+          <p class='suggested_events_label'> Our analysis seems to think that you had the following events on this day too: </p>
+          <div class="suggested_calendar_events">
+              {% for event in events %}
+                <div class="suggested_calendar_event">
+                  <p class="calendar_event_title"> {{event.item.summary}} </p>
+                  <p class="calendar_start_time"> {{ event.format_start_date() }} </p>
+                  <a class="calendar_event_view" href="{{ event.item.htmlLink }}">View event</a>
+                </div>
+              {% endfor %}
+          </div>
+        {% else %}
+          <p class="suggested_event_message"> No Events were found in your calendar for that date </p>
+        {% endif %}
+
+
+      </section>
 {% endblock %}

@@ -17,13 +17,17 @@ def show_note(note_id):
 
     location = note.meta_data.location
 
+    calendar_url = None
+    if note.calendar_url is not None:
+        calendar_url = note.calendar_url
+
     date = note.meta_data.date
     formated_date = date.strftime("%d %B %Y %H:%M")
 
     title = note.meta_data.title
 
     note_id = note.id
-    return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer, location=location, date=formated_date, note_id=note_id, title=title)
+    return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer, location=location, date=formated_date, note_id=note_id, title=title, calendar_url=calendar_url)
 
 @shownote.route("/delete_note/<note_id>", methods=["POST"])
 def delete_note(note_id):

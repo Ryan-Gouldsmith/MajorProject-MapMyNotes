@@ -7,18 +7,24 @@ from googleapiclient.http import HttpMock, HttpRequest
 from googleapiclient import discovery
 import os
 import json
-
+from flask.ext.testing import TestCase
+from flask import Flask
 
 """
 https://developers.google.com/api-client-library/python/guide/mocks#example
 """
-class TestGooglePlusService(object):
+class TestGooglePlusService(TestCase):
 
-    def setup(self):
-        application.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
-        self.application = application.test_client()
+    def create_app(self):
+        app = Flask(__name__)
+        app.config['TESTING'] = True
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
+
         self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/plus-discovery.json")
         self.google_plus_mock_response = os.path.join(os.path.dirname(__file__), "mock-data/google_plus_response.json")
+        return app
 
     def test_build_the_google_plus_service_return_discovery_resource(self):
         google_plus_service = Google_Plus_Service()
