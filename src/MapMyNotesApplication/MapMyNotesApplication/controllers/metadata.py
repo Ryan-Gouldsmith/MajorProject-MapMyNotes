@@ -45,6 +45,7 @@ def add_meta_data(note_image):
 
             note = Note(note_image, note_meta_data.id)
             note.save()
+
             service = Oauth_Service()
             session_helper = SessionHelper()
             session_credentials = session_helper.return_session_credentials(session)
@@ -55,27 +56,25 @@ def add_meta_data(note_image):
             note_url = google_calendar_service.prepare_url_for_event(note)
             google_service = google_calendar_service.build(http_auth)
 
-
-            # Great API https://docs.python.org/2/library/datetime.html#datetime.datetime.replace Had issue with the BST. Had to supply the timezone offset to Google API.
-            date_time = date_time.replace(tzinfo=tz.gettz('Europe/London'))
-            start_date = (date_time).isoformat("T")
-            end_time = datetime.strptime('23:59', "%H:%M").time()
-
-            end_date = datetime.combine(date_time.date(), end_time).replace(tzinfo=tz.gettz('Europe/London')).isoformat("T")
-
+            start_date, end_date = process_time_zone(date_time)
             google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
 
             google_calendar_response = google_calendar_service.execute_request(google_request, http_auth)
             module_code = module_code_obj.module_code
-            saved = False
-            for event in google_calendar_response['items']:
-                if module_code in event['summary'] and start_date == event['start']['dateTime']:
-                    google_request = google_calendar_service.add_url_to_event_description(google_service, note_url, event)
-                    response = google_calendar_service.execute_request(google_request, http_auth)
-                    if note_url in response['description']:
-                        saved = True
-                        note.update_calendar_url(response['htmlLink'])
-            return redirect(url_for('shownote.show_note',note_id=note.id, saved=saved))
+
+            event = get_event_containing_module_code(module_code, google_calendar_response, start_date)
+
+            print event
+
+            saved_response = None
+            if event is not None:
+                saved_response = add_url_to_event(google_calendar_service, google_service, note_url, event, http_auth)
+
+
+            if saved_response is not None and note_url in saved_response['description']:
+                note.update_calendar_url(saved_response['htmlLink'])
+
+            return redirect(url_for('shownote.show_note',note_id=note.id))
     return redirect(url_for('fileupload.error_four_zero_four'))
 
 
@@ -141,3 +140,29 @@ def check_all_params_exist(params):
 
 def convert_string_date_to_datetime(date):
     return datetime.strptime(date, "%d %B %Y %H:%M")
+
+
+def process_time_zone(date_time):
+    """ Great API
+    https://docs.python.org/2/library/datetime.html#datetime.datetime.replace
+    Had issue with the BST. Had to supply the timezone offset to Google API.
+    """
+    date_time = date_time.replace(tzinfo=tz.gettz('Europe/London'))
+    start_date = (date_time).isoformat("T")
+    end_time = datetime.strptime('23:59', "%H:%M").time()
+    end_date = datetime.combine(date_time.date(), end_time)
+    end_date = end_date.replace(tzinfo=tz.gettz('Europe/London'))
+    end_date = end_date.isoformat("T")
+    return start_date, end_date
+
+
+def get_event_containing_module_code(module_code, calendar_response, start_date):
+    for event in calendar_response["items"]:
+        if module_code in event['summary'] and start_date == event['start']['dateTime']:
+            return event
+    return None
+
+def add_url_to_event(google_calendar_service, google_service, note_url, event, http_auth):
+    google_request = google_calendar_service.add_url_to_event_description(google_service, note_url, event)
+
+    return google_calendar_service.execute_request(google_request, http_auth)

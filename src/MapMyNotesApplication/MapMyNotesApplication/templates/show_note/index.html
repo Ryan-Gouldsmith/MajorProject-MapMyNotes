@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-    {% if saved == "True" %}
+    {% if calendar_url %}
       <p class="saved_to_cal">Successfully saved to calendar</p>
       <a class="calendar_link" href="{{ calendar_url }}"> View Event </a>
     {% else %}
