@@ -39,6 +39,6 @@ class Note(database.Model):
         self.save()
 
     @staticmethod
-    def find_note_by_module_code(module_code):
+    def find_note_by_module_code(module_code, user_id):
         query = Module_Code.module_code.like(module_code)
-        return Note.query.filter(query).all()
+        return Note.query.filter(Note.user_id == user_id, query).all()

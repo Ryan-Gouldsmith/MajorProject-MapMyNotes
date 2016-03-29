@@ -8,7 +8,10 @@ from MapMyNotesApplication.models.module_code import Module_Code
 from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.user import User
+from MapMyNotesApplication.models.session_helper import SessionHelper
+import mock
 from datetime import datetime
+
 
 class TestIntegrationSearch(LiveServerTestCase):
 
@@ -16,6 +19,16 @@ class TestIntegrationSearch(LiveServerTestCase):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+
+
+        self.user_patch = mock.patch.object(SessionHelper, 'return_user_id')
+        self.user_mock = self.user_patch.start()
+        self.user_mock.return_value = 1
+
+        self.user_in_session = mock.patch.object(SessionHelper,
+        'is_user_id_in_session')
+        self.user_in_session_mock = self.user_in_session.start()
+        self.user_in_session_mock.return_value = True
 
         return app
 
@@ -42,12 +55,29 @@ class TestIntegrationSearch(LiveServerTestCase):
         database.session.commit()
         self.user_id = user.id
 
+        user_two = User("newUser@gmail.com")
+        database.session.add(user_two)
+        database.session.commit()
+        self.second_user_id = user_two.id
+
+        note_meta_data_two = Note_Meta_Data("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Second")
+        note_meta_data_two.save()
+        self.second_meta_data_id = note_meta_data_two.id
+
+
         note = Note('uploads/', self.note_meta_data_id, self.user_id)
         database.session.add(note)
         database.session.commit()
 
+        note_two = Note('other_users', self.second_meta_data_id, self.second_user_id)
+        database.session.add(note_two)
+        database.session.commit()
+
+        self.create_app()
+
     def tearDown(self):
         self.driver.quit()
+        mock.patch.stopall()
 
     def test_form_with_search_bar_is_displayed(self):
         self.driver.get(self.get_server_url() + "/search")
@@ -99,6 +129,8 @@ class TestIntegrationSearch(LiveServerTestCase):
 
         view_notes[0].click()
 
+        print self.driver.page_source
+
         assert "show_note/1" in self.driver.current_url
 
     def test_when_searched_for_it_shows_the_user_what_they_have_search(self):
@@ -110,3 +142,16 @@ class TestIntegrationSearch(LiveServerTestCase):
         searched = self.driver.find_element_by_class_name("searched")
 
         assert "CS31310" in searched.text
+
+    def test_only_display_the_logged_in_users_notes_not_others(self):
+        self.driver.get(self.get_server_url() + "/search")
+        search_field = self.driver.find_element_by_class_name('search_field')
+        search_field.send_keys("CS31310")
+        submit = self.driver.find_element_by_class_name("submit").click()
+
+        titles = self.driver.find_elements_by_class_name('note_title')
+        expected_titles = []
+        for title in titles:
+            expected_titles.append(title.text)
+
+        assert "Second" not in expected_titles
