@@ -54,4 +54,4 @@ class TestUser(TestCase):
         tesseract_helper.set_tiff_image_for_analysis(self.image)
         tuples = tesseract_helper.get_confidence_and_words_from_image()
         assert type(tuples) is list
-        assert type(tuples[0]) is not tuple
+        assert type(tuples[0]) is  tuple
