@@ -23,6 +23,9 @@ class TestUploadRoute(TestCase):
         if os.path.isfile("MapMyNotesApplication/upload/ryan_test_1.jpg"):
             os.remove("MapMyNotesApplication/upload/ryan_test_1.jpg")
 
+        if os.path.isfile('MapMyNotesApplication/upload/ryan_test_1.tif'):
+            os.remove('MapMyNotesApplication/upload/ryan_test_1.tif')
+
     def test_get_upload_route(self):
         resource = self.client.get("/upload")
         assert resource.status_code is 200
@@ -125,3 +128,9 @@ class TestUploadRoute(TestCase):
 
         assert resource.headers.get("Content-Type") == "image/jpeg"
         assert resource.status_code == 200
+
+    def test_should_save_the_correct_tif_file_to_upload(self):
+        upload_file = open("tests/ryan_test_1.jpg", "r")
+        resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects = False)
+
+        assert os.path.isfile("MapMyNotesApplication/upload/ryan_test_1.tif") is True
