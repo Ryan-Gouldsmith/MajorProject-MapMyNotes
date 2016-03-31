@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block head %}
+      <link href="{{url_for('static', filename='stylesheet/base.css')}}" rel="stylesheet" />
+      <title> Map My Notes </title>
+    {% endblock %}
+  </head>
+  <body>
+    <nav>
+      <a href="/"> Home </a>
+      <a href="/upload"> Upload Note </a>
+      <a href="/view_notes"> View Notes </a>
+      <a href="/search"> Search </a>
+    </nav>
+    <main>{% block content%} {% endblock %} </main>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+form {
+  margin-left: auto;
+  margin-right: auto;
+  height:60%;
+  width:inherit;
+}
+form .submit {
+  display:inherit;
+  margin-top:2%;
+  height:10%;
+  width:10%;
+  background-color: #009688;
+  color:white;
+  border:none;
+  /*http://www.w3schools.com/cssref/tryit.asp?filename=trycss3_box-shadow*/
+  box-shadow: 0px 4px 0px #888888;
+}
+form .submit:active{
+  /* Like the Gov UK website button click, make it look like we've clicked it */
+  box-shadow: 0px 0px 0px #888888;
+}

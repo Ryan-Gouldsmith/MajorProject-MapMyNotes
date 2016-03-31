@@ -17,9 +17,11 @@ class FileUploadService(object):
 
     def accepted_file_extension(self, filename):
         filename, file_extension = os.path.splitext(filename)
-        print file_extension
-
         return file_extension in self.ACCEPTED_FILE_EXTENSIONS
 
     def file_exists(self, filename):
         return os.path.isfile(filename)
+
+    def is_png(self, filename):
+        filename, file_extension = os.path.splitext(filename)
+        return file_extension == '.png'

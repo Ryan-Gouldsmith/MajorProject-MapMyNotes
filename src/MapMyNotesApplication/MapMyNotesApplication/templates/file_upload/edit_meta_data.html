@@ -1,0 +1,13 @@
+{% extends "root.html" %}
+
+{% block content %}
+  <form class="edit_form" method="post">
+    <input type="text" class="module_code" value="{{ module_code}}" name="module_code_data">
+    <input type="text" class="lecturer" value="{{ lecturer }}" name="lecturer_name_data">
+    <input type="text" class="location" value="{{ location }}" name="location_data" >
+    <input type="text" class="date" value="{{ date }}" name="date_data">
+
+    <input type="text" class="title" value="{{ title }}" name="title_data">
+    <input type="submit">
+  </form>
+{% endblock %}
