@@ -9,6 +9,7 @@ from MapMyNotesApplication.models.google_calendar_service import Google_Calendar
 from googleapiclient.http import HttpMock, HttpRequest
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from MapMyNotesApplication.models.session_helper import SessionHelper
+from MapMyNotesApplication.models.tesseract_helper import TesseractHelper
 import os
 
 
@@ -110,6 +111,10 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         self.google_mock = self.google_patch.start()
         self.google_mock.return_value = self.google_response
 
+        self.tesseract_patch = mock.patch.object(TesseractHelper, 'get_confidence_and_words_from_image')
+        self.user_mock = self.tesseract_patch.start()
+        self.user_mock.return_value = [[(u'CS4192250:', 75), (u'A', 88), (u't-.tLe.', 72), (u'.9oes', 72), (u'here\n\n', 81)], [(u'Date:', 73), (u'29', 93), (u'/3/2016', 83), (u'15..', 76), (u'e0\n\n', 63)], [(u'By:', 69), (u'A', 89), (u'c".crlain', 65), (u'doc.tor', 74), (u'tiHe\n\n', 75)]]
+
         return app
 
     def setUp(self):
@@ -191,7 +196,6 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
 
     def test_google_calendar_event_shows_when_exif_data_matches(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
-        print self.driver.page_source
         calendar_date =  self.driver.find_element_by_class_name("suggested_calendar_event")
         assert calendar_date.is_displayed() is True
 
@@ -202,3 +206,16 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         assert "Test Example" in calendar_event_title.text
         assert "01 December 2016 01:00" in calendar_event_date.text
         assert "View event" in view_event.text
+
+    def test_tesseract_data_shows_when_image_is_uploaded(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+
+        module_code = self.driver.find_element_by_class_name("tesseract_module_code")
+        lecture_title = self.driver.find_element_by_class_name('tesseract_title')
+        date = self.driver.find_element_by_class_name("tesseract_date")
+        lecturer = self.driver.find_element_by_class_name("tesseract_lecturer")
+
+        assert module_code.text == "CS4192250:"
+        assert lecture_title.text == 'A t-.tLe. .9oes here'
+        assert date.text == "Date: 29 /3/2016 15.. e0"
+        assert lecturer.text == 'By: A c".crlain doc.tor tiHe'

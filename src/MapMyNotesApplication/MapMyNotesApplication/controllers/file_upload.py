@@ -9,6 +9,7 @@ from MapMyNotesApplication.models.google_calendar_service import Google_Calendar
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from MapMyNotesApplication.models.binarise_image import BinariseImage
+from MapMyNotesApplication.models.tesseract_helper import TesseractHelper
 import httplib2
 from datetime import datetime, timedelta
 import json
@@ -138,10 +139,21 @@ def show_image(note_image):
             return redirect(url_for("oauth.oauthsubmit"))
 
     # TESSERACT PARSING HERE
+    filename_test, file_extension = os.path.splitext(note_image)
+    tiff_image = filename_test + ".tif"
+    tif_path = FILE_UPLOAD_PATH + tiff_image
+    tesseract_helper = TesseractHelper()
+    print tif_path
+    tesseract_helper.set_tiff_image_for_analysis(tif_path)
+    data = tesseract_helper.get_confidence_and_words_from_image()
+    print data
+    tesseract_module_code = data[0][0]
+    tesseract_title = data[0][1:]
+    tesseract_date = data[1]
+    tesseract_lecturer = data[2]
 
 
-
-    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date, events=events)
+    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date, events=events, tesseract_module_code=tesseract_module_code, tesseract_title=tesseract_title, tesseract_date=tesseract_date, tesseract_lecturer=tesseract_lecturer)
 
 
 # Not happy with this function, I think it will need to be looked into further down the down. Surely there's a better way than this. For some reason the send from directory did not work.... here https://github.com/mitsuhiko/flask/issues/1169
