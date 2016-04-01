@@ -7,13 +7,14 @@ from MapMyNotesApplication import database
 from PIL import Image
 
 
-class TestUser(TestCase):
+class TestTesseractHelper(TestCase):
 
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
         """
-        http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file.
+        http://blog.toast38coza.me/adding-a-database-to-a-flask-app/
+        Used to help with the test database, could move this to a config file.
         """
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         return app
@@ -38,7 +39,9 @@ class TestUser(TestCase):
         assert tesseract_helper.image == "image"
 
     def test_setting_tesseract_image_for_analysis(self):
-        # Reference: http://stackoverflow.com/questions/4319825/python-unittest-opposite-of-assertraises
+        """ Reference:
+         http://stackoverflow.com/questions/4319825/python-unittest-opposite-of-assertraises
+        """
         try:
             tesseract_helper = TesseractHelper()
             tesseract_helper.set_tiff_image_for_analysis(self.image)
@@ -54,4 +57,4 @@ class TestUser(TestCase):
         tesseract_helper.set_tiff_image_for_analysis(self.image)
         tuples = tesseract_helper.get_confidence_and_words_from_image()
         assert type(tuples) is list
-        assert type(tuples[0]) is  tuple
+        assert type(tuples[0][0]) is tuple

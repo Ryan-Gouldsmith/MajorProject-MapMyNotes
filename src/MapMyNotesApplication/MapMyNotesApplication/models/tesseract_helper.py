@@ -1,9 +1,10 @@
-from tesserocr import PyTessBaseAPI, RIL
+from tesserocr import PyTessBaseAPI, RIL, iterate_level
 
 
 class TesseractHelper(object):
 
     CUSTOM_LANGUAGE = "eng.ryan.exp2a"
+    NUMBER_OF_LINES = 2
 
     def __init__(self):
         self.tesseract_api = PyTessBaseAPI(lang=self.CUSTOM_LANGUAGE)
@@ -18,16 +19,16 @@ class TesseractHelper(object):
         self.tesseract_api.SetImageFile(image)
 
     def get_confidence_and_words_from_image(self):
-        # Off the readME, testing it out to see if I can get the confidence levels of every word in a line https://github.com/sirfz/tesserocr
-        boxes = self.tesseract_api.GetComponentImages(RIL.TEXTLINE, True)
-        print 'Found {} textline image components.'.format(len(boxes))
-        for i, (im, box, _, _) in enumerate(boxes):
-            # im is a PIL image object
-            # box is a dict with x, y, w and h keys
-            self.tesseract_api.SetRectangle(box['x'], box['y'], box['w'], box['h'])
-            ocrResult = self.tesseract_api.GetUTF8Text()
-            conf = self.tesseract_api.MeanTextConf()
-            print self.tesseract_api.MapWordConfidences()
-            print (u"Box[{0}]: x={x}, y={y}, w={w}, h={h}, "
-               "confidence: {1}, text: {2}").format(i, conf, ocrResult, **box)
-        return self.tesseract_api.MapWordConfidences()
+        # Modified from the Advanced API interaction on the ReadMe. Further referencing from the source code. https://github.com/sirfz/tesserocr
+        text_boxes = self.tesseract_api.GetTextlines(True)
+        list_word_confidence = []
+
+        #We only want the first few lines for the meta-data, so let's use list comprehensions to get the lines.
+        for (image, bounding_box, block_id, paragraph_id) in text_boxes[:self.NUMBER_OF_LINES]:
+            # You have to set the bounding box so that we know which line we are on about so we can get the text and confidence as tuple values. Otherwise GetUTF8Text returns all the text again, not what we want.
+            self.tesseract_api.SetRectangle(bounding_box['x'], bounding_box['y'], bounding_box['w'], bounding_box['h'])
+
+            confidence = self.tesseract_api.MapWordConfidences()
+            list_word_confidence.append(confidence)
+
+        return list_word_confidence
