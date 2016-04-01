@@ -219,3 +219,28 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         assert lecture_title.text == 'A t-.tLe. .9oes here'
         assert date.text == "Date: 29 /3/2016 15.. e0"
         assert lecturer.text == 'By: A c".crlain doc.tor tiHe'
+
+    def test_tesseract_data_is_coloured_correctly_for_confidence(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        #http://www.hexcolortool.com/ hex to rgba converter
+        green = "rgba(76, 175, 80, 1)"
+
+        orange = "rgba(255, 152, 0, 1)"
+
+        red = "rgba(244, 67, 54, 1)"
+        module_code = self.driver.find_element_by_css_selector("p.tesseract_module_code span")
+        lecture_title = self.driver.find_elements_by_css_selector('p.tesseract_title span')
+        date = self.driver.find_elements_by_css_selector("p.tesseract_date span")
+        lecturer = self.driver.find_element_by_class_name("tesseract_lecturer")
+        print self.driver.page_source
+        assert module_code.value_of_css_property("color") == green
+
+        assert lecture_title[0].value_of_css_property("color") == green
+        assert lecture_title[1].value_of_css_property("color") == orange
+        assert lecture_title[2].value_of_css_property("color") == orange
+        assert lecture_title[3].value_of_css_property("color") == green
+
+        assert date[0].value_of_css_property("color") == orange
+        assert date[1].value_of_css_property("color") == green
+        assert date[2].value_of_css_property("color") == green
+        assert date[3].value_of_css_property("color") == green
