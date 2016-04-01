@@ -4,7 +4,7 @@ from tesserocr import PyTessBaseAPI, RIL, iterate_level
 class TesseractHelper(object):
 
     CUSTOM_LANGUAGE = "eng.ryan.exp2a"
-    NUMBER_OF_LINES = 2
+    NUMBER_OF_LINES = 3
 
     def __init__(self):
         self.tesseract_api = PyTessBaseAPI(lang=self.CUSTOM_LANGUAGE)

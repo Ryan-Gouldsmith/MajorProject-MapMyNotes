@@ -47,8 +47,29 @@
               {% endfor %}
           </div>
         {% else %}
+
           <p class="suggested_event_message"> No Events were found in your calendar for that date </p>
         {% endif %}
+        <p class='tesseract_label'> We believe the module code could be </p>
+        <p class="tesseract_module_code">{{ tesseract_module_code[0]}}</p>
+        <p class='tesseract_label'> We believe the title could be </p>
+        <p class="tesseract_title">
+          {% for title_word in tesseract_title %}
+            {{ title_word[0] + " " }}
+          {% endfor %}
+        </p>
+        <p class='tesseract_label'> We believe the date could be </p>
+        <p class="tesseract_date">
+          {% for date_word in tesseract_date %}
+            {{ date_word[0] + " "}}
+          {% endfor %}
+        </p>
+        <p class='tesseract_label'> We believe the lecturer could be </p>
+        <p class='tesseract_lecturer'>
+            {% for lecturer_word in tesseract_lecturer %}
+              {{ lecturer_word[0] + " "}}
+            {% endfor %}
+        </p>
 
 
       </section>
