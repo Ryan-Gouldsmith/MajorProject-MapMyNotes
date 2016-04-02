@@ -3,7 +3,8 @@ language: python
 sudo: required
 
 before_install:
-  - sudo apt-get -qq update
+  - sudo apt-get update
+  - sudo apt-get upgrade
   - pip install --upgrade google-api-python-client
 
 install:
@@ -27,6 +28,8 @@ install:
   - sudo apt-get install libjpeg62-dev
   - sudo apt-get install libtiff4-dev
   - sudo apt-get install zlib1g-dev
+  - sudo apt-get install libleptonica-dev
+  - sudo apt-get install libtesseract-dev 
   - sudo apt-get install tesseract-ocr
   - "pip install -r requirements.txt"
 
