@@ -6,18 +6,16 @@ import cv2
 import os
 import numpy as np
 
-import tesseract_training_data.tesseract_training_on_adaptive_threshold.binarise_image as blueline
+import MapMyNotesApplication.models.binarise_image as blueline
 
 class TestBlueLinedAdaptedThreshold(object):
     def setup(self):
         self.threshold = blueline.BinariseImage()
-        self.image_file = "test_image.jpg"
+        self.image_file = "tests/test_image.jpg"
 
     def teardown(self):
-        if os.path.isfile("test_image.tiff"):
-            os.remove("test_image.tiff")
-
-
+        if os.path.isfile("tests/test_image.tif"):
+            os.remove("tests/test_image.tif")
 
     def test_image_exists(self):
         assert self.threshold.image_file_exists(self.image_file) is True
@@ -109,6 +107,7 @@ class TestBlueLinedAdaptedThreshold(object):
 
         lines = self.threshold.copy_image(threshold_image)
         kernal_structure = self.threshold.get_structuring_element(width, height)
+
 
         dilated_image = self.threshold.dilate_image(lines, kernal_structure)
 
@@ -206,10 +205,7 @@ class TestBlueLinedAdaptedThreshold(object):
         read_in_image = self.threshold.read_image_as_grasycale(self.image_file)
 
         median_blurred_image = self.threshold.apply_median_blur()
-
         threshold_image = self.threshold.apply_adaptive_threshold()
-
-
         lines = self.threshold.copy_image(threshold_image)
         kernal_structure = self.threshold.get_structuring_element(width, height)
 
@@ -230,7 +226,7 @@ class TestBlueLinedAdaptedThreshold(object):
     def test_prepare_tiff_file_for_saving(self):
         returned_tiff_file = self.threshold.prepare_image_to_save(self.image_file)
 
-        assert returned_tiff_file == "test_image.tiff"
+        assert returned_tiff_file == "tests/test_image.tif"
 
     def test_saving_image_file_to_filestore(self):
         read_in_image = self.threshold.read_image_as_grasycale(self.image_file)
@@ -240,4 +236,4 @@ class TestBlueLinedAdaptedThreshold(object):
 
         self.threshold.save_image(image)
 
-        assert os.path.isfile('test_image.tiff') is True
+        assert os.path.isfile('tests/test_image.tif') is True

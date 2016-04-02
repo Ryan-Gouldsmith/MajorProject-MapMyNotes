@@ -69,7 +69,6 @@ class TestUploadRoute(TestCase):
     def test_uploading_wrong_file_extension(self):
         upload_file = open("tests/ryan_test_1.pdf", "r")
 
-
         resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects = False)
 
         assert resource.status_code is 200
@@ -83,11 +82,9 @@ class TestUploadRoute(TestCase):
 
         file_name = file_list[1]
 
-        resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects = False)
+        resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects=False)
 
-        resource = self.client.get("/upload/show_image/" + file_name, follow_redirects = False)
-
-
+        resource = self.client.get("/upload/show_image/" + file_name, follow_redirects=False)
 
         assert resource.status_code is 200
 
