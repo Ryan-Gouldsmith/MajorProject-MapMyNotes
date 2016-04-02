@@ -7,7 +7,7 @@ before_install:
   - echo "deb http://archive.ubuntu.com/ubuntu/ wily universe" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get -qq update
   - pip install --upgrade google-api-python-client
-  
+
 
 install:
   - sudo apt-get install -y libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
@@ -17,9 +17,9 @@ install:
   - sudo apt-get install -y libjpeg62-dev
   - sudo apt-get install -y libtiff4-dev
   - sudo apt-get install -y zlib1g-dev
-  - sudo apt-get install -y libleptonica-dev
-  - sudo apt-get install -y libtesseract-dev
   - sudo apt-get install -y tesseract-ocr
+  - sudo apt-get install -y libtesseract-dev
+  - sudo apt-get install -y libleptonica-dev
   - git clone https://github.com/Itseez/opencv.git
   - cd opencv
   - git checkout 3.0.0
