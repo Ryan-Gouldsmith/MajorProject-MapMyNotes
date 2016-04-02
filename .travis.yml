@@ -46,7 +46,7 @@ install:
   - export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python2.7/site-packages
   - cd ../../
   - "pip install -r requirements.txt"
-  - cp tesseract_training_data/tesseract_training_on_adaptive_threshold/eng.ryan.exp2a.traineddata /usr/local/share/tessdata
+  - sudo cp tesseract_training_data/tesseract_training_on_adaptive_threshold/eng.ryan.exp2a.traineddata /usr/local/share/tessdata
 
 python:
   - "2.7"
