@@ -26,8 +26,8 @@ install:
   - git clone https://github.com/tesseract-ocr/tesseract.git
   - cd tesseract
   - ./autogen.sh
-  - ./configure
-  - LDFLAGS="-L/usr/local/lib" CFLAGS="-I/usr/local/include
+  - sudo ./configure
+  - sudo LDFLAGS="-L/usr/local/lib" CFLAGS="-I/usr/local/include
   - sudo make install
   - sudo ldconfig
   - git clone https://github.com/Itseez/opencv.git
