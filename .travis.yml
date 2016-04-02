@@ -19,6 +19,7 @@ install:
   - sudo apt-get install -y libtiff4-dev
   - sudo apt-get install -y zlib1g-dev
   - wget http://www.leptonica.org/source/leptonica-1.73.tar.gz
+  - tar xzvf leptonica-1.73.tar.gz
   - cd leptonica-1.73
   - ./configure
   - make
