@@ -6,7 +6,11 @@ before_install:
   - sudo apt-get -qq update
   - pip install --upgrade google-api-python-client
 
+# REFERENCE For Open CV build scripts: http://stackoverflow.com/questions/15790501/why-cv2-so-missing-after-opencv-installed and http://www.pyimagesearch.com/2015/06/22/install-opencv-3-0-and-python-2-7-on-ubuntu/
 
+# REFERENCE Compiling tesseract from source: https://github.com/tesseract-ocr/tesseract/wiki/Compiling
+
+# Reference Leptonica Build script: http://www.leptonica.org/source/README.html
 install:
   - sudo apt-get install -y libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
   - sudo apt-get install -y python-dev python-numpy

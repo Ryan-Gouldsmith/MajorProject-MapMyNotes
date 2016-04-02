@@ -2,4 +2,4 @@
 
 cd src/MapMyNotesApplication
 
-py.test tests/test_integration_show_note.py
+py.test tests/*.py
