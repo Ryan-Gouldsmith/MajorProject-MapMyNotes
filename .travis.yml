@@ -8,7 +8,7 @@ before_install:
   - pip install --upgrade google-api-python-client
 
 install:
-  - sudo apt-get install libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
+  - sudo apt-get install -qq libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
   - sudo apt-get install python-dev python-numpy
   - sudo apt-get install autoconf automake libtool
   - sudo apt-get install libpng12-dev
