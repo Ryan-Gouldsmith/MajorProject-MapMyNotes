@@ -26,8 +26,9 @@ install:
   - git clone https://github.com/tesseract-ocr/tesseract.git
   - cd tesseract
   - ./autogen.sh
-  - LIBLEPT_HEADERSDIR=$HOME/local/include ./configure --prefix=$HOME/local/ --with-extra-libraries=$HOME/local/lib
-  - sudo make install
+  - export LIBLEPT_HEADERSDIR=/local/include
+  - ./configure --with-extra-libraries=/local/lib
+  - make install
   - sudo ldconfig
   - git clone https://github.com/Itseez/opencv.git
   - cd opencv
