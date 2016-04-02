@@ -8,16 +8,16 @@ before_install:
   - pip install --upgrade google-api-python-client
 
 install:
-  - sudo apt-get install -qq libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
-  - sudo apt-get install python-dev python-numpy
-  - sudo apt-get install autoconf automake libtool
-  - sudo apt-get install libpng12-dev
-  - sudo apt-get install libjpeg62-dev
-  - sudo apt-get install libtiff4-dev
-  - sudo apt-get install zlib1g-dev
-  - sudo apt-get install libleptonica-dev
-  - sudo apt-get install libtesseract-dev
-  - sudo apt-get install tesseract-ocr
+  - sudo apt-get install -y libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
+  - sudo apt-get install -y python-dev python-numpy
+  - sudo apt-get install -y autoconf automake libtool
+  - sudo apt-get install -y libpng12-dev
+  - sudo apt-get install -y libjpeg62-dev
+  - sudo apt-get install -y libtiff4-dev
+  - sudo apt-get install -y zlib1g-dev
+  - sudo apt-get install -y libleptonica-dev
+  - sudo apt-get install -y libtesseract-dev
+  - sudo apt-get install -y tesseract-ocr
   - git clone https://github.com/Itseez/opencv.git
   - cd opencv
   - git checkout 3.0.0
