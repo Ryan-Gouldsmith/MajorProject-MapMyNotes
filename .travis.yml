@@ -1,12 +1,8 @@
 language: python
 
 sudo: required
-dist: trusty
-
-
 
 before_install:
-  - echo "deb http://archive.ubuntu.com/ubuntu/ wily universe" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get -qq update
   - pip install --upgrade google-api-python-client
 
@@ -25,6 +21,7 @@ install:
   - ./configure
   - make
   - sudo make install
+  - cd ../
   - git clone https://github.com/tesseract-ocr/tesseract.git
   - cd tesseract
   - ./autogen.sh
@@ -32,6 +29,7 @@ install:
   - LDFLAGS="-L/usr/local/lib" CFLAGS="-I/usr/local/include" make
   - sudo make install
   - sudo ldconfig
+  - cd ../
   - git clone https://github.com/Itseez/opencv.git
   - cd opencv
   - git checkout 3.0.0
