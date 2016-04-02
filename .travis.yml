@@ -4,8 +4,10 @@ sudo: required
 dist: trusty
 
 before_install:
+  - echo "deb http://archive.ubuntu.com/ubuntu/ wily universe" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get -qq update
   - pip install --upgrade google-api-python-client
+  
 
 install:
   - sudo apt-get install -y libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
