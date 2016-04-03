@@ -1,0 +1,20 @@
+.title_strapline{
+  text-align: center;
+}
+.note_link{
+  text-decoration: none;
+  width:130px;
+  height:16%;
+}
+.note{
+  height:27vh;
+}
+@media(max-width:768px){
+  .note{
+    height:29vh;
+  }
+  .btn{
+    margin-top:0;
+    height:20%;
+  }
+}

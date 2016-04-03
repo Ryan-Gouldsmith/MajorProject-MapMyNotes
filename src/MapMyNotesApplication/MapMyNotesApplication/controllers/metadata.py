@@ -92,7 +92,7 @@ def edit_meta_data(note_id):
         date = note.meta_data.date.strftime("%d %B %Y %H:%M")
         title = note.meta_data.title
 
-        return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, title=title)
+        return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, title=title, note_image=note.image_path)
 
     elif request.method == "POST":
         if not check_all_params_exist(request.form):
