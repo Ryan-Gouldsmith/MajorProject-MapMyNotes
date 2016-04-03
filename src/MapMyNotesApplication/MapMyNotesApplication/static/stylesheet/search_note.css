@@ -1,0 +1,18 @@
+.title{
+  text-align: center;
+}
+.search_field {
+  width:80%;
+  padding:12px;
+}
+.search_btn {
+  display:inline;
+  padding:6px;
+  margin-top:3%;
+}
+.item{
+  font-weight:bold;
+}
+.notes{
+  width:100%;
+}
