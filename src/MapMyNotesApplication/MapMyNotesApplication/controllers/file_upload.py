@@ -8,6 +8,8 @@ from MapMyNotesApplication.models.calendar_item import Calendar_Item
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
+from MapMyNotesApplication.models.binarise_image import BinariseImage
+from MapMyNotesApplication.models.tesseract_helper import TesseractHelper
 import httplib2
 from datetime import datetime, timedelta
 import json
@@ -45,6 +47,41 @@ def file_upload_index_route():
 
         file_upload_service.save_users_file(prepared_file, file)
 
+        binarise = BinariseImage()
+        if binarise.image_file_exists(prepared_file):
+            image = binarise.read_image_as_grasycale(prepared_file)
+            image = binarise.apply_median_blur()
+            threshold_image = binarise.apply_adaptive_threshold()
+            horizontal_lines = binarise.copy_image(threshold_image)
+            rows, columns = binarise.get_shape_info(horizontal_lines)
+            structuring_element_kernel = binarise.get_structuring_element(75,1)
+            horizontal_lines = binarise.erode_image(horizontal_lines, structuring_element_kernel)
+            horizontal_lines = binarise.dilate_image(horizontal_lines, structuring_element_kernel)
+            #Thats the morphological dilatate?
+            horizontal_lines = binarise.dilate_image(horizontal_lines, structuring_element_kernel)
+
+            modified_threshold_mask = binarise.convert_black_threshold_to_white(horizontal_lines)
+
+            new_mask = binarise.create_empty_mask(rows, columns)
+
+            black_text_mask = binarise.convert_white_to_black(modified_threshold_mask, new_mask)
+
+            one_kernel = binarise.create_kernels_of_ones(3,3)
+
+            dilated_black_text_mask = binarise.dilate_image(black_text_mask, one_kernel)
+
+            image, contours, approximation = binarise.find_contours_in_mask(dilated_black_text_mask)
+
+            dilated_black_text_mask = binarise.draw_contours(dilated_black_text_mask)
+
+            ones_kernel = binarise.create_kernels_of_ones(7,7)
+
+            final_output = binarise.erode_image(dilated_black_text_mask, ones_kernel)
+
+            path = binarise.prepare_image_to_save(prepared_file)
+
+            binarise.save_image(final_output)
+
         if not file_upload_service.file_exists(prepared_file):
             return "There was an error saving the file, please upload again."
 
@@ -57,6 +94,7 @@ def file_upload_index_route():
 def show_image(note_image):
     file_upload_service = FileUploadService()
     file_path = FILE_UPLOAD_PATH + note_image
+
     if not file_upload_service.file_exists(file_path):
         return redirect(url_for('fileupload.error_four_zero_four'))
 
@@ -100,8 +138,22 @@ def show_image(note_image):
         elif credentials.access_token_expired is True:
             return redirect(url_for("oauth.oauthsubmit"))
 
+    # TESSERACT PARSING HERE
+    filename_test, file_extension = os.path.splitext(note_image)
+    tiff_image = filename_test + ".tif"
+    tif_path = FILE_UPLOAD_PATH + tiff_image
+    tesseract_helper = TesseractHelper()
+    print tif_path
+    tesseract_helper.set_tiff_image_for_analysis(tif_path)
+    data = tesseract_helper.get_confidence_and_words_from_image()
+    print data
+    tesseract_module_code = data[0][0]
+    tesseract_title = data[0][1:]
+    tesseract_date = data[1]
+    tesseract_lecturer = data[2]
 
-    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date, events=events)
+
+    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date, events=events, tesseract_module_code=tesseract_module_code, tesseract_title=tesseract_title, tesseract_date=tesseract_date, tesseract_lecturer=tesseract_lecturer)
 
 
 # Not happy with this function, I think it will need to be looked into further down the down. Surely there's a better way than this. For some reason the send from directory did not work.... here https://github.com/mitsuhiko/flask/issues/1169

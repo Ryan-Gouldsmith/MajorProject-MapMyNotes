@@ -47,9 +47,62 @@
               {% endfor %}
           </div>
         {% else %}
+
           <p class="suggested_event_message"> No Events were found in your calendar for that date </p>
         {% endif %}
-
-
+        <p class='tesseract_label'> We believe the module code could be </p>
+        <p class="tesseract_module_code">
+           {% if tesseract_module_code[1] >= 75 %}
+              <span class="tesseract_green">
+           {% elif tesseract_module_code[1] < 75 and tesseract_module_code[1] >= 70 %}
+              <span class="tesseract_orange">
+           {% else %}
+              <span class="tesseract_red">
+            {% endif %}
+                {{ tesseract_module_code[0] }}
+            </span>
+        </p>
+        <p class='tesseract_label'> We believe the title could be </p>
+        <p class="tesseract_title">
+          {% for title_word in tesseract_title %}
+            {% if title_word[1] >= 75 %}
+                <span class="tesseract_green">
+            {% elif title_word[1] < 75 and title_word[1] >= 70 %}
+                <span class="tesseract_orange">
+            {% else %}
+                <span class="tesseract_red">
+            {% endif %}
+                  {{ title_word[0] + " " }}
+            </span>
+          {% endfor %}
+        </p>
+        <p class='tesseract_label'> We believe the date could be </p>
+        <p class="tesseract_date">
+          {% for date_word in tesseract_date %}
+            {% if date_word[1] >= 75 %}
+                <span class="tesseract_green">
+            {% elif date_word[1] < 75 and date_word[1] >= 70 %}
+                <span class="tesseract_orange">
+            {% else %}
+                <span class="tesseract_red">
+            {% endif %}
+                {{ date_word[0] + " "}}
+            </span>
+          {% endfor %}
+        </p>
+        <p class='tesseract_label'> We believe the lecturer could be </p>
+        <p class='tesseract_lecturer'>
+            {% for lecturer_word in tesseract_lecturer %}
+              {% if lecturer_word[1] >= 75 %}
+                  <span class="tesseract_green">
+              {% elif lecturer_word[1] < 75 and lecturer_word[1] >= 72 %}
+                  <span class="tesseract_orange">
+              {% else %}
+                  <span class="tesseract_red">
+              {% endif %}
+                {{ lecturer_word[0] + " "}}
+              </span>
+            {% endfor %}
+        </p>
       </section>
 {% endblock %}
