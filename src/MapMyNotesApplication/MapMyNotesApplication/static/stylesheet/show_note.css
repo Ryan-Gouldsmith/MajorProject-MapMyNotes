@@ -42,3 +42,17 @@ img {
 .btn{
   width:140px;
 }
+@media(max-width:768px){
+  img{
+    width:90%;
+  }
+  .right{
+    width:100%;
+  }
+  .meta-data-card{
+    width:90%;
+  }
+  .calendar_link{
+    margin-bottom:20px;
+  }
+}

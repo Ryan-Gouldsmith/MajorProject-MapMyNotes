@@ -6,9 +6,9 @@
 {% endblock %}
 {% block content %}
   <h1 class="title_strapline">View all of your notes </h1>
-  <section class="notes">
+  <section class="row notes">
   {% for note in notes %}
-    <div class="note">
+    <div class="block note">
       <p class="title"> {{ note.meta_data.title }} </p>
       <p class="note_module">{{ note.meta_data.module_code.module_code  }} </p>
       <p class="lecturer"> By {{ note.meta_data.lecturer }} </p>
