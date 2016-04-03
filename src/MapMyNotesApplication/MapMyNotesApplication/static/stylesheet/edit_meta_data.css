@@ -1,9 +1,3 @@
-.temp_uploaded_image{
-  margin-right:auto;
-  display:inline-block;
-  padding-right:2%;
-  width:25%;
-}
 form {
   vertical-align: top;
   width:50%;
@@ -18,13 +12,19 @@ form input[type="text"]{
   width:93%;
   padding:10px;
 }
-.suggestion_message{
-  font-weight: bold;
+.strapline_title{
+  text-align: center;
+}
+.uploaded_image{
+  margin-right:auto;
+  display:inline-block;
+  padding-right:2%;
+  width:25%;
 }
 @media(max-width:768px){
-  .temp_uploaded_image {
+  .uploaded_image {
     padding-left:10px;
     padding-top:26px;
-    width:44%;
+    width:50%;
   }
 }

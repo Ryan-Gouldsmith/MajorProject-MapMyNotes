@@ -1,20 +1,13 @@
-main {
-  background-color: #e8e8e8;
-}
-
 img {
-  width:50%;
-  height:50%;
+  width:40%;
   margin-left:auto;
   margin-right:auto;
-  display:block;
+  display:inline-block;
 }
 .meta-data-card{
-  width:30%;
+  background-color: #ECEFF1;
+  width:60%;
   height:30%;
-  background-color: white;
-  margin-left:auto;
-  margin-right:auto;
 }
 .meta-data-card h3 {
   text-align:center;
@@ -24,4 +17,42 @@ img {
   margin-left:auto;
   margin-right:auto;
   width:80%;
+}
+.title {
+  text-align:center;
+}
+.right{
+  width:50%;
+  vertical-align: top;
+  display: inline-block;
+}
+.delete_note{
+  background-color:#B71C1C;
+  color:white;
+  border:none;
+}
+.saved_to_cal{
+  font-weight: bold;
+}
+.calendar_link{
+  width:30%;
+  text-align: center;
+  text-decoration: none
+}
+.btn{
+  width:140px;
+}
+@media(max-width:768px){
+  img{
+    width:90%;
+  }
+  .right{
+    width:100%;
+  }
+  .meta-data-card{
+    width:90%;
+  }
+  .calendar_link{
+    margin-bottom:20px;
+  }
 }

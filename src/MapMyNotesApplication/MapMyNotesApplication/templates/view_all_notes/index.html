@@ -1,12 +1,18 @@
 {% extends "root.html" %}
+{% block head %}
+  {{super()}}
+  <link href="{{ url_for('static', filename='stylesheet/view_all_notes.css')}}" rel="stylesheet" >
+
+{% endblock %}
 {% block content %}
-  <section class="notes">
+  <h1 class="title_strapline">View all of your notes </h1>
+  <section class="row notes">
   {% for note in notes %}
-    <div class="note">
+    <div class="block note">
       <p class="title"> {{ note.meta_data.title }} </p>
       <p class="note_module">{{ note.meta_data.module_code.module_code  }} </p>
       <p class="lecturer"> By {{ note.meta_data.lecturer }} </p>
-      <a href="{{ url_for('shownote.show_note',note_id=note.id) }}" class="note_link">View Note </a>
+      <a href="{{ url_for('shownote.show_note',note_id=note.id) }}" class="note_link btn">View Note </a>
     </div>
   {% endfor %}
   </section>
