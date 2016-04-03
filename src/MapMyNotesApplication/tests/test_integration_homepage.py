@@ -97,10 +97,10 @@ class TestIntegrationHomepage(object):
 
         response = self.app.get("/")
         response_data = response.data.replace("\n", '')
-        assert '<section class="events">' in response_data
-        assert '<div class="event">' in response_data
+        assert '<section class="row events">' in response_data
+        assert '<div class="block event">' in response_data
         assert '<p class="summary">Test Example</p>' in response_data
-        assert '<a href="https://www.google.com/calendar/event?testtest">View event</a>' in response_data
+        assert '<a href="https://www.google.com/calendar/event?testtest" class="link">View event</a>' in response_data
 
     def test_credentials_not_in_session_return_blank_homepage(self):
         response = self.app.get("/")
