@@ -2,12 +2,12 @@
 
 {% block results %}
   {% if notes %}
-    <p class="searched"> You searched for "{{ searched }}" </p>
-    <div class="notes">
+    <p class="searched"> You searched for <span class="item">"{{ searched }}"</span></p>
+    <div class="notes row">
       {% for note in notes %}
-        <div class="note">
-          <p class='note_title'> Lecture Title: {{ note.meta_data.title }} </p>
-          <a href="{{ url_for('shownote.show_note', note_id=note.id)}}" class="view_notes"> View note </a>
+        <div class="note block">
+          <p class='note_title'>{{ note.meta_data.title }} </p>
+          <a href="{{ url_for('shownote.show_note', note_id=note.id)}}" class="view_notes link"> View note </a>
         </div>
         {% endfor %}
     </div>

@@ -12,5 +12,6 @@ def view_all_notes():
         return redirect(url_for('homepage.home_page_route'))
 
     user_id = session_helper.return_user_id(session)
+    print user_id
     notes = Note.query.filter(Note.user_id == user_id).all()
     return render_template("/view_all_notes/index.html", notes=notes)
