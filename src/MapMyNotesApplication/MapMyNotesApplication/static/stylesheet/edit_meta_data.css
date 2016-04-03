@@ -1,0 +1,30 @@
+form {
+  vertical-align: top;
+  width:50%;
+  display:inline-block;
+  padding-right:50px;
+}
+form label {
+  width:97%;
+  display:inline-block;
+}
+form input[type="text"]{
+  width:93%;
+  padding:10px;
+}
+.strapline_title{
+  text-align: center;
+}
+.uploaded_image{
+  margin-right:auto;
+  display:inline-block;
+  padding-right:2%;
+  width:25%;
+}
+@media(max-width:768px){
+  .uploaded_image {
+    padding-left:10px;
+    padding-top:26px;
+    width:50%;
+  }
+}

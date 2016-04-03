@@ -8,7 +8,6 @@
 
 {% block content %}
     <h1 class="strapline"> Showing note {{note_image}} </h1>
-    {% block form %}
     <form action="{{ url_for('metadata.add_meta_data', note_image=note_image) }}" method="post">
       <label class="module_label">Module Code:
         <input type="text" class="module_code_data" name="module_code_data" >
@@ -19,16 +18,15 @@
         <label class="location_name_label"> Location of the lecture:
       <input type="text" class="location_name" name="location_data">
       </label>
-      <label class='date_label'> Date of lecture
+      <label class='date_label'> Date of lecture:
         <input type="text" class="date" name="date_data">
       </label>
-      <label class='title_label'> Title
+      <label class='title_label'> Title:
         <input type="text" class="title" name="title_data">
       </label>
       <input type="submit" class="submit btn" name="submit" >
     </form>
-    {% endblock %}
-        <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="temp_uploaded_image"/ class="temp_uploaded_note">
+    <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="temp_uploaded_image"/ class="temp_uploaded_note">
       <section class="suggestions row">
         <p class="suggestion_test">Below are suggesting based on analysis we did on your note:</p>
         <div class="suggestion block">
