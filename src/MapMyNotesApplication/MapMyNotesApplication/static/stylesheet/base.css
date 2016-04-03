@@ -83,6 +83,7 @@ nav a:hover{
     text-align:center;
     vertical-align:top
 }
+/* Got the media query size from Bootstraps guide to media queries. REFERENCE: http://getbootstrap.com/css/ */
 @media(max-width:768px){
   nav {
     width:25%;
