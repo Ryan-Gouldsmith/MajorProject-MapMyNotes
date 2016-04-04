@@ -67,3 +67,17 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         assert location == "C11 Hugh Owen"
         assert date == "20 January 2016 15:00"
         assert title == "Title"
+
+    def test_ensure_the_fields_have_required_key(self):
+        self.driver.get(self.get_server_url() + "/metadata/edit/" + str(self.note.id))
+        module_code = self.driver.find_element_by_class_name("module_code").get_attribute('required')
+        lecturer = self.driver.find_element_by_class_name("lecturer").get_attribute('required')
+        location = self.driver.find_element_by_class_name("location").get_attribute('required')
+        date = self.driver.find_element_by_class_name("date").get_attribute('required')
+        title = self.driver.find_element_by_class_name('title').get_attribute('required')
+
+        assert module_code == "true"
+        assert lecturer == "true"
+        assert location == "true"
+        assert date == "true"
+        assert title == "true"

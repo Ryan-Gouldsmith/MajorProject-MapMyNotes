@@ -18,13 +18,17 @@ metadata = Blueprint('metadata', __name__)
 @metadata.route("/metadata/add/<note_image>", methods=["POST"])
 def add_meta_data(note_image):
     session_helper = SessionHelper()
-    print session
     if session_helper.is_user_id_in_session(session) is False:
         return redirect(url_for('homepage.home_page_route'))
 
     if request.method == "POST":
         if check_all_params_exist(request.form) is False:
-            return 'Some fields are missing'
+            session['errors'] = "Some fields are missing"
+            return redirect(url_for('fileupload.show_image', note_image=note_image))
+
+        if date_formatted_correctly(request.form['date_data']) is False:
+            session['errors'] = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
+            return redirect(url_for('fileupload.show_image', note_image=note_image))
 
         module_code_data = request.form['module_code_data'].upper()
 
@@ -85,6 +89,12 @@ def add_meta_data(note_image):
 @metadata.route("/metadata/edit/<note_id>", methods=["GET", "POST"])
 def edit_meta_data(note_id):
     if request.method == "GET":
+        errors = None
+        session_helper = SessionHelper()
+        if session_helper.errors_in_session(session):
+            errors = session_helper.get_errors(session)
+            session_helper.delete_session_errors(session)
+
         note = Note.query.get(note_id)
         module_code = note.meta_data.module_code.module_code
         lecturer = note.meta_data.lecturer
@@ -92,11 +102,16 @@ def edit_meta_data(note_id):
         date = note.meta_data.date.strftime("%d %B %Y %H:%M")
         title = note.meta_data.title
 
-        return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, title=title, note_image=note.image_path)
+        return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, title=title, note_image=note.image_path, errors=errors)
 
     elif request.method == "POST":
-        if not check_all_params_exist(request.form):
-            return 'Some fields are missing'
+        if check_all_params_exist(request.form) is False:
+            session['errors'] = "Some fields are missing"
+            return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
+
+        if date_formatted_correctly(request.form['date_data']) is False:
+            session['errors'] = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
+            return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
 
         module_code_data = request.form['module_code_data'].upper()
 
@@ -139,6 +154,11 @@ def check_all_params_exist(params):
     if params["module_code_data"] is None or params['lecturer_name_data'] is None or params['location_data'] is None or params['date_data'] is None or params['title_data'] is None:
         return False
 
+    # REFERENCE isspace checks for empty spaces http://stackoverflow.com/questions/2405292/how-to-check-if-text-is-empty-spaces-tabs-newlines-in-python
+
+    if params['module_code_data'].isspace() or params['lecturer_name_data'].isspace() or params['location_data'].isspace() or params['date_data'].isspace() or params['title_data'].isspace():
+        return False
+
     return True
 
 
@@ -170,3 +190,13 @@ def add_url_to_event(google_calendar_service, google_service, note_url, event, h
     google_request = google_calendar_service.add_url_to_event_description(google_service, note_url, event)
 
     return google_calendar_service.execute_request(google_request, http_auth)
+
+"""
+REFERENCE: http://stackoverflow.com/questions/16870663/how-do-i-validate-a-date-string-format-in-python No build in function so I needed to see how I could catch the ValueError
+"""
+def date_formatted_correctly(date):
+    try:
+        datetime.strptime(date, "%d %B %Y %H:%M")
+        return True
+    except ValueError:
+        return False

@@ -89,12 +89,7 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         }
          ]
         }
-        #self.old_session = SessionHelper.check_if_session_contains_credentials
-        #SessionHelper.check_if_session_contains_credentials = mock.Mock(return_value=True)
-        #self.old_cred = SessionHelper.return_session_credentials
-        #SessionHelper.return_session_credentials = mock.Mock(return_value = self.credentials_oauth.to_json())
-
-        #Oauth_Service.authorise = mock.Mock(return_value = self.oauth_return )
+        
         self.patch = mock.patch.object(SessionHelper, "check_if_session_contains_credentials")
         self.cred_mock = self.patch.start()
         self.cred_mock.return_value = True
@@ -114,6 +109,10 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         self.tesseract_patch = mock.patch.object(TesseractHelper, 'get_confidence_and_words_from_image')
         self.user_mock = self.tesseract_patch.start()
         self.user_mock.return_value = [[(u'CS4192250:', 75), (u'A', 88), (u't-.tLe.', 72), (u'.9oes', 72), (u'here\n\n', 81)], [(u'Date:', 73), (u'29', 93), (u'/3/2016', 83), (u'15..', 76), (u'e0\n\n', 63)], [(u'By:', 69), (u'A', 89), (u'c".crlain', 65), (u'doc.tor', 74), (u'tiHe\n\n', 75)]]
+
+        self.errors_in_session_patch = mock.patch.object(SessionHelper, "errors_in_session")
+        self.errors_in_session_mock = self.errors_in_session_patch.start()
+        self.errors_in_session_mock.return_value = False
 
         return app
 
@@ -244,3 +243,17 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         assert date[1].value_of_css_property("color") == green
         assert date[2].value_of_css_property("color") == green
         assert date[3].value_of_css_property("color") == green
+
+    def test_ensure_the_fields_have_required_key(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        module_code = self.driver.find_element_by_class_name("module_code_data").get_attribute('required')
+        lecturer = self.driver.find_element_by_class_name("lecturer_name").get_attribute('required')
+        location = self.driver.find_element_by_class_name("location_name").get_attribute('required')
+        date = self.driver.find_element_by_class_name("date").get_attribute('required')
+        title = self.driver.find_element_by_class_name('title').get_attribute('required')
+
+        assert module_code == "true"
+        assert lecturer == "true"
+        assert location == "true"
+        assert date == "true"
+        assert title == "true"

@@ -9,7 +9,7 @@ class Note(database.Model):
 
     __tablename__ = "notes"
     id = Column(Integer, primary_key=True)
-    image_path = Column(String(150))
+    image_path = Column(String(150), nullable=False)
     note_meta_data_id = Column(Integer, ForeignKey(Note_Meta_Data.id))
     calendar_url = Column(String(256))
     user_id = Column(Integer, ForeignKey(User.id))
@@ -20,6 +20,10 @@ class Note(database.Model):
         self.user_id = user_id
 
     def save(self):
+        if len(self.image_path) > 150:
+            return False
+        if self.calendar_url is not None and len(self.calendar_url) > 256:
+            return False
         database.session.add(self)
         database.session.commit()
 
