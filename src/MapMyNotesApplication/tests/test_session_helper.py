@@ -95,3 +95,11 @@ class TestSessionHelper(TestCase):
         session_helper.delete_session_errors(session)
         in_session = 'errors' in session
         assert in_session is False
+
+    def test_setting_errors_in_session_successfully_sets_session(self):
+        session_helper = SessionHelper()
+        with self.client.session_transaction() as session:
+            session_helper.set_errors_in_session(session, "test")
+
+        errors_value = session['errors']
+        assert errors_value == "test"

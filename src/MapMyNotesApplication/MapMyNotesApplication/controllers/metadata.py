@@ -14,25 +14,29 @@ from dateutil import parser, tz
 
 metadata = Blueprint('metadata', __name__)
 
+POST = "POST"
+GET = "GET"
 
-@metadata.route("/metadata/add/<note_image>", methods=["POST"])
+@metadata.route("/metadata/add/<note_image>", methods=[POST])
 def add_meta_data(note_image):
     session_helper = SessionHelper()
     if session_helper.is_user_id_in_session(session) is False:
         return redirect(url_for('homepage.home_page_route'))
 
-    if request.method == "POST":
+    if request.method == POST:
         if check_all_params_exist(request.form) is False:
-            session['errors'] = "Some fields are missing"
+            error = "Some fields are missing"
+            session_helper.set_errors_in_session(session, error)
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
         if date_formatted_correctly(request.form['date_data']) is False:
-            session['errors'] = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
+            error = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
+            session_helper.set_errors_in_session(session, error)
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
         any_errors, errors = check_all_params_are_less_than_schema_length(request.form)
         if any_errors is True:
-            session['errors'] = errors
+            session_helper.set_errors_in_session(session, errors)
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
         module_code_data = request.form['module_code_data'].upper()
@@ -40,6 +44,7 @@ def add_meta_data(note_image):
         location_data = request.form['location_data']
         date_data = request.form['date_data']
         title_data = request.form['title_data']
+
         file_path = "MapMyNotesApplication/upload/" + note_image
 
         if module_code_data and os.path.isfile(file_path):
@@ -86,9 +91,9 @@ def add_meta_data(note_image):
     return redirect(url_for('fileupload.error_four_zero_four'))
 
 
-@metadata.route("/metadata/edit/<note_id>", methods=["GET", "POST"])
+@metadata.route("/metadata/edit/<note_id>", methods=[GET, POST])
 def edit_meta_data(note_id):
-    if request.method == "GET":
+    if request.method == GET:
         errors = None
         session_helper = SessionHelper()
         if session_helper.errors_in_session(session):
@@ -104,7 +109,7 @@ def edit_meta_data(note_id):
 
         return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, title=title, note_image=note.image_path, errors=errors)
 
-    elif request.method == "POST":
+    elif request.method == POST:
         if check_all_params_exist(request.form) is False:
             session['errors'] = "Some fields are missing"
             return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
@@ -149,6 +154,7 @@ def edit_meta_data(note_id):
 
         return redirect(url_for('shownote.show_note',note_id=note_id))
 
+#TODO: Move the below functions to a helper class?
 
 def check_all_params_exist(params):
     if params["module_code_data"] is None or params['lecturer_name_data'] is None or params['location_data'] is None or params['date_data'] is None or params['title_data'] is None:
