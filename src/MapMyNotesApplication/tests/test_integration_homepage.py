@@ -6,7 +6,6 @@ import mock
 from googleapiclient.http import HttpMock, HttpRequest
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
-from MapMyNotesApplication.controllers.homepage import cookie_in_session
 from MapMyNotesApplication.models.user import User
 import os
 import pprint

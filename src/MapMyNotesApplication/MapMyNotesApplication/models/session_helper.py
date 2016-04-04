@@ -20,3 +20,6 @@ class SessionHelper(object):
 
     def delete_session_errors(self, session):
         del session['errors']
+
+    def set_errors_in_session(self, session, errors):
+        session['errors'] = errors

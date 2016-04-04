@@ -57,7 +57,7 @@ def file_upload_index_route():
             structuring_element_kernel = binarise.get_structuring_element(75,1)
             horizontal_lines = binarise.erode_image(horizontal_lines, structuring_element_kernel)
             horizontal_lines = binarise.dilate_image(horizontal_lines, structuring_element_kernel)
-            #Thats the morphological dilatate?
+
             horizontal_lines = binarise.dilate_image(horizontal_lines, structuring_element_kernel)
 
             modified_threshold_mask = binarise.convert_black_threshold_to_white(horizontal_lines)
@@ -94,10 +94,8 @@ def file_upload_index_route():
 def show_image(note_image):
     file_upload_service = FileUploadService()
     file_path = FILE_UPLOAD_PATH + note_image
-
     errors = None
     session_helper = SessionHelper()
-
     if session_helper.errors_in_session(session):
         errors = session_helper.get_errors(session)
         session_helper.delete_session_errors(session)
@@ -126,6 +124,8 @@ def show_image(note_image):
 
             # Google requires it to be in  RFC 3339 format. http://stackoverflow.com/questions/8556398/generate-rfc-3339-timestamp-in-python Reference.
             # Additional reference on how to concat two date times so that I can start the date from midnight-almost mid-ngiht the next day. Modified for my own usage. http://stackoverflow.com/questions/9578906/easiest-way-to-combine-date-and-time-strings-to-single-datetime-object-using-pyt
+
+            #TODO DRY with calendar things ?
             end_time = datetime.strptime('23:59', "%H:%M").time()
             start_time = datetime.strptime("00:00", "%H:%M").time()
 
@@ -151,6 +151,7 @@ def show_image(note_image):
     tesseract_helper = TesseractHelper()
     tesseract_helper.set_tiff_image_for_analysis(tif_path)
     data = tesseract_helper.get_confidence_and_words_from_image()
+    #TODO Add functions to get the lines easier?
     tesseract_module_code = data[0][0]
     tesseract_title = data[0][1:]
     tesseract_date = data[1]
