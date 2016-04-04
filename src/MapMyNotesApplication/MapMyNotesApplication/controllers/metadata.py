@@ -30,16 +30,16 @@ def add_meta_data(note_image):
             session['errors'] = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
+        any_errors, errors = check_all_params_are_less_than_schema_length(request.form)
+        if any_errors is True:
+            session['errors'] = errors
+            return redirect(url_for('fileupload.show_image', note_image=note_image))
+
         module_code_data = request.form['module_code_data'].upper()
-
         lecturer_name_data = request.form['lecturer_name_data']
-
         location_data = request.form['location_data']
-
         date_data = request.form['date_data']
-
         title_data = request.form['title_data']
-
         file_path = "MapMyNotesApplication/upload/" + note_image
 
         if module_code_data and os.path.isfile(file_path):
@@ -113,16 +113,16 @@ def edit_meta_data(note_id):
             session['errors'] = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
             return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
 
+        any_errors, errors = check_all_params_are_less_than_schema_length(request.form)
+        if any_errors is True:
+            session['errors'] = errors
+            return redirect(url_for('metadata.edit_meta_data', note_image=note_image))
+
         module_code_data = request.form['module_code_data'].upper()
-
         lecturer_name= request.form['lecturer_name_data']
-
         location = request.form['location_data']
-
         date = request.form['date_data']
-
         title = request.form['title_data']
-
         module_code = Module_Code.find_id_by_module_code(module_code_data)
         date_time = convert_string_date_to_datetime(date)
 
@@ -160,6 +160,23 @@ def check_all_params_exist(params):
         return False
 
     return True
+
+
+def check_all_params_are_less_than_schema_length(params):
+    errors = []
+    if len(params["module_code_data"]) > 50:
+        errors.append("Module code length too long, max 50 characters.")
+
+    if len(params['lecturer_name_data']) > 100:
+        errors.append("Lecture name is too long, max length 100 characters")
+
+    if len(params['location_data']) > 100:
+        errors.append("Location data too long, max length 100 characters")
+
+    if len(params['title_data']) > 100:
+        errors.appen("title data too long, max length 100 characters")
+
+    return (len(errors) > 0, errors)
 
 
 def convert_string_date_to_datetime(date):
