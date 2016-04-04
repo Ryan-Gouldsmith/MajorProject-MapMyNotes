@@ -65,3 +65,33 @@ class TestSessionHelper(TestCase):
             session.clear()
 
         assert session_helper.is_user_id_in_session(session) is False
+
+    def test_errors_in_session_returns_true(self):
+        session_helper = SessionHelper()
+        with self.client.session_transaction() as session:
+            session['errors'] = 'errors!'
+
+        assert session_helper.errors_in_session(session) is True
+
+    def test_errors_in_session_returns_false(self):
+        session_helper = SessionHelper()
+        with self.client.session_transaction() as session:
+            session.clear()
+
+        assert session_helper.errors_in_session(session) is False
+
+    def test_get_errors_returns_correct_errors(self):
+        session_helper = SessionHelper()
+        with self.client.session_transaction() as session:
+            session['errors'] = 'errors!'
+
+        assert session_helper.get_errors(session) == "errors!"
+
+    def test_delete_session_errors_removes_them_properly(self):
+        session_helper = SessionHelper()
+        with self.client.session_transaction() as session:
+            session['errors'] = 'errors!'
+
+        session_helper.delete_session_errors(session)
+        in_session = 'errors' in session
+        assert in_session is False

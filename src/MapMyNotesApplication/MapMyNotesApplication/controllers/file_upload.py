@@ -95,6 +95,13 @@ def show_image(note_image):
     file_upload_service = FileUploadService()
     file_path = FILE_UPLOAD_PATH + note_image
 
+    errors = None
+    session_helper = SessionHelper()
+
+    if session_helper.errors_in_session(session):
+        errors = session_helper.get_errors(session)
+        session_helper.delete_session_errors(session)
+
     if not file_upload_service.file_exists(file_path):
         return redirect(url_for('fileupload.error_four_zero_four'))
 
@@ -105,7 +112,6 @@ def show_image(note_image):
         exif_data = exif_parser.parse_exif()
         suggested_date = exif_parser.get_image_date()
 
-    session_helper = SessionHelper()
     if session_helper.check_if_session_contains_credentials(session) is True:
         service = Oauth_Service()
         session_credentials = session_helper.return_session_credentials(session)
@@ -143,17 +149,20 @@ def show_image(note_image):
     tiff_image = filename_test + ".tif"
     tif_path = FILE_UPLOAD_PATH + tiff_image
     tesseract_helper = TesseractHelper()
-    print tif_path
     tesseract_helper.set_tiff_image_for_analysis(tif_path)
     data = tesseract_helper.get_confidence_and_words_from_image()
-    print data
     tesseract_module_code = data[0][0]
     tesseract_title = data[0][1:]
     tesseract_date = data[1]
     tesseract_lecturer = data[2]
 
+    """
+    Reference for empty string regex: http://stackoverflow.com/questions/406230/regular-expression-to-match-line-that-doesnt-contain-a-word
 
-    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date, events=events, tesseract_module_code=tesseract_module_code, tesseract_title=tesseract_title, tesseract_date=tesseract_date, tesseract_lecturer=tesseract_lecturer)
+    Used this tool to help to create my own too:
+    http://regexr.com/
+    """
+    return render_template("/file_upload/show_image.html",note_image=note_image, suggested_date=suggested_date, events=events, tesseract_module_code=tesseract_module_code, tesseract_title=tesseract_title, tesseract_date=tesseract_date, tesseract_lecturer=tesseract_lecturer, errors=errors)
 
 
 # Not happy with this function, I think it will need to be looked into further down the down. Surely there's a better way than this. For some reason the send from directory did not work.... here https://github.com/mitsuhiko/flask/issues/1169
