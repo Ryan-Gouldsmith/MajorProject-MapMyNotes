@@ -1,21 +1,20 @@
 from flask import Blueprint, render_template, request, url_for, redirect, current_app, session
-
 import httplib2
-
-
 from MapMyNotesApplication.models.google_plus_service import Google_Plus_Service
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from MapMyNotesApplication.models.user import User
+from MapMyNotesApplication.models.session_helper import SessionHelper
 
 user = Blueprint('user', __name__)
 
 @user.route('/signin')
 def signin():
-    if 'credentials' not in session:
+    session_helper = SessionHelper()
+    if session_helper.check_if_session_contains_credentials(session) is False:
         return redirect(url_for('oauth.oauthsubmit'))
 
     service = Oauth_Service()
-    session_credentials = session['credentials']
+    session_credentials = session_helper.return_session_credentials(session)
     credentials = service.create_credentials_from_json(session_credentials)
 
     http_auth = service.authorise(credentials, httplib2.Http())

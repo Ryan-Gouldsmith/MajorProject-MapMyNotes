@@ -1,12 +1,10 @@
 from flask import Blueprint, render_template, request, url_for, redirect, current_app, session
-
 import httplib2
-
 from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
 from MapMyNotesApplication.models.user import User
 from MapMyNotesApplication.models.oauth_service import Oauth_Service
+from MapMyNotesApplication.models.session_helper import SessionHelper
 from datetime import datetime, timedelta
-
 import json
 import os
 homepage = Blueprint('homepage', __name__)
@@ -14,10 +12,10 @@ homepage = Blueprint('homepage', __name__)
 
 @homepage.route("/")
 def home_page_route():
-    if cookie_in_session() is  True:
-        email_address = "foo"
+    session_helper = SessionHelper()
+    if session_helper.check_if_session_contains_credentials(session) is True:
         service = Oauth_Service()
-        session_credentials = session['credentials']
+        session_credentials = session_helper.return_session_credentials(session)
         credentials = service.create_credentials_from_json(session_credentials)
         http_auth = service.authorise(credentials, httplib2.Http())
         # https://developers.google.com/identity/protocols/OAuth2WebServer#example Reference for the access token expiration
@@ -39,5 +37,3 @@ def home_page_route():
             return render_template('/homepage/index.html', events=events, email_address=email_address)
 
     return render_template('/homepage/index.html')
-def cookie_in_session():
-    return "credentials" in session

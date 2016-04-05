@@ -6,21 +6,24 @@
 
 {% block content %}
 <h1 class="strapline_title"> Edit Meta data </h1>
+  {% if errors  %}
+    <p class="error">Error uploading the form data: {{ errors }}</p>
+  {% endif %}
   <form class="edit_form" method="post">
     <label class="module_code_label"> Module Code:
-      <input type="text" class="module_code" value="{{ module_code}}" name="module_code_data">
+      <input type="text" class="module_code" value="{{ module_code}}" name="module_code_data" required="required" pattern="^(?!\s+).+" title="Must contain characters" >
     </label>
     <label class="lecturer_label"> Lecturer's Name:
-      <input type="text" class="lecturer" value="{{ lecturer }}" name="lecturer_name_data">
+      <input type="text" class="lecturer" value="{{ lecturer }}" name="lecturer_name_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
     </label>
     <label class="location_label"> Location of the lecture:
-      <input type="text" class="location" value="{{ location }}" name="location_data" >
+      <input type="text" class="location" value="{{ location }}" name="location_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
     </label>
     <label class="date_label"> Date of lecture:
-      <input type="text" class="date" value="{{ date }}" name="date_data">
+      <input type="text" class="date" value="{{ date }}" name="date_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
     </label>
     <label class="title_label"> Title
-      <input type="text" class="title" value="{{ title }}" name="title_data">
+      <input type="text" class="title" value="{{ title }}" name="title_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
     </label>
     <input type="submit" class="submit btn" name="submit" >
   </form>
