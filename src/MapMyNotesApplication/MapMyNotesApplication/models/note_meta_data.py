@@ -7,16 +7,14 @@ from sqlalchemy.orm import relationship
 class Note_Meta_Data(database.Model):
 
     __tablename__ = "notes_meta_data"
-    id = Column(Integer, primary_key = True)
-    lecturer = Column(String(100))
-    location = Column(String(100))
+    id = Column(Integer, primary_key=True)
+    lecturer = Column(String(100), nullable=False)
+    location = Column(String(100), nullable=False)
     module_code_id = Column(Integer, ForeignKey(Module_Code.id))
-    date = Column(DateTime)
-    title = Column(String(100))
+    date = Column(DateTime, nullable=False)
+    title = Column(String(100), nullable=False)
 
     meta_data = relationship("Note", backref="meta_data")
-
-
 
     def __init__(self, lecturer_name, module_code, location, date, title):
         self.lecturer = lecturer_name
@@ -26,7 +24,7 @@ class Note_Meta_Data(database.Model):
         self.title = title
 
     def save(self):
-        if len(self.lecturer) > 100 or len(self.location) > 100:
+        if len(self.lecturer) > 100 or len(self.location) > 100 or len(self.title) > 100:
             return False
 
         database.session.add(self)
@@ -36,7 +34,6 @@ class Note_Meta_Data(database.Model):
     def update_module_code_id(self, module_code_id):
         self.module_code_id = module_code_id
         self.save()
-
 
     @staticmethod
     def find_meta_data(meta_data):
