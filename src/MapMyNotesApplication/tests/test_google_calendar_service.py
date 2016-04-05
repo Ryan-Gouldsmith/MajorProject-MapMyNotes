@@ -76,7 +76,7 @@ class TestCalendarService(TestCase):
 
         request = calendar_service.get_list_of_events(service)
 
-        expected_uri = "https://www.googleapis.com/calendar/v3/calendars/primary/events?alt=json"
+        expected_uri = "https://www.googleapis.com/calendar/v3/calendars/primary/events?timeZone=Europe%2FLondon&alt=json"
         assert expected_uri in request.uri
 
     def test_executing_the_request_to_return_events_from_calendar(self):
