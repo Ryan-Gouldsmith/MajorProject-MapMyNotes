@@ -103,3 +103,11 @@ class TestSessionHelper(TestCase):
 
         errors_value = session['errors']
         assert errors_value == "test"
+
+    def test_setting_user_id_in_session_successfully_sets_key(self):
+        session_helper = SessionHelper()
+        with self.client.session_transaction() as session:
+            session_helper.save_user_id_to_session(session, 4)
+
+        user_id = session['user_id']
+        assert user_id is 4

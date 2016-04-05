@@ -44,3 +44,15 @@ class TestUser(TestCase):
 
         assert find_user.id == 1
         assert find_user.email_address == "test@mail.co.uk"
+
+    def test_find_a_user_by_email_address_should_return_user(self):
+        user = User("test@mail.co.uk")
+        user.save()
+
+        found_user = User.find_user_by_email_address("test@mail.co.uk")
+        assert found_user.id == user.id
+
+    def test_finding_a_user_by_email_address_which_doesnt_exist(self):
+        found_user = User.find_user_by_email_address('nonexistant@test.co.uk')
+
+        assert found_user is None

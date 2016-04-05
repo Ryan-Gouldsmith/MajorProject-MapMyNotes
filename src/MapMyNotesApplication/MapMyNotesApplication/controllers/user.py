@@ -29,8 +29,11 @@ def signin():
 
     email_address = google_plus_service.parse_response_for_email(google_plus_response)
 
-    user = User(email_address)
-    user.save()
-    session['user_id'] = user.id
+    user = User.find_user_by_email_address(email_address)
+    if user is None:
+        user = User(email_address)
+        user.save()
+
+    session_helper.save_user_id_to_session(session, user.id)
 
     return redirect(url_for('homepage.home_page_route'))
