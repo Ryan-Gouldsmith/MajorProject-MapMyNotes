@@ -16,3 +16,7 @@ class User(database.Model):
             return False
         database.session.add(self)
         database.session.commit()
+
+    @staticmethod
+    def find_user_by_email_address(email_address):
+        return User.query.filter_by(email_address=email_address).one_or_none()

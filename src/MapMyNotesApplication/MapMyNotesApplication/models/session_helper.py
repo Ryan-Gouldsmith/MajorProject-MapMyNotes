@@ -23,3 +23,6 @@ class SessionHelper(object):
 
     def set_errors_in_session(self, session, errors):
         session['errors'] = errors
+
+    def save_user_id_to_session(self, session, user_id):
+        session['user_id'] = user_id
