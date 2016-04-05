@@ -21,9 +21,9 @@ class Google_Calendar_Service(object):
             if self.check_dates_are_correct(start=start, end=end) is False:
                 return None
 
-            return service.events().list(calendarId="primary", timeMin=start, timeMax=end)
+            return service.events().list(calendarId="primary", timeMin=start, timeMax=end, timeZone="Europe/London")
 
-        return service.events().list(calendarId="primary")
+        return service.events().list(calendarId="primary", timeZone="Europe/London")
 
     def execute_request(self, request, http):
         return request.execute(http=http)
