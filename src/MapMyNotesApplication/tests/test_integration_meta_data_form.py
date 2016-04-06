@@ -19,12 +19,10 @@ http://makina-corpus.com/blog/metier/2013/dry-up-mock-instanciation-with-addclea
 class TestIntegrationMetaDataForm(LiveServerTestCase):
 
     def create_app(self):
-        print "creating app"
-
         app = application
         app.config['LIVESERVER_PORT'] = 5000
         app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = 'Secret_pass_phrase'
+        app.config['SECRET_KEY'] = 'Secret key'
         app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
@@ -89,7 +87,7 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         }
          ]
         }
-        
+
         self.patch = mock.patch.object(SessionHelper, "check_if_session_contains_credentials")
         self.cred_mock = self.patch.start()
         self.cred_mock.return_value = True

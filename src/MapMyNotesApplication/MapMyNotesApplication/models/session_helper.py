@@ -26,3 +26,11 @@ class SessionHelper(object):
 
     def save_user_id_to_session(self, session, user_id):
         session['user_id'] = user_id
+
+    def delete_credentials_from_session(self, session):
+        if self.check_if_session_contains_credentials(session) is True:
+            del session['credentials']
+
+    def delete_user_from_session(self, session):
+        if self.is_user_id_in_session(session) is True:
+            del session['user_id']

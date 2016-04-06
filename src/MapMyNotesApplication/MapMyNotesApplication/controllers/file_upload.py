@@ -27,6 +27,9 @@ FILE_UPLOAD_PATH = "MapMyNotesApplication/upload/"
 
 @fileupload.route("/upload", methods=[GET, POST])
 def file_upload_index_route():
+    session_helper = SessionHelper()
+    if session_helper.check_if_session_contains_credentials(session) is False:
+        return redirect(url_for('homepage.home_page_route'))
     if request.method == POST:
         file = request.files["file"]
         if not file:
@@ -142,7 +145,7 @@ def show_image(note_image):
                 events.append(event)
 
         elif credentials.access_token_expired is True:
-            return redirect(url_for("oauth.oauthsubmit"))
+            return redirect(url_for("logoutblueprint.logout"))
 
     # TESSERACT PARSING HERE
     filename_test, file_extension = os.path.splitext(note_image)
