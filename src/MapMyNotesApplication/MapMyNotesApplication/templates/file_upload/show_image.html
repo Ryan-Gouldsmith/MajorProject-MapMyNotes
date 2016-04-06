@@ -23,7 +23,10 @@
       <input type="text" class="location_name" name="location_data" title="Must contain characters" required="required" pattern='^(?!\s+).+'>
       </label>
       <label class='date_label'> Date of lecture:
-        <input type="text" class="date" name="date_data" required="required" title="Must contain characters" pattern='^(?!\s+).+'>
+        <input type="text" class="date" id="datepicker" name="date_data" required="required" title="Must contain characters" pattern='^(?!\s+).+'>
+      </label>
+      <label class="time_label"> Time of lecture:
+        <input type="text" class="time" id="time" name="time_data" required="required" title="Must contain characters" pattern='^(?!\s+).+'>
       </label>
       <label class='title_label'> Title:
         <input type="text" class="title" name="title_data" required="required" title="Must contain characters" pattern="^(?!\s+).+">
@@ -120,4 +123,8 @@
       {% endif %}
       </div>
       </section>
+      <script type=text/javascript>
+          $('#datepicker').datepicker({dateFormat: "d MM yy"});
+          $('#time').timepicker({'timeFormat': 'H:i'});
+      </script>
 {% endblock %}

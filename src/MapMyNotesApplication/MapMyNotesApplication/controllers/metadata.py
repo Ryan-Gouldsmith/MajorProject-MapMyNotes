@@ -30,7 +30,7 @@ def add_meta_data(note_image):
     http_auth = service.authorise(credentials, httplib2.Http())
 
     if credentials.access_token_expired is True:
-        return redirect(url_for('logoutblueprint.logout'))
+        return redirect(url_for('logout.logout'))
 
     if request.method == POST:
         if check_all_params_exist(request.form) is False:
@@ -39,7 +39,12 @@ def add_meta_data(note_image):
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
         if date_formatted_correctly(request.form['date_data']) is False:
-            error = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
+            error = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016"
+            session_helper.set_errors_in_session(session, error)
+            return redirect(url_for('fileupload.show_image', note_image=note_image))
+
+        if time_formatted_correctly(request.form['time_data']) is False:
+            error = "Wrong time format: should be hour:minute, e.g 13:00"
             session_helper.set_errors_in_session(session, error)
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
@@ -52,6 +57,7 @@ def add_meta_data(note_image):
         lecturer_name_data = request.form['lecturer_name_data']
         location_data = request.form['location_data']
         date_data = request.form['date_data']
+        time_data = request.form['time_data']
         title_data = request.form['title_data']
 
         file_path = "MapMyNotesApplication/upload/" + note_image
@@ -63,7 +69,7 @@ def add_meta_data(note_image):
                 module_code_obj.save()
 
             module_code_id = module_code_obj.id
-            date_time = convert_string_date_to_datetime(date_data)
+            date_time = convert_string_date_and_time_to_datetime(date_data, time_data)
             note_meta_data = Note_Meta_Data(lecturer_name_data, module_code_id, location_data, date_time, title_data)
             note_meta_data.save()
 
@@ -107,7 +113,7 @@ def edit_meta_data(note_id):
     http_auth = service.authorise(credentials, httplib2.Http())
 
     if credentials.access_token_expired is True:
-        return redirect(url_for('logoutblueprint.logout'))
+        return redirect(url_for('logout.logout'))
 
     if request.method == GET:
         errors = None
@@ -119,10 +125,11 @@ def edit_meta_data(note_id):
         module_code = note.meta_data.module_code.module_code
         lecturer = note.meta_data.lecturer
         location = note.meta_data.location
-        date = note.meta_data.date.strftime("%d %B %Y %H:%M")
+        date = note.meta_data.date.strftime("%d %B %Y")
+        time = note.meta_data.date.strftime("%H:%M")
         title = note.meta_data.title
 
-        return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, title=title, note_image=note.image_path, errors=errors)
+        return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, time=time, title=title, note_image=note.image_path, errors=errors)
 
     elif request.method == POST:
         if check_all_params_exist(request.form) is False:
@@ -133,6 +140,11 @@ def edit_meta_data(note_id):
             session['errors'] = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
             return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
 
+        if time_formatted_correctly(request.form['time_data']) is False:
+            error = "Wrong time format: should be hour:minute, e.g 13:00"
+            session_helper.set_errors_in_session(session, error)
+            return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
+
         any_errors, errors = check_all_params_are_less_than_schema_length(request.form)
         if any_errors is True:
             session['errors'] = errors
@@ -141,10 +153,11 @@ def edit_meta_data(note_id):
         module_code_data = request.form['module_code_data'].upper()
         lecturer_name= request.form['lecturer_name_data']
         location = request.form['location_data']
-        date = request.form['date_data']
+        date_data = request.form['date_data']
+        time_data = request.form['time_data']
         title = request.form['title_data']
         module_code = Module_Code.find_id_by_module_code(module_code_data)
-        date_time = convert_string_date_to_datetime(date)
+        date_time = convert_string_date_and_time_to_datetime(date_data, time_data)
 
         if module_code is not None:
             meta_data = Note_Meta_Data(lecturer_name, module_code.id, location, date_time, title)
@@ -172,12 +185,12 @@ def edit_meta_data(note_id):
 #TODO: Move the below functions to a helper class?
 
 def check_all_params_exist(params):
-    if params["module_code_data"] is None or params['lecturer_name_data'] is None or params['location_data'] is None or params['date_data'] is None or params['title_data'] is None:
+    if params["module_code_data"] is None or params['lecturer_name_data'] is None or params['location_data'] is None or params['date_data'] is None or params['title_data'] is None or params['time_data'] is None:
         return False
 
     # REFERENCE isspace checks for empty spaces http://stackoverflow.com/questions/2405292/how-to-check-if-text-is-empty-spaces-tabs-newlines-in-python
 
-    if params['module_code_data'].isspace() or params['lecturer_name_data'].isspace() or params['location_data'].isspace() or params['date_data'].isspace() or params['title_data'].isspace():
+    if params['module_code_data'].isspace() or params['lecturer_name_data'].isspace() or params['location_data'].isspace() or params['date_data'].isspace() or params['title_data'].isspace() or params['time_data'].isspace():
         return False
 
     return True
@@ -200,8 +213,11 @@ def check_all_params_are_less_than_schema_length(params):
     return (len(errors) > 0, errors)
 
 
-def convert_string_date_to_datetime(date):
-    return datetime.strptime(date, "%d %B %Y %H:%M")
+def convert_string_date_and_time_to_datetime(date, time):
+    date = datetime.strptime(date, "%d %B %Y")
+    time = datetime.strptime(time, "%H:%M")
+    date_time = datetime.combine(date.date(), time.time())
+    return date_time
 
 
 def process_time_zone(date_time):
@@ -236,7 +252,14 @@ REFERENCE: http://stackoverflow.com/questions/16870663/how-do-i-validate-a-date-
 """
 def date_formatted_correctly(date):
     try:
-        datetime.strptime(date, "%d %B %Y %H:%M")
+        datetime.strptime(date, "%d %B %Y")
+        return True
+    except ValueError:
+        return False
+
+def time_formatted_correctly(time):
+    try:
+        datetime.strptime(time, "%H:%S")
         return True
     except ValueError:
         return False
