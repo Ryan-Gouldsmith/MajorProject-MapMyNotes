@@ -145,7 +145,7 @@ def show_image(note_image):
                 events.append(event)
 
         elif credentials.access_token_expired is True:
-            return redirect(url_for("logoutblueprint.logout"))
+            return redirect(url_for('logout.logout'))
 
     # TESSERACT PARSING HERE
     filename_test, file_extension = os.path.splitext(note_image)

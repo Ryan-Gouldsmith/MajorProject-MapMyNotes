@@ -19,8 +19,12 @@
     <label class="location_label"> Location of the lecture:
       <input type="text" class="location" value="{{ location }}" name="location_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
     </label>
-    <label class="date_label"> Date of lecture:
-      <input type="text" class="date" value="{{ date }}" name="date_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
+    <label class='date_label'> Date of lecture:
+      <input type="text" class="date" id="datepicker" name="date_data" required="required" title="Must contain characters" pattern='^(?!\s+).+' value="{{ date }}">
+    </label>
+    <label class="time_label"> Time of lecture:
+      <input type="text" class="time" id="time" name="time_data" required="required" title="Must contain characters" pattern='^(?!\s+).+' value="{{ time }}">
+    </label>
     </label>
     <label class="title_label"> Title
       <input type="text" class="title" value="{{ title }}" name="title_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
@@ -28,4 +32,8 @@
     <input type="submit" class="submit btn" name="submit" >
   </form>
   <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="uploaded_image">
+  <script type=text/javascript>
+      $('#datepicker').datepicker({dateFormat: "d MM yy"});
+      $('#time').timepicker({'timeFormat': 'H:i'});
+  </script>
 {% endblock %}

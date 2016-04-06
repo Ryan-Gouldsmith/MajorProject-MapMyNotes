@@ -36,6 +36,6 @@ def home_page_route():
 
             return render_template('/homepage/index.html', events=events, email_address=email_address)
         else:
-            return redirect(url_for('logoutblueprint.logout'))
+            return redirect(url_for('logout.logout'))
 
     return render_template('/homepage/index.html')

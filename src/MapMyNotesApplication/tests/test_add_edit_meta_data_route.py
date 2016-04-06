@@ -127,7 +127,7 @@ class TestAddEditMetaDataRoute(TestCase):
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00", "title_data": "A Title"}
 
         resource = self.client.post('/metadata/add/' + self.image,       content_type='multipart/form-data', data=post_data, follow_redirects=False)
 
@@ -145,7 +145,7 @@ class TestAddEditMetaDataRoute(TestCase):
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -160,7 +160,7 @@ class TestAddEditMetaDataRoute(TestCase):
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
             content_type='multipart/form-data',
             data=post_data, follow_redirects=False)
@@ -179,7 +179,7 @@ class TestAddEditMetaDataRoute(TestCase):
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00", "title_data": "A Title"}
 
         resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
@@ -200,7 +200,7 @@ class TestAddEditMetaDataRoute(TestCase):
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
@@ -228,12 +228,12 @@ class TestAddEditMetaDataRoute(TestCase):
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016","time_data": "16:00","title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=False)
 
-        post_data_second = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        post_data_second = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00", "title_data": "A Title"}
         second_resource = self.client.post("/metadata/add/" + self.second_image,
                 content_type='multipart/form-data',
                 data=post_data_second, follow_redirects=False)
@@ -263,7 +263,7 @@ class TestAddEditMetaDataRoute(TestCase):
 
         note_id = self.note_id
 
-        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00",  "title_data": "A Title"}
 
         response = self.client.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',
         data=meta_data_change, follow_redirects=False)
@@ -278,7 +278,7 @@ class TestAddEditMetaDataRoute(TestCase):
         note_id = self.note_id
 
 
-        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016 16:00", "title_data": "A Title"}
+        meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00", "title_data": "A Title"}
 
         response = self.client.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
@@ -299,7 +299,7 @@ class TestAddEditMetaDataRoute(TestCase):
         changed_meta_data.save()
         changed_meta_data_id = changed_meta_data.id
 
-        meta_data_change = {"module_code_data":"CS361010", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016 16:00", "title_data": "A Title"}
+        meta_data_change = {"module_code_data":"CS361010", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016", "time_data": "16:00", "title_data": "A Title"}
 
         response = self.client.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
@@ -312,7 +312,7 @@ class TestAddEditMetaDataRoute(TestCase):
 
         note_id = self.note_id
 
-        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016 16:00", "title_data": "A Title"}
+        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016", "time_data": "16:00", "title_data": "A Title"}
 
         response = self.client.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
@@ -325,7 +325,7 @@ class TestAddEditMetaDataRoute(TestCase):
 
         note_id = self.note_id
 
-        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016 16:00", "title_data": "A Title"}
+        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016", "time_data": "16:00", "title_data": "A Title"}
 
         response = self.client.post("/metadata/edit/" + str(note_id), content_type='multipart/form-data',data=meta_data_change, follow_redirects=False)
 
@@ -338,7 +338,7 @@ class TestAddEditMetaDataRoute(TestCase):
 
         note_id = self.note_id
 
-        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016 16:00", "title_data": "A Title"}
+        meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016", "time_data": "16:00",  "title_data": "A Title"}
 
         with self.client.session_transaction() as session:
             session.clear()
@@ -356,12 +356,13 @@ class TestAddEditMetaDataRoute(TestCase):
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th  2016 February 16:00", "title_data": "A Title"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th  2016 February 16:00", "time_data": "16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=True)
 
-        assert "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00" in resource.data
+        assert "Wrong date format: should be date month year hour:minute, eg: 20 February 2016" in resource.data
+
 
     @mock.patch.object(Oauth_Service, 'authorise')
     @mock.patch.object(Google_Calendar_Service, 'execute_request')
@@ -371,7 +372,7 @@ class TestAddEditMetaDataRoute(TestCase):
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"  ", "lecturer_name_data": "  ", 'location_data': " ", "date_data": " ", "title_data": " "}
+        post_data = {"module_code_data":"  ", "lecturer_name_data": "  ", 'location_data': " ", "date_data": " ", "time_data": " ", "title_data": " "}
 
         resource = self.client.post("/metadata/add/" + self.image,
                 content_type='multipart/form-data',
@@ -385,15 +386,50 @@ class TestAddEditMetaDataRoute(TestCase):
         self.create_note()
 
         note_id = self.note_id
-        
+
         self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
         self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
         authorise.return_value = self.oauth_return
         execute_request.return_value = self.returned_google_response
 
-        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th  2016 February 16:00", "title_data": "A Title"}
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12th  2016 February 16:00", "time_data": "16:00", "title_data": "A Title"}
         resource = self.client.post("/metadata/edit/" + str(note_id),
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=True)
 
-        assert "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00" in resource.data
+        assert "Wrong date format: should be date month year hour:minute, eg: 20 February 2016" in resource.data
+
+
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_uploading_erroneous_time_format_returns_error(self, execute_request, authorise):
+        self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
+        authorise.return_value = self.oauth_return
+        execute_request.return_value = self.returned_google_response
+
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12  February 2016", "time_data": "16:00:00", "title_data": "A Title"}
+        resource = self.client.post("/metadata/add/" + self.image,
+                content_type='multipart/form-data',
+                data=post_data, follow_redirects=True)
+
+        assert "Wrong time format: should be hour:minute, e.g 13:00" in resource.data
+
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_edit_route_upload_erroneous_time_format_returns_error(self, execute_request, authorise):
+        self.create_note()
+
+        note_id = self.note_id
+
+        self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
+        authorise.return_value = self.oauth_return
+        execute_request.return_value = self.returned_google_response
+
+        post_data = {"module_code_data":"CS31310", "lecturer_name_data": "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00:99", "title_data": "A Title"}
+        resource = self.client.post("/metadata/edit/" + str(note_id),
+                content_type='multipart/form-data',
+                data=post_data, follow_redirects=True)
+
+        assert "Wrong time format: should be hour:minute, e.g 13:00" in resource.data
