@@ -87,8 +87,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
         titles = []
         for title in note_titles:
             titles.append(title.text)
-
-        assert len(notes) is 1
+        assert len(notes) is  1
         assert "CS31310" in module_codes
         assert "/show_note/1" in note_links
         assert "By Mr Foo" in lecturers
