@@ -11,6 +11,7 @@ from MapMyNotesApplication.models.oauth_service import Oauth_Service
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.tesseract_helper import TesseractHelper
 import os
+from selenium.webdriver.common.keys import Keys
 
 
 """https://books.google.co.uk/books?id=Xd0DCgAAQBAJ&pg=PA77&lpg=PA77&dq=flask-testing+liveservertestcase+selenium&source=bl&ots=fhCVat8wgm&sig=2ehfPK93v8fS2NQEq_vzdKYbc-U&hl=en&sa=X&ved=0ahUKEwiCr7ns6KLLAhVCUhQKHVO0DWoQ6AEIPTAF#v=onepage&q=flask-testing%20liveservertestcase%20selenium&f=false Docs are terrible this book may be good. http://www.voidspace.org.uk/python/mock/patch.html#patch-methods-start-and-stop This is great. Helped with the mocking and found it really useful part of the library. It meant that all the other tests passed and I could mock the functions for the acceptance tests.
@@ -255,3 +256,17 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         assert location == "true"
         assert date == "true"
         assert title == "true"
+
+    def test_clicking_on_date_field_shows_datepicker(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        date_field = self.driver.find_element_by_class_name("date").click()
+        calendar_ui = self.driver.find_element_by_class_name("ui-datepicker")
+
+        assert calendar_ui.is_displayed() is True
+
+    def test_clicking_on_time_field_shows_timepicker(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        date_field = self.driver.find_element_by_class_name("time").click()
+        timepicker_ui = self.driver.find_element_by_class_name("ui-timepicker-wrapper")
+
+        assert timepicker_ui.is_displayed() is True

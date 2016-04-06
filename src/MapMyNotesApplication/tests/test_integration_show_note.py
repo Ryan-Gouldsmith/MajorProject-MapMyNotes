@@ -174,7 +174,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("12 February 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -199,7 +201,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("12 February 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -224,7 +228,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("12 February 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -249,7 +255,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("12 February 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -274,7 +282,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("12 February 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -299,7 +309,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("12 February 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -324,7 +336,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("12 February 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -353,7 +367,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("12 February 2016 16:00")
+        date.send_keys("12 February 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("16:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")
@@ -382,7 +398,9 @@ class TestIntegretationShowNote(LiveServerTestCase):
         location_name.send_keys("C11 Hugh Owen")
 
         date = self.driver.find_element_by_class_name("date")
-        date.send_keys("1 December 2016 01:00")
+        date.send_keys("1 December 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.send_keys("01:00")
 
         title = self.driver.find_element_by_class_name("title")
         title.send_keys("Title")

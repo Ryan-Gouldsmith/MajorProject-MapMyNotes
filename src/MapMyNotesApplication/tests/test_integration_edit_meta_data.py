@@ -90,13 +90,15 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         location = self.driver.find_element_by_class_name('location').get_attribute("value")
 
         date = self.driver.find_element_by_class_name("date").get_attribute("value")
+        time = self.driver.find_element_by_class_name("time").get_attribute('value')
 
         title = self.driver.find_element_by_class_name("title").get_attribute("value")
 
         assert module_code_field == 'CS31310'
         assert lecturer_field == "Mr Foo"
         assert location == "C11 Hugh Owen"
-        assert date == "20 January 2016 15:00"
+        assert date == "20 January 2016"
+        assert time == "15:00"
         assert title == "Title"
 
     def test_ensure_the_fields_have_required_key(self):
