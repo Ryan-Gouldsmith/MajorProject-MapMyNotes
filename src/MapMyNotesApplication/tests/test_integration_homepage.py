@@ -250,3 +250,77 @@ class TestIntegrationHomepage(object):
     def test_if_not_authorised_it_doesnt_display_email(self):
         response = self.app.get("/")
         assert 'Welcome, test@gmail.com' not in response.data
+
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_displays_logout_link_if_logged_in(self, execute_request, authorise):
+        user = User("test@gmail.com")
+        database.session.add(user)
+        database.session.commit()
+
+        with self.app.session_transaction() as session:
+            http_mock = HttpMock(self.credentials, {'status': 200})
+            oauth_service = Oauth_Service()
+            file_path = application.config['secret_json_file']
+
+            oauth_service.store_secret_file(file_path)
+            flow = oauth_service.create_flow_from_clients_secret()
+            credentials = oauth_service.exchange_code(flow, "123code",
+            http=http_mock)
+            cred_obj = oauth_service.create_credentials_from_json(credentials.to_json())
+
+            session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
+
+        auth = HttpMock(self.authorised_credentials, {'status' : 200})
+        oauth_return = Oauth_Service.authorise(cred_obj, auth)
+        authorise.return_value = oauth_return
+
+
+        execute_request.return_value = {"items": [
+        {
+        "kind": "calendar#event",
+        "etag": "\"1234567891012345\"",
+        "id": "ideventcalendaritem1",
+        "status": "confirmed",
+        "htmlLink": "https://www.google.com/calendar/event?testtest",
+        "created": "2014-09-10T14:53:25.000Z",
+        "updated": "2014-09-10T14:54:12.748Z",
+        "summary": "Test Example",
+        "creator": {
+            "email": "test@gmail.com",
+            "displayName": "Tester",
+            "self": 'true'
+        },
+        "organizer": {
+            "email": "test@gmail.com",
+            "displayName": "Test",
+            "self": 'true'
+        },
+        "start": {
+            "dateTime": "2016-12-01T01:00:00+01:00"
+        },
+        "end": {
+            "dateTime": "2016-12-01T02:30:00+01:00"
+        },
+        "transparency": "transparent",
+        "visibility": "private",
+        "iCalUID": "123456789@google.com",
+        "sequence": 0,
+        "guestsCanInviteOthers": 'false',
+        "guestsCanSeeOtherGuests": 'false',
+        "reminders": {
+            "useDefault": 'true'
+        }
+        }
+        ]
+        }
+
+        response = self.app.get("/")
+        assert "logout" in response.data
+        assert "/logout" in response.data
+
+    def test_if_not_logged_in_it_doesnt_display_logout(self):
+        response = self.app.get("/")
+        assert "logout" not in response.data
+        assert "/logout" not in response.data
