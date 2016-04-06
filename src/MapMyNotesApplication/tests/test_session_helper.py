@@ -111,3 +111,21 @@ class TestSessionHelper(TestCase):
 
         user_id = session['user_id']
         assert user_id is 4
+
+    def test_deleting_credentials_from_session_removes_them(self):
+        session_helper = SessionHelper()
+        with self.client.session_transaction() as session:
+            session['credentials'] = "credentials"
+
+        session_helper.delete_credentials_from_session(session)
+        credentials_in_session = 'credentials' in session
+        assert credentials_in_session is False
+
+    def test_deleting_user_id_from_session_removes_it(self):
+        session_helper = SessionHelper()
+        with self.client.session_transaction() as session:
+            session['user_id'] = 1
+
+        session_helper.delete_user_from_session(session)
+        user_in_session = 'user_id' in session
+        assert user_in_session is False

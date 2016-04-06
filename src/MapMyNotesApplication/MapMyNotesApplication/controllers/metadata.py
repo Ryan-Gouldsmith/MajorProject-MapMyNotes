@@ -24,6 +24,14 @@ def add_meta_data(note_image):
     if session_helper.is_user_id_in_session(session) is False:
         return redirect(url_for('homepage.home_page_route'))
 
+    service = Oauth_Service()
+    session_credentials = session_helper.return_session_credentials(session)
+    credentials = service.create_credentials_from_json(session_credentials)
+    http_auth = service.authorise(credentials, httplib2.Http())
+
+    if credentials.access_token_expired is True:
+        return redirect(url_for('logoutblueprint.logout'))
+
     if request.method == POST:
         if check_all_params_exist(request.form) is False:
             error = "Some fields are missing"
@@ -64,10 +72,7 @@ def add_meta_data(note_image):
             note = Note(note_image, note_meta_data.id, user.id)
             note.save()
 
-            service = Oauth_Service()
-            session_credentials = session_helper.return_session_credentials(session)
-            credentials = service.create_credentials_from_json(session_credentials)
-            http_auth = service.authorise(credentials, httplib2.Http())
+
 
             google_calendar_service = Google_Calendar_Service()
             note_url = google_calendar_service.prepare_url_for_event(note)
@@ -95,9 +100,17 @@ def add_meta_data(note_image):
 
 @metadata.route("/metadata/edit/<note_id>", methods=[GET, POST])
 def edit_meta_data(note_id):
+    session_helper = SessionHelper()
+    service = Oauth_Service()
+    session_credentials = session_helper.return_session_credentials(session)
+    credentials = service.create_credentials_from_json(session_credentials)
+    http_auth = service.authorise(credentials, httplib2.Http())
+
+    if credentials.access_token_expired is True:
+        return redirect(url_for('logoutblueprint.logout'))
+
     if request.method == GET:
         errors = None
-        session_helper = SessionHelper()
         if session_helper.errors_in_session(session):
             errors = session_helper.get_errors(session)
             session_helper.delete_session_errors(session)
