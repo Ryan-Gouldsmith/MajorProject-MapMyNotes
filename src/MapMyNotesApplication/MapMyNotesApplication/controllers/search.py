@@ -13,7 +13,7 @@ def search():
         return redirect(url_for('homepage.home_page_route'))
 
     if request.args:
-        module_code = request.args.get('module_code')
+        module_code = request.args.get('module_code').upper()
         user_id = session_helper.return_user_id(session)
         notes = Note.find_note_by_module_code(module_code, user_id)
         return render_template("search/show_notes.html", notes=notes, searched=module_code)
