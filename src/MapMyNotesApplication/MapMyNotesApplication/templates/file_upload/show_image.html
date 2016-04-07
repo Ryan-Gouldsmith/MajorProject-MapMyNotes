@@ -44,66 +44,66 @@
           <p class='suggested_date'> No suitable date was found from the note </p>
         {% endif %}
         </div>
-        <div class="suggestion block">
+        <div class="suggestion block autofill_module_code autofill">
           <p class='tesseract_label suggestion_message'> The note's module code:</p>
           <p class="tesseract_module_code">
-            {% if tesseract_module_code[1] >= 75 %}
+            {%- if tesseract_module_code[1] >= 75 -%}
                 <span class="tesseract_green">
-            {% elif tesseract_module_code[1] < 75 and tesseract_module_code[1] >= 70 %}
+            {%- elif tesseract_module_code[1] < 75 and tesseract_module_code[1] >= 70 -%}
                 <span class="tesseract_orange">
-            {% else %}
+            {%- else -%}
                 <span class="tesseract_red">
-            {% endif %}
-            {{ tesseract_module_code[0] }}
+            {%- endif -%}
+            {{- tesseract_module_code[0].strip() -}}
             </span>
           </p>
         </div>
-        <div class="suggestion block">
+        <div class="suggestion block autofill_title autofill">
           <p class='tesseract_label suggestion_message'> The note's title: </p>
           <p class="tesseract_title">
-            {% for title_word in tesseract_title %}
-              {% if title_word[1] >= 75 %}
+            {%- for title_word in tesseract_title -%}
+              {%- if title_word[1] >= 75 -%}
                   <span class="tesseract_green">
-              {% elif title_word[1] < 75 and title_word[1] >= 70 %}
+              {%- elif title_word[1] < 75 and title_word[1] >= 70 -%}
                   <span class="tesseract_orange">
-              {% else %}
+              {%- else -%}
                   <span class="tesseract_red">
-              {% endif %}
-              {{ title_word[0] + " " }}
+              {%- endif -%}
+              {{- title_word[0].strip() + " " -}}
               </span>
-            {% endfor %}
+            {%- endfor -%}
           </p>
         </div>
-        <div class="suggestion block">
+        <div class="suggestion block ">
           <p class='tesseract_label suggestion_message'> The note's lecture date: </p>
           <p class="tesseract_date">
-            {% for date_word in tesseract_date %}
-              {% if date_word[1] >= 75 %}
+            {%- for date_word in tesseract_date -%}
+              {%- if date_word[1] >= 75 -%}
                 <span class="tesseract_green">
-              {% elif date_word[1] < 75 and date_word[1] >= 70 %}
+              {%- elif date_word[1] < 75 and date_word[1] >= 70 -%}
                 <span class="tesseract_orange">
-              {% else %}
+              {%- else -%}
                 <span class="tesseract_red">
-              {% endif %}
-              {{ date_word[0] + " "}}
+              {%- endif -%}
+              {{- date_word[0].strip() + " " -}}
             </span>
-          {% endfor %}
+          {%- endfor -%}
         </p>
         </div>
-        <div class="suggestion block">
+        <div class="suggestion block autofill_lecturer autofill">
           <p class='tesseract_label suggestion_message'> The note's lecturer: </p>
           <p class='tesseract_lecturer'>
-            {% for lecturer_word in tesseract_lecturer %}
-              {% if lecturer_word[1] >= 75 %}
+            {%- for lecturer_word in tesseract_lecturer -%}
+              {%- if lecturer_word[1] >= 75 -%}
                   <span class="tesseract_green">
-              {% elif lecturer_word[1] < 75 and lecturer_word[1] >= 72 %}
+              {%- elif lecturer_word[1] < 75 and lecturer_word[1] >= 72 -%}
                   <span class="tesseract_orange">
-              {% else %}
+              {%- else -%}
                   <span class="tesseract_red">
-              {% endif %}
-                {{ lecturer_word[0] + " "}}
+              {%- endif -%}
+                  {{- lecturer_word[0].strip() + " " -}}
               </span>
-            {% endfor %}
+            {%- endfor -%}
         </p>
       </div>
       <div class="suggestion_events">
@@ -126,5 +126,14 @@
       <script type=text/javascript>
           $('#datepicker').datepicker({dateFormat: "d MM yy"});
           $('#time').timepicker({'timeFormat': 'H:i'});
+          $('.autofill_module_code').on("click", function(){
+            $('.module_code_data').val($('.tesseract_module_code').text().trim());
+          });
+          $('.autofill_lecturer').on("click", function(){
+            $('.lecturer_name').val($('.tesseract_lecturer').text().trim());
+          });
+          $('.autofill_title').on("click", function(){
+            $('.title').val($('.tesseract_title').text().trim());
+          });
       </script>
 {% endblock %}
