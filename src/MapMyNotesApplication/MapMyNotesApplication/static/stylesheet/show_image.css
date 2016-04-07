@@ -21,6 +21,10 @@ form input[type="text"]{
 .suggestion_message{
   font-weight: bold;
 }
+.autofill:hover{
+  background-color:#E3F2FD;
+  cursor:pointer;
+}
 @media(max-width:768px){
   .temp_uploaded_image {
     padding-left:10px;
