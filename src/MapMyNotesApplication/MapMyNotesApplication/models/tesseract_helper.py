@@ -28,7 +28,7 @@ class TesseractHelper(object):
             # You have to set the bounding box so that we know which line we are on about so we can get the text and confidence as tuple values. Otherwise GetUTF8Text returns all the text again, not what we want.
             self.tesseract_api.SetRectangle(bounding_box['x'], bounding_box['y'], bounding_box['w'], bounding_box['h'])
 
-            confidence = self.tesseract_api.MapWordConfidences()
-            list_word_confidence.append(confidence)
+            confidences = list(self.tesseract_api.MapWordConfidences())
+            list_word_confidence.append(confidences)
 
         return list_word_confidence
