@@ -73,6 +73,19 @@ class TestIntegrationSearch(LiveServerTestCase):
         database.session.add(note_two)
         database.session.commit()
 
+        module_code_two = Module_Code('SE31520')
+        database.session.add(module_code)
+        database.session.commit()
+        self.module_code_two_id = module_code_two.id
+
+        note_meta_data_three = Note_Meta_Data("Mr Three", self.module_code_two_id, 'C11 Hugh Owen', date, "Third")
+        note_meta_data_three.save()
+        self.three_meta_data_id = note_meta_data_three.id
+
+        note_three = Note('Another one', self.three_meta_data_id, self.user_id)
+        database.session.add(note_three)
+        database.session.commit()
+
         self.create_app()
 
     def tearDown(self):
@@ -155,3 +168,15 @@ class TestIntegrationSearch(LiveServerTestCase):
             expected_titles.append(title.text)
 
         assert "Second" not in expected_titles
+
+    def test_notes_not_included_from_other_modules(self):
+        self.driver.get(self.get_server_url() + "/search")
+        search_field = self.driver.find_element_by_class_name('search_field')
+        search_field.send_keys("CS31310")
+        submit = self.driver.find_element_by_class_name("submit").click()
+        titles = self.driver.find_elements_by_class_name('note_title')
+        expected_titles = []
+        for title in titles:
+            expected_titles.append(title.text)
+
+        assert "Third" not in expected_titles
