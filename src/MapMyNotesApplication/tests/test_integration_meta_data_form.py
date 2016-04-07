@@ -270,3 +270,24 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         timepicker_ui = self.driver.find_element_by_class_name("ui-timepicker-wrapper")
 
         assert timepicker_ui.is_displayed() is True
+
+    def test_clicking_suggested_module_code_from_tesseract_populates_module_code_field(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        module_code = self.driver.find_element_by_class_name('autofill_module_code')
+        module_code_field = self.driver.find_element_by_class_name("module_code_data")
+        module_code.click()
+        assert module_code_field.get_attribute('value') == "CS4192250:"
+
+    def test_clicking_suggested_lecturer_from_tesseract_populates_lecture_field(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        lecturer = self.driver.find_element_by_class_name('autofill_lecturer')
+        lecturer_field = self.driver.find_element_by_class_name("lecturer_name")
+        lecturer.click()
+        assert lecturer_field.get_attribute("value") == 'By: A c".crlain doc.tor tiHe'
+
+    def test_clicking_suggested_title_from_tesseract_populates_title_field(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        title = self.driver.find_element_by_class_name('autofill_title')
+        title_field = self.driver.find_element_by_class_name("title")
+        title.click()
+        assert title_field.get_attribute('value') == "A t-.tLe. .9oes here"
