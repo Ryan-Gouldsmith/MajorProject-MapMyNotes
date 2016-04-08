@@ -132,12 +132,34 @@ def edit_meta_data(note_id):
         return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer, location=location, date=date, time=time, title=title, note_image=note.image_path, errors=errors)
 
     elif request.method == POST:
+        # Get the note NO TESTS FOR THIS
+        note = Note.query.get(note_id)
+        # Call the calendar event for the given date of a note
+        previous_date = note.meta_data.date
+        start_date, end_date = process_time_zone(previous_date)
+
+        google_calendar_service = Google_Calendar_Service()
+        note_url = google_calendar_service.prepare_url_for_event(note)
+        google_service = google_calendar_service.build(http_auth)
+
+        google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
+
+        google_calendar_response = google_calendar_service.execute_request(google_request, http_auth)
+        module_code = note.meta_data.module_code.module_code
+
+        # Check to see if the description contains the string of the note
+        event = get_event_containing_module_code(module_code, google_calendar_response, previous_date)
+        if event and 'description' in note_url and note_url in event['description']:
+            # Remove the string from the description
+            response = add_url_to_event(google_calendar_service, google_service, "", event, http_auth)
+        # Add it to a new event
+
         if check_all_params_exist(request.form) is False:
             session['errors'] = "Some fields are missing"
             return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
 
         if date_formatted_correctly(request.form['date_data']) is False:
-            session['errors'] = "Wrong date format: should be date month year hour:minute, eg: 20 February 2016 16:00"
+            session['errors'] = "Wrong date format: should be date month year eg: 20 February 2016"
             return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
 
         if time_formatted_correctly(request.form['time_data']) is False:
@@ -173,12 +195,25 @@ def edit_meta_data(note_id):
         else:
             module_code_obj = Module_Code(module_code_data)
             module_code_obj.save()
+            module_code = module_code_obj
 
             note_meta_data = Note_Meta_Data(lecturer_name, module_code_obj.id, location, date_time, title)
             response = note_meta_data.save()
 
             note = Note.query.get(note_id)
             note.update_meta_data_id(note_meta_data.id)
+
+
+        start_date, end_date = process_time_zone(previous_date)
+        google_request = google_calendar_service.get_list_of_events(google_service, start=start_date,end=end_date)
+        google_calendar_response = google_calendar_service.execute_request(google_request, http_auth)
+        event = get_event_containing_module_code(module_code.module_code, google_calendar_response, date_time)
+        note_url = google_calendar_service.prepare_url_for_event(note)
+        if event:
+            # Remove the string from the description
+            response = add_url_to_event(google_calendar_service, google_service, note_url, event, http_auth)
+            if response is not None and note_url in response['description']:
+                note.update_calendar_url(response['htmlLink'])
 
         return redirect(url_for('shownote.show_note',note_id=note_id))
 
@@ -237,7 +272,9 @@ def process_time_zone(date_time):
 def get_event_containing_module_code(module_code, calendar_response, start_date):
     #some events come back like 2016-02-16T10:30:00Z other's come back like 2016-02-16T10:30:00+00:00
     start_date = start_date.replace(tzinfo=None).isoformat("T")
+    print start_date
     for event in calendar_response["items"]:
+        print event['start']['dateTime']
         if module_code in event['summary'].upper() and start_date in event['start']['dateTime']:
             return event
     return None
