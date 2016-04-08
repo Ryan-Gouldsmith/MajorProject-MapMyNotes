@@ -82,6 +82,40 @@ class TestIntegretationShowNote(LiveServerTestCase):
         }
          ]
         }
+        self.new_event = {"items": [
+            {
+             "kind": "calendar#event",
+             "etag": "\"12334455667\"",
+             "id": "123456789",
+             "status": "confirmed",
+             "htmlLink": "http://localhost/show_note/1",
+             "created": "2016-03-24T08:59:46.000Z",
+             "updated": "2016-03-27T22:42:07.278Z",
+             "summary": "Test To Show Hannah",
+             "creator": {
+              "email": "test@gmail.com",
+              "displayName": "Test",
+              "self": True
+             },
+             "organizer": {
+              "email": "test@gmail.com",
+              "displayName": "test",
+              "self": True
+             },
+             "start": {
+              "dateTime": "2016-03-24T07:30:00Z"
+             },
+             "end": {
+              "dateTime": "2016-03-24T08:30:00Z"
+             },
+             "iCalUID": "test124@google.com",
+             "sequence": 0,
+             "reminders": {
+              "useDefault": True
+             }
+            }
+        ]
+       }
         self.updated_response = {
          "kind": "calendar#event",
          "etag": "\"12334455667\"",
@@ -215,7 +249,7 @@ class TestIntegretationShowNote(LiveServerTestCase):
 
         assert module_code.text == "Module Code: CS31310"
 
-    def test_lectuer_name_is_correct(self):
+    def test_lecturer_name_is_correct(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
 
         module_code = self.driver.find_element_by_class_name('module_code_data')

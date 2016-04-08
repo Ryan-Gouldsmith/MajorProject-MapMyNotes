@@ -250,18 +250,30 @@ class TestAddEditMetaDataRoute(TestCase):
 
         assert actual != expected
 
-    def test_get_edit_note_information_returns_200_success(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_get_edit_note_information_returns_200_success(self, execute_request, authorise):
         self.create_note()
         note_id = self.note_id
+        self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
+        authorise.return_value = self.oauth_return
+        execute_request.return_value = self.returned_google_response
 
         resource = self.client.get("/metadata/edit/" + str(note_id), follow_redirects=False)
 
         assert resource.status_code == 200
 
-    def test_post_to_edit_note_different_data_created_new_meta_data(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_post_to_edit_note_different_data_created_new_meta_data(self, execute_request, authorise):
         self.create_note()
 
         note_id = self.note_id
+        self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
+        authorise.return_value = self.oauth_return
+        execute_request.return_value = self.returned_google_response
 
         meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00",  "title_data": "A Title"}
 
@@ -272,11 +284,16 @@ class TestAddEditMetaDataRoute(TestCase):
         note_meta_data = Note_Meta_Data.query.all()
         assert len(note_meta_data) is 2
 
-    def test_post_to_edit_note_changes_the_foreign_key_association(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_post_to_edit_note_changes_the_foreign_key_association(self, execute_request, authorise):
         self.create_note()
 
         note_id = self.note_id
-
+        self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
+        authorise.return_value = self.oauth_return
+        execute_request.return_value = self.returned_google_response
 
         meta_data_change = {"module_code_data":"SE315120", "lecturer_name_data" : "Mr Foo", 'location_data': "C11 Hugh Owen", "date_data": "12 February 2016", "time_data": "16:00", "title_data": "A Title"}
 
@@ -285,9 +302,15 @@ class TestAddEditMetaDataRoute(TestCase):
         note_found = Note.query.get(note_id)
         assert note_found.note_meta_data_id is 2
 
-    def test_post_with_already_existing_meta_data_should_return_instance(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_post_with_already_existing_meta_data_should_return_instance(self, execute_request, authorise):
         self.create_note()
         note_id = self.note_id
+        self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
+        authorise.return_value = self.oauth_return
+        execute_request.return_value = self.returned_google_response
         module_code_two = Module_Code('CS361010')
         database.session.add(module_code_two)
         database.session.commit()
@@ -307,10 +330,16 @@ class TestAddEditMetaDataRoute(TestCase):
 
         assert note_found.meta_data.id == changed_meta_data_id
 
-    def test_posting_exisiting_module_code_new_meta_data_new_instance(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_posting_exisiting_module_code_new_meta_data_new_instance(self, execute_request, authorise):
         self.create_note()
 
         note_id = self.note_id
+        self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
+        authorise.return_value = self.oauth_return
+        execute_request.return_value = self.returned_google_response
 
         meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016", "time_data": "16:00", "title_data": "A Title"}
 
@@ -320,10 +349,16 @@ class TestAddEditMetaDataRoute(TestCase):
 
         assert note_found.meta_data.id is 2
 
-    def test_posting_redirects_back_to_show_note(self):
+    @mock.patch.object(Oauth_Service, 'authorise')
+    @mock.patch.object(Google_Calendar_Service, 'execute_request')
+    def test_posting_redirects_back_to_show_note(self, execute_request, authorise):
         self.create_note()
 
         note_id = self.note_id
+        self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = Oauth_Service.authorise(self.cred_obj, self.auth_mock)
+        authorise.return_value = self.oauth_return
+        execute_request.return_value = self.returned_google_response
 
         meta_data_change = {"module_code_data":"CS31310", "lecturer_name_data" : "Changed Text", 'location_data': "Test room", "date_data": "24 January 2016", "time_data": "16:00", "title_data": "A Title"}
 
@@ -396,8 +431,9 @@ class TestAddEditMetaDataRoute(TestCase):
         resource = self.client.post("/metadata/edit/" + str(note_id),
                 content_type='multipart/form-data',
                 data=post_data, follow_redirects=True)
+        print resource.data
 
-        assert "Wrong date format: should be date month year hour:minute, eg: 20 February 2016" in resource.data
+        assert "Wrong date format: should be date month year eg: 20 February 2016" in resource.data
 
 
     @mock.patch.object(Oauth_Service, 'authorise')
@@ -433,3 +469,5 @@ class TestAddEditMetaDataRoute(TestCase):
                 data=post_data, follow_redirects=True)
 
         assert "Wrong time format: should be hour:minute, e.g 13:00" in resource.data
+
+    #TODO Write a test which will check the changed html link

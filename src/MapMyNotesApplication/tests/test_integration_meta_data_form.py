@@ -35,8 +35,7 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
 
         oauth_service.store_secret_file(file_path)
         flow = oauth_service.create_flow_from_clients_secret()
-        self.credentials_oauth = oauth_service.exchange_code(flow, "123code",
-                    http=http_mock)
+        self.credentials_oauth = oauth_service.exchange_code(flow, "123code", http=http_mock)
 
         cred_obj = oauth_service.create_credentials_from_json(self.credentials_oauth.to_json())
 
