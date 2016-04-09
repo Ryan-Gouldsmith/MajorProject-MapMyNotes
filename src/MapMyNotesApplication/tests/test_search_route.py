@@ -1,15 +1,9 @@
 from MapMyNotesApplication import application, database
-import pytest
-import os
-from flask import request
-from datetime import datetime
 from MapMyNotesApplication.models.user import User
-from MapMyNotesApplication.models.session_helper import SessionHelper
-import mock
 from flask.ext.testing import TestCase
 
-class TestSearchRoute(TestCase):
 
+class TestSearchRoute(TestCase):
     def create_app(self):
         app = application
         app.config['TESTING'] = True

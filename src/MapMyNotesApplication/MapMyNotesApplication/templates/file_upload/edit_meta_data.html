@@ -1,39 +1,45 @@
 {% extends "root.html" %}
 {% block head %}
-  {{super()}}
-  <link href="{{ url_for('static', filename='stylesheet/edit_meta_data.css')}}" rel="stylesheet" >
+{{super()}}
+<link href="{{ url_for('static', filename='stylesheet/edit_meta_data.css')}}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 <h1 class="strapline_title"> Edit Meta data </h1>
-  {% if errors  %}
-    <p class="error">Error uploading the form data: {{ errors }}</p>
-  {% endif %}
-  <form class="edit_form" method="post">
+{% if errors  %}
+<p class="error">Error uploading the form data: {{ errors }}</p>
+{% endif %}
+<form class="edit_form" method="post">
     <label class="module_code_label"> Module Code:
-      <input type="text" class="module_code" value="{{ module_code}}" name="module_code_data" required="required" pattern="^(?!\s+).+" title="Must contain characters" >
+        <input type="text" class="module_code" value="{{ module_code}}" name="module_code_data" required="required"
+               pattern="^(?!\s+).+" title="Must contain characters">
     </label>
     <label class="lecturer_label"> Lecturer's Name:
-      <input type="text" class="lecturer" value="{{ lecturer }}" name="lecturer_name_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
+        <input type="text" class="lecturer" value="{{ lecturer }}" name="lecturer_name_data" required="required"
+               pattern="^(?!\s+).+" title="Must contain characters">
     </label>
     <label class="location_label"> Location of the lecture:
-      <input type="text" class="location" value="{{ location }}" name="location_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
+        <input type="text" class="location" value="{{ location }}" name="location_data" required="required"
+               pattern="^(?!\s+).+" title="Must contain characters">
     </label>
     <label class='date_label'> Date of lecture:
-      <input type="text" class="date" id="datepicker" name="date_data" required="required" title="Must contain characters" pattern='^(?!\s+).+' value="{{ date }}">
+        <input type="text" class="date" id="datepicker" name="date_data" required="required"
+               title="Must contain characters" pattern='^(?!\s+).+' value="{{ date }}">
     </label>
     <label class="time_label"> Time of lecture:
-      <input type="text" class="time" id="time" name="time_data" required="required" title="Must contain characters" pattern='^(?!\s+).+' value="{{ time }}">
-    </label>
+        <input type="text" class="time" id="time" name="time_data" required="required" title="Must contain characters"
+               pattern='^(?!\s+).+' value="{{ time }}">
     </label>
     <label class="title_label"> Title
-      <input type="text" class="title" value="{{ title }}" name="title_data" required="required" pattern="^(?!\s+).+" title="Must contain characters">
+        <input type="text" class="title" value="{{ title }}" name="title_data" required="required" pattern="^(?!\s+).+"
+               title="Must contain characters">
     </label>
-    <input type="submit" class="submit btn" name="submit" >
-  </form>
-  <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="uploaded_image">
-  <script type=text/javascript>
+    <input type="submit" class="submit btn" name="submit">
+</form>
+<img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="uploaded_image">
+<script type=text/javascript>
       $('#datepicker').datepicker({dateFormat: "d MM yy"});
       $('#time').timepicker({'timeFormat': 'H:i'});
-  </script>
+
+</script>
 {% endblock %}

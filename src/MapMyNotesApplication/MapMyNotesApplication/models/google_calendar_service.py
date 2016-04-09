@@ -1,18 +1,18 @@
-import os
-from oauth2client import client
 from apiclient import discovery
-from flask import url_for, current_app
+from flask import current_app
 
 """
-Although update wasn't used I saw how to make a request to change an event. Therefore it should be given an honourable reference.
+Although update wasn't used I saw how to make a request to change an event.
+Therefore it should be given an honourable reference.
 https://developers.google.com/google-apps/calendar/v3/reference/events/update
 """
-class Google_Calendar_Service(object):
 
+
+class GoogleCalendarService(object):
     API = "calendar"
     VERSION = "v3"
 
-    def build(self,http_auth):
+    def build(self, http_auth):
         return discovery.build(self.API, self.VERSION, http=http_auth)
 
     def get_list_of_events(self, service, start=None, end=None):

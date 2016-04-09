@@ -1,9 +1,8 @@
 from MapMyNotesApplication import database
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String
 
 
 class User(database.Model):
-
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     email_address = Column(String(100), nullable=False)

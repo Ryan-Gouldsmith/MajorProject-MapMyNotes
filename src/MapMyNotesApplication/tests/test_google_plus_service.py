@@ -1,20 +1,17 @@
-import pytest
-from MapMyNotesApplication import application
-from MapMyNotesApplication.models.oauth_service import Oauth_Service
-from MapMyNotesApplication.models.google_plus_service import Google_Plus_Service
-from oauth2client import client
-from googleapiclient.http import HttpMock, HttpRequest
-from googleapiclient import discovery
 import os
-import json
-from flask.ext.testing import TestCase
+
+from MapMyNotesApplication.models.google_plus_service import GooglePlusService
 from flask import Flask
+from flask.ext.testing import TestCase
+from googleapiclient import discovery
+from googleapiclient.http import HttpMock, HttpRequest
 
 """
 https://developers.google.com/api-client-library/python/guide/mocks#example
 """
-class TestGooglePlusService(TestCase):
 
+
+class TestGooglePlusService(TestCase):
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
@@ -27,7 +24,7 @@ class TestGooglePlusService(TestCase):
         return app
 
     def test_build_the_google_plus_service_return_discovery_resource(self):
-        google_plus_service = Google_Plus_Service()
+        google_plus_service = GooglePlusService()
 
         http_mock = HttpMock(self.discovery_mock, {'status': '200'})
         service = google_plus_service.build(http_mock)
@@ -35,7 +32,7 @@ class TestGooglePlusService(TestCase):
         assert type(service) is discovery.Resource
 
     def test_request_to_get_user_logged_in(self):
-        google_plus_service = Google_Plus_Service()
+        google_plus_service = GooglePlusService()
 
         http_mock = HttpMock(self.discovery_mock, {'status': '200'})
         service = google_plus_service.build(http_mock)
@@ -48,7 +45,7 @@ class TestGooglePlusService(TestCase):
         assert request.uri == expected_uri
 
     def test_executing_request_object_to_get_user_information(self):
-        google_plus_service = Google_Plus_Service()
+        google_plus_service = GooglePlusService()
 
         http_mock = HttpMock(self.discovery_mock, {'status': '200'})
         service = google_plus_service.build(http_mock)
@@ -59,12 +56,14 @@ class TestGooglePlusService(TestCase):
 
         returned_values = google_plus_service.execute(request, http_mock)
 
-        expected = {'circledByCount': 100, 'emails': [{'type': 'account', 'value': 'test@gmail.com'}], 'objectType': 'person', 'occupation': 'A Test Occupation', 'tagline': 'Some Dummy data taglone','verified': 'False'}
+        expected = {'circledByCount': 100, 'emails': [{'type': 'account', 'value': 'test@gmail.com'}],
+                    'objectType': 'person', 'occupation': 'A Test Occupation', 'tagline': 'Some Dummy data taglone',
+                    'verified': 'False'}
 
         assert expected == returned_values
 
     def test_parsing_response_and_returning_the_email_address(self):
-        google_plus_service = Google_Plus_Service()
+        google_plus_service = GooglePlusService()
 
         http_mock = HttpMock(self.discovery_mock, {'status': '200'})
         service = google_plus_service.build(http_mock)

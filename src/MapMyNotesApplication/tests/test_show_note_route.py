@@ -1,17 +1,14 @@
-from MapMyNotesApplication import application, database
-import pytest
-import os
-from flask import request, Flask
-from MapMyNotesApplication.models.note import Note
-from MapMyNotesApplication.models.module_code import Module_Code
-from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
-from MapMyNotesApplication.models.user import User
 from datetime import datetime
+
+from MapMyNotesApplication import application, database
+from MapMyNotesApplication.models.module_code import ModuleCode
+from MapMyNotesApplication.models.note import Note
+from MapMyNotesApplication.models.note_meta_data import NoteMetaData
+from MapMyNotesApplication.models.user import User
 from flask.ext.testing import TestCase
 
 
 class TestShowNoteRoute(TestCase):
-
     def create_app(self):
         app = application
         app.config['TESTING'] = True
@@ -24,13 +21,13 @@ class TestShowNoteRoute(TestCase):
         database.drop_all()
         database.create_all()
 
-        module_code = Module_Code('CS31310')
+        module_code = ModuleCode('CS31310')
         database.session.add(module_code)
         database.session.commit()
         self.module_code_id = module_code.id
 
         date = datetime.strptime("20 January 2016 15:00", "%d %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Title")
+        note_meta_data = NoteMetaData("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Title")
         note_meta_data.save()
         self.note_meta_data_id = note_meta_data.id
 
@@ -51,20 +48,18 @@ class TestShowNoteRoute(TestCase):
         assert response.status_code == 200
 
     def test_deleting_a_note_returns_status_code_200(self):
-
         note = Note('uploads/', self.note_meta_data_id, self.user_id)
         note.save()
 
-        resource = self.client.post('/delete_note/'+str(note.id))
+        resource = self.client.post('/delete_note/' + str(note.id))
 
         assert resource.status_code == 302
 
     def test_deleting_a_note_deletes_a_note_from_database(self):
-
         note = Note('uploads/', self.note_meta_data_id, self.user_id)
         note.save()
 
-        resource = self.client.post('/delete_note/'+str(note.id))
+        resource = self.client.post('/delete_note/' + str(note.id))
 
         notes = Note.query.all()
 
