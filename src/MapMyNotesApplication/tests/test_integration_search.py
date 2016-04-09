@@ -1,32 +1,28 @@
-from MapMyNotesApplication import application, database
-from selenium import webdriver
-import pytest
-from flask import Flask
-from flask.ext.testing import LiveServerTestCase
-from selenium.webdriver.common.keys import Keys
-from MapMyNotesApplication.models.module_code import Module_Code
-from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
-from MapMyNotesApplication.models.note import Note
-from MapMyNotesApplication.models.user import User
-from MapMyNotesApplication.models.session_helper import SessionHelper
-import mock
 from datetime import datetime
+
+import mock
+from MapMyNotesApplication import application, database
+from MapMyNotesApplication.models.module_code import ModuleCode
+from MapMyNotesApplication.models.note import Note
+from MapMyNotesApplication.models.note_meta_data import NoteMetaData
+from MapMyNotesApplication.models.session_helper import SessionHelper
+from MapMyNotesApplication.models.user import User
+from flask.ext.testing import LiveServerTestCase
+from selenium import webdriver
 
 
 class TestIntegrationSearch(LiveServerTestCase):
-
     def create_app(self):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
-
 
         self.user_patch = mock.patch.object(SessionHelper, 'return_user_id')
         self.user_mock = self.user_patch.start()
         self.user_mock.return_value = 1
 
         self.user_in_session = mock.patch.object(SessionHelper,
-        'is_user_id_in_session')
+                                                 'is_user_id_in_session')
         self.user_in_session_mock = self.user_in_session.start()
         self.user_in_session_mock.return_value = True
 
@@ -36,17 +32,17 @@ class TestIntegrationSearch(LiveServerTestCase):
         # Ideas on how to create the driver and use it. https://realpython.com/blog/python/headless-selenium-testing-with-python-and-phantomjs/
 
         self.driver = webdriver.PhantomJS()
-        self.driver.set_window_size(1024, 640 )
+        self.driver.set_window_size(1024, 640)
         database.session.close()
         database.drop_all()
         database.create_all()
-        module_code = Module_Code('CS31310')
+        module_code = ModuleCode('CS31310')
         database.session.add(module_code)
         database.session.commit()
         self.module_code_id = module_code.id
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Dummy")
+        note_meta_data = NoteMetaData("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Dummy")
         note_meta_data.save()
         self.note_meta_data_id = note_meta_data.id
 
@@ -60,10 +56,9 @@ class TestIntegrationSearch(LiveServerTestCase):
         database.session.commit()
         self.second_user_id = user_two.id
 
-        note_meta_data_two = Note_Meta_Data("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Second")
+        note_meta_data_two = NoteMetaData("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "Second")
         note_meta_data_two.save()
         self.second_meta_data_id = note_meta_data_two.id
-
 
         note = Note('uploads/', self.note_meta_data_id, self.user_id)
         database.session.add(note)
@@ -73,12 +68,12 @@ class TestIntegrationSearch(LiveServerTestCase):
         database.session.add(note_two)
         database.session.commit()
 
-        module_code_two = Module_Code('SE31520')
+        module_code_two = ModuleCode('SE31520')
         database.session.add(module_code)
         database.session.commit()
         self.module_code_two_id = module_code_two.id
 
-        note_meta_data_three = Note_Meta_Data("Mr Three", self.module_code_two_id, 'C11 Hugh Owen', date, "Third")
+        note_meta_data_three = NoteMetaData("Mr Three", self.module_code_two_id, 'C11 Hugh Owen', date, "Third")
         note_meta_data_three.save()
         self.three_meta_data_id = note_meta_data_three.id
 

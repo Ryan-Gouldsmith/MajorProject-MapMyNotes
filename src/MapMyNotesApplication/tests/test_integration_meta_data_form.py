@@ -1,24 +1,21 @@
-from MapMyNotesApplication import application, database
-from selenium import webdriver
-import pytest
-from flask import Flask, session, current_app
-from flask.ext.testing import LiveServerTestCase
+import os
+
 import mock
-from MapMyNotesApplication.models.file_upload_service import FileUploadService
-from MapMyNotesApplication.models.google_calendar_service import Google_Calendar_Service
-from googleapiclient.http import HttpMock, HttpRequest
-from MapMyNotesApplication.models.oauth_service import Oauth_Service
+from MapMyNotesApplication import application
+from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
+from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.tesseract_helper import TesseractHelper
-import os
-from selenium.webdriver.common.keys import Keys
-
+from flask.ext.testing import LiveServerTestCase
+from googleapiclient.http import HttpMock
+from selenium import webdriver
 
 """https://books.google.co.uk/books?id=Xd0DCgAAQBAJ&pg=PA77&lpg=PA77&dq=flask-testing+liveservertestcase+selenium&source=bl&ots=fhCVat8wgm&sig=2ehfPK93v8fS2NQEq_vzdKYbc-U&hl=en&sa=X&ved=0ahUKEwiCr7ns6KLLAhVCUhQKHVO0DWoQ6AEIPTAF#v=onepage&q=flask-testing%20liveservertestcase%20selenium&f=false Docs are terrible this book may be good. http://www.voidspace.org.uk/python/mock/patch.html#patch-methods-start-and-stop This is great. Helped with the mocking and found it really useful part of the library. It meant that all the other tests passed and I could mock the functions for the acceptance tests.
 http://makina-corpus.com/blog/metier/2013/dry-up-mock-instanciation-with-addcleanup Was also a good reference for the testing with the mocks. I learnt a lot from this resource
 """
-class TestIntegrationMetaDataForm(LiveServerTestCase):
 
+
+class TestIntegrationMetaDataForm(LiveServerTestCase):
     def create_app(self):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
@@ -27,10 +24,10 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
-        self.authorised_credentials = os.path.join(os.path.dirname(__file__),"mock-data/authorised_credentials.json")
+        self.authorised_credentials = os.path.join(os.path.dirname(__file__), "mock-data/authorised_credentials.json")
 
         http_mock = HttpMock(self.credentials, {'status': 200})
-        oauth_service = Oauth_Service()
+        oauth_service = OauthService()
         file_path = app.config['secret_json_file']
 
         oauth_service.store_secret_file(file_path)
@@ -39,53 +36,53 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
 
         cred_obj = oauth_service.create_credentials_from_json(self.credentials_oauth.to_json())
 
-        auth = HttpMock(self.authorised_credentials, {'status' : 200})
-        self.oauth_return = oauth_service.authorise(cred_obj, auth)
+        auth = HttpMock(self.authorised_credentials, {'status': 200})
+        self.oauth_return = oauth_service.authorise(auth, self.credentials_oauth.to_json())
 
         self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar-discovery.json")
-        calendar_service = Google_Calendar_Service()
+        calendar_service = GoogleCalendarService()
 
-        http_mock = HttpMock(self.discovery_mock, {'status' : '200'})
+        http_mock = HttpMock(self.discovery_mock, {'status': '200'})
         service = calendar_service.build(http_mock)
 
         self.google_response = {"items": [
-         {
+            {
 
-          "kind": "calendar#event",
-          "etag": "\"1234567891012345\"",
-          "id": "ideventcalendaritem1",
-          "status": "confirmed",
-          "htmlLink": "https://www.google.com/calendar/event?testtest",
-          "created": "2014-09-10T14:53:25.000Z",
-          "updated": "2014-09-10T14:54:12.748Z",
-          "summary": "Test Example",
-          "creator": {
-           "email": "test@gmail.com",
-           "displayName": "Tester",
-           "self": 'true'
-          },
-          "organizer": {
-           "email": "test@gmail.com",
-           "displayName": "Test",
-           "self": 'true'
-          },
-          "start": {
-           "dateTime": "2016-12-01T01:00:00Z"
-          },
-          "end": {
-           "dateTime": "2016-12-01T02:30:00Z"
-          },
-          "transparency": "transparent",
-          "visibility": "private",
-          "iCalUID": "123456789@google.com",
-          "sequence": 0,
-          "guestsCanInviteOthers": 'false',
-          "guestsCanSeeOtherGuests": 'false',
-          "reminders": {
-           "useDefault": 'true'
-          }
-        }
-         ]
+                "kind": "calendar#event",
+                "etag": "\"1234567891012345\"",
+                "id": "ideventcalendaritem1",
+                "status": "confirmed",
+                "htmlLink": "https://www.google.com/calendar/event?testtest",
+                "created": "2014-09-10T14:53:25.000Z",
+                "updated": "2014-09-10T14:54:12.748Z",
+                "summary": "Test Example",
+                "creator": {
+                    "email": "test@gmail.com",
+                    "displayName": "Tester",
+                    "self": 'true'
+                },
+                "organizer": {
+                    "email": "test@gmail.com",
+                    "displayName": "Test",
+                    "self": 'true'
+                },
+                "start": {
+                    "dateTime": "2016-12-01T01:00:00Z"
+                },
+                "end": {
+                    "dateTime": "2016-12-01T02:30:00Z"
+                },
+                "transparency": "transparent",
+                "visibility": "private",
+                "iCalUID": "123456789@google.com",
+                "sequence": 0,
+                "guestsCanInviteOthers": 'false',
+                "guestsCanSeeOtherGuests": 'false',
+                "reminders": {
+                    "useDefault": 'true'
+                }
+            }
+        ]
         }
 
         self.patch = mock.patch.object(SessionHelper, "check_if_session_contains_credentials")
@@ -96,28 +93,35 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         self.auth_mock = self.auth_patch.start()
         self.auth_mock.return_value = self.credentials_oauth.to_json()
 
-        self.oauth_patch = mock.patch.object(Oauth_Service, "authorise")
+        self.oauth_patch = mock.patch.object(OauthService, "authorise")
         self.oauth_mock = self.oauth_patch.start()
         self.oauth_mock.return_value = self.oauth_return
 
-        self.google_patch = mock.patch.object(Google_Calendar_Service, "execute_request")
+        self.google_patch = mock.patch.object(GoogleCalendarService, "execute_request")
         self.google_mock = self.google_patch.start()
         self.google_mock.return_value = self.google_response
 
         self.tesseract_patch = mock.patch.object(TesseractHelper, 'get_confidence_and_words_from_image')
         self.user_mock = self.tesseract_patch.start()
-        self.user_mock.return_value = [[(u'CS4192250:', 75), (u'A', 88), (u't-.tLe.', 72), (u'.9oes', 72), (u'here\n\n', 81)], [(u'Date:', 73), (u'29', 93), (u'/3/2016', 83), (u'15..', 76), (u'e0\n\n', 63)], [(u'By:', 69), (u'A', 89), (u'c".crlain', 65), (u'doc.tor', 74), (u'tiHe\n\n', 75)]]
+        self.user_mock.return_value = [
+            [(u'CS4192250:', 75), (u'A', 88), (u't-.tLe.', 72), (u'.9oes', 72), (u'here\n\n', 81)],
+            [(u'Date:', 73), (u'29', 93), (u'/3/2016', 83), (u'15..', 76), (u'e0\n\n', 63)],
+            [(u'By:', 69), (u'A', 89), (u'c".crlain', 65), (u'doc.tor', 74), (u'tiHe\n\n', 75)]]
 
         self.errors_in_session_patch = mock.patch.object(SessionHelper, "errors_in_session")
         self.errors_in_session_mock = self.errors_in_session_patch.start()
         self.errors_in_session_mock.return_value = False
+
+        self.credentials_patch = mock.patch.object(OauthService, 'get_credentials')
+        self.credentials_mock = self.credentials_patch.start()
+        self.credentials_mock.return_value = oauth_service.credentials
 
         return app
 
     def setUp(self):
         self.create_app()
         self.driver = webdriver.PhantomJS()
-        self.driver.set_window_size(1024, 640 )
+        self.driver.set_window_size(1024, 640)
 
     def tearDown(self):
         print "deleting"
@@ -190,10 +194,9 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         suggested_date = self.driver.find_element_by_class_name('suggested_date')
         assert suggested_date.text == 'No suitable date was found from the note'
 
-
     def test_google_calendar_event_shows_when_exif_data_matches(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test2.jpg")
-        calendar_date =  self.driver.find_element_by_class_name("suggested_calendar_event")
+        calendar_date = self.driver.find_element_by_class_name("suggested_calendar_event")
         assert calendar_date.is_displayed() is True
 
         calendar_event_title = self.driver.find_element_by_class_name("calendar_event_title")
@@ -219,7 +222,7 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
 
     def test_tesseract_data_is_coloured_correctly_for_confidence(self):
         self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
-        #http://www.hexcolortool.com/ hex to rgba converter
+        # http://www.hexcolortool.com/ hex to rgba converter
         green = "rgba(76, 175, 80, 1)"
 
         orange = "rgba(255, 152, 0, 1)"

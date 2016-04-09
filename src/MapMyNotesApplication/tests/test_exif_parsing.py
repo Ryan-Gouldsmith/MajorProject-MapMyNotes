@@ -1,11 +1,9 @@
-import pytest
-from MapMyNotesApplication import application, database
-from MapMyNotesApplication.models.exifparser import ExifParser
-from flask.ext.testing import TestCase
+from MapMyNotesApplication.models.exif_parser import ExifParser
 from flask import Flask
+from flask.ext.testing import TestCase
+
 
 class TestExifParsing(TestCase):
-
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
