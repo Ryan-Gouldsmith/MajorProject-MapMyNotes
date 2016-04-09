@@ -61,7 +61,7 @@ class TestUploadRoute(TestCase):
             session['credentials'] = credentials.to_json()
 
         auth = HttpMock(self.authorised_credentials, {'status': 200})
-        oauth_return = OauthService.authorise(auth)
+        oauth_return = OauthService.authorise(auth, credentials.to_json())
         OauthService.authorise.return_value = oauth_return
 
         GooglePlusService.execute.return_value = {'circledByCount': 100,
