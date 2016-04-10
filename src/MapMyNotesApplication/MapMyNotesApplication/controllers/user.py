@@ -1,5 +1,6 @@
 import httplib2
 from MapMyNotesApplication.models.google_plus_service import GooglePlusService
+from MapMyNotesApplication.models.google_services_helper import GoogleServicesHelper
 from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.user import User
@@ -14,11 +15,7 @@ def signin():
     if session_helper.check_if_session_contains_credentials() is False:
         return redirect(url_for('oauth.oauthsubmit'))
 
-    # TODO duplicated functionality
-    service = OauthService()
-    session_credentials = session_helper.return_session_credentials()
-    http_auth = service.authorise(httplib2.Http(), session_credentials)
-
+    credentials, http_auth = GoogleServicesHelper.authorise(session_helper)
     google_plus_service = GooglePlusService()
     google_service = google_plus_service.build(http_auth)
     google_request = google_plus_service.get_request_user_authorised(google_service)
