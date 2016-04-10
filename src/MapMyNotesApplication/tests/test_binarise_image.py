@@ -1,16 +1,30 @@
 #!/usr/bin/python
 import os
 
-import MapMyNotesApplication.models.binarise_image as blueline
 import numpy as np
+from flask import Flask
+from flask.ext.testing import TestCase
+
+import MapMyNotesApplication.models.binarise_image as blueline
+from MapMyNotesApplication import database
 
 
-class TestBlueLinedAdaptedThreshold(object):
-    def setup(self):
+class TestUser(TestCase):
+    def create_app(self):
+        app = Flask(__name__)
+        app.config['TESTING'] = True
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
+        return app
+
+    def setUp(self):
         self.threshold = blueline.BinariseImage()
         self.image_file = "tests/test_image.jpg"
+        database.session.close()
+        database.drop_all()
+        database.create_all()
 
-    def teardown(self):
+    def tearDown(self):
         if os.path.isfile("tests/test_image.tif"):
             os.remove("tests/test_image.tif")
 
