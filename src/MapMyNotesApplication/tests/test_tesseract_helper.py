@@ -55,3 +55,35 @@ class TestTesseractHelper(TestCase):
         tuples = tesseract_helper.get_confidence_and_words_from_image()
         assert type(tuples) is list
         assert type(tuples[0][0]) is tuple
+
+    def test_get_module_code_line_returns_a_tuple(self):
+        tesseract_helper = TesseractHelper(self.image)
+        tesseract_helper.set_tiff_image_for_analysis()
+        tesseract_helper.get_confidence_and_words_from_image()
+        module_code = tesseract_helper.get_module_code_line()
+        assert type(module_code) is tuple
+
+    def test_get_title_line_returns_a_list_of_tuples(self):
+        tesseract_helper = TesseractHelper(self.image)
+        tesseract_helper.set_tiff_image_for_analysis()
+        tesseract_helper.get_confidence_and_words_from_image()
+        title_line = tesseract_helper.get_title_line()
+        assert type(title_line) is list
+        assert type(title_line[0]) is tuple
+
+    def test_get_date_line_returns_a_list_of_tuples(self):
+        tesseract_helper = TesseractHelper(self.image)
+        tesseract_helper.set_tiff_image_for_analysis()
+        tesseract_helper.get_confidence_and_words_from_image()
+        date_line = tesseract_helper.get_date_line()
+        assert type(date_line) is list
+        assert type(date_line[0]) is tuple
+
+    def test_get_lecturer_line_returns_a_list_of_tuples(self):
+        tesseract_helper = TesseractHelper(self.image)
+        tesseract_helper.set_tiff_image_for_analysis()
+        tesseract_helper.get_confidence_and_words_from_image()
+        lecturer_line = tesseract_helper.get_lecturer_line()
+        assert type(lecturer_line) is list
+        assert type(lecturer_line[0]) is tuple
+

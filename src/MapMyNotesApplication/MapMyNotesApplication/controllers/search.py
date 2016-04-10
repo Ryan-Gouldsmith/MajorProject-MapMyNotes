@@ -1,12 +1,14 @@
-from MapMyNotesApplication.models.note import Note
-from MapMyNotesApplication.models.session_helper import SessionHelper
 from flask import Blueprint, render_template, request, url_for, redirect, session
 
+from MapMyNotesApplication.models.note import Note
+from MapMyNotesApplication.models.session_helper import SessionHelper
 
 searchblueprint = Blueprint('searchblueprint', __name__)
 
+GET = 'GET'
 
-@searchblueprint.route("/search", methods=["GET"])
+
+@searchblueprint.route("/search", methods=[GET])
 def search():
     session_helper = SessionHelper(session)
     if session_helper.is_user_id_in_session() is False:

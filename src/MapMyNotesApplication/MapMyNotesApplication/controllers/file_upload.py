@@ -1,4 +1,3 @@
-import datetime
 import os
 
 import httplib2
@@ -7,6 +6,7 @@ from werkzeug import secure_filename
 
 from MapMyNotesApplication.models.binarise_image import BinariseImage
 from MapMyNotesApplication.models.calendar_item import CalendarItem
+from MapMyNotesApplication.models.date_time_helper import DateTimeHelper
 from MapMyNotesApplication.models.exif_parser import ExifParser
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
@@ -53,6 +53,7 @@ def file_upload_index_route():
 
         binarise = BinariseImage()
         if binarise.image_file_exists(prepared_file):
+            # TODO look into this, especially where return values are not used
             _ = binarise.read_image_as_grayscale(prepared_file)
             _ = binarise.apply_median_blur()
             threshold_image = binarise.apply_adaptive_threshold()
@@ -111,10 +112,12 @@ def show_image(note_image):
     events = None
     if not file_upload_service.is_png():
         exif_parser = ExifParser(file_upload_service.upload_path)
+        # TODO does it need to return a value here?
         _ = exif_parser.parse_exif()
         suggested_date = exif_parser.get_image_date()
 
     if session_helper.check_if_session_contains_credentials():
+        # TODO duplicated functionality, extract to a generic helper function
         service = OauthService()
         session_credentials = session_helper.return_session_credentials()
         http_auth = service.authorise(httplib2.Http(), session_credentials)
@@ -125,7 +128,6 @@ def show_image(note_image):
         Reference for the access token expiration
         """
         if not credentials.access_token_expired and suggested_date is not None:
-            suggested_date = datetime.datetime.strptime(suggested_date, "%Y:%m:%d %H:%M:%S")
             google_calendar_service = GoogleCalendarService()
             google_service = google_calendar_service.build(http_auth)
 
@@ -137,13 +139,9 @@ def show_image(note_image):
             Modified for my own usage.
             http://stackoverflow.com/questions/9578906/easiest-way-to-combine-date-and-time-strings-to-single-datetime-object-using-pyt
             """
-
-            # TODO DRY with calendar things ?
-            end_time = datetime.datetime.strptime('23:59', "%H:%M").time()
-            start_time = datetime.datetime.strptime("00:00", "%H:%M").time()
-
-            end_date = datetime.datetime.combine(suggested_date.date(), end_time).isoformat("T") + "Z"
-            start_date = datetime.datetime.combine(suggested_date.date(), start_time).isoformat("T") + "Z"
+            date_time_helper = DateTimeHelper()
+            suggested_date, end_date, start_date = date_time_helper.process_suggested_date_for_calendar_events(
+                suggested_date)
             google_request = google_calendar_service.get_list_of_events(google_service, start=start_date, end=end_date)
 
             google_calendar_response = google_calendar_service.execute_request(google_request, http_auth)
@@ -161,14 +159,15 @@ def show_image(note_image):
     filename_test, file_extension = os.path.splitext(note_image)
     tiff_image = filename_test + ".tif"
     tif_path = FILE_UPLOAD_PATH + tiff_image
+
     tesseract_helper = TesseractHelper(tif_path)
     tesseract_helper.set_tiff_image_for_analysis()
-    data = tesseract_helper.get_confidence_and_words_from_image()
-    # TODO Add functions to get the lines easier?
-    tesseract_module_code = data[0][0]
-    tesseract_title = data[0][1:]
-    tesseract_date = data[1]
-    tesseract_lecturer = data[2]
+    _ = tesseract_helper.get_confidence_and_words_from_image()
+
+    tesseract_module_code = tesseract_helper.get_module_code_line()
+    tesseract_title = tesseract_helper.get_title_line()
+    tesseract_date = tesseract_helper.get_date_line()
+    tesseract_lecturer = tesseract_helper.get_lecturer_line()
 
     """
     Reference for empty string regex
@@ -197,7 +196,6 @@ def get_image(note_image):
         return None
 
     filename = secure_filename(note_image)
-    # TODO look for better way to fix this bug mentioned in the github issues
     application_root = os.path.dirname(fileupload.root_path)
 
     return send_from_directory(os.path.join(application_root, 'upload'), filename)

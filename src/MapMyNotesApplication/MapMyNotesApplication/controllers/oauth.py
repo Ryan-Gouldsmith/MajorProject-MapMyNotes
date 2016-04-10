@@ -1,5 +1,7 @@
-from MapMyNotesApplication.models.oauth_service import OauthService
 from flask import Blueprint, request, url_for, redirect, current_app, session
+
+from MapMyNotesApplication.models.oauth_service import OauthService
+from MapMyNotesApplication.models.session_helper import SessionHelper
 
 oauth = Blueprint('oauth', __name__)
 
@@ -9,11 +11,14 @@ oauth = Blueprint('oauth', __name__)
  https://developers.google.com/api-client-library/python/auth/web-app#example
 """
 
+GET = "GET"
 
-@oauth.route('/oauthsubmit', methods=["GET"])
+
+@oauth.route('/oauthsubmit', methods=[GET])
 def oauthsubmit():
     oauth_service = OauthService()
     client_secrets_file = current_app.config['secret_json_file']
+    session_helper = SessionHelper(session)
 
     if oauth_service.client_secret_file_exists(client_secrets_file):
         oauth_service.store_secret_file(client_secrets_file)
@@ -25,10 +30,8 @@ def oauthsubmit():
             return redirect(authorisation_uri)
         else:
             code = request.args.get('code')
-            # DEFAULT HTTP
             credentials = oauth_service.exchange_code(flow, code)
-            # TODO replace with session helper
-            session['credentials'] = credentials.to_json()
+            session_helper.save_credentials_to_session(credentials.to_json())
             return redirect(url_for('user.signin'))
     else:
         return 'Error with the key, contact an admin'

@@ -1,5 +1,4 @@
 class SessionHelper(object):
-
     def __init__(self, session):
         self.session = session
 
@@ -37,3 +36,6 @@ class SessionHelper(object):
     def delete_user_from_session(self):
         if self.is_user_id_in_session() is True:
             del self.session['user_id']
+
+    def save_credentials_to_session(self, credentials):
+        self.session['credentials'] = credentials

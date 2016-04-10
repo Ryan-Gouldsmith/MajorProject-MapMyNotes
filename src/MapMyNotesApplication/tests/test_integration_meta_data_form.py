@@ -1,14 +1,15 @@
 import os
 
 import mock
+from flask.ext.testing import LiveServerTestCase
+from googleapiclient.http import HttpMock
+from selenium import webdriver
+
 from MapMyNotesApplication import application
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.tesseract_helper import TesseractHelper
-from flask.ext.testing import LiveServerTestCase
-from googleapiclient.http import HttpMock
-from selenium import webdriver
 
 """https://books.google.co.uk/books?id=Xd0DCgAAQBAJ&pg=PA77&lpg=PA77&dq=flask-testing+liveservertestcase+selenium&source=bl&ots=fhCVat8wgm&sig=2ehfPK93v8fS2NQEq_vzdKYbc-U&hl=en&sa=X&ved=0ahUKEwiCr7ns6KLLAhVCUhQKHVO0DWoQ6AEIPTAF#v=onepage&q=flask-testing%20liveservertestcase%20selenium&f=false Docs are terrible this book may be good. http://www.voidspace.org.uk/python/mock/patch.html#patch-methods-start-and-stop This is great. Helped with the mocking and found it really useful part of the library. It meant that all the other tests passed and I could mock the functions for the acceptance tests.
 http://makina-corpus.com/blog/metier/2013/dry-up-mock-instanciation-with-addcleanup Was also a good reference for the testing with the mocks. I learnt a lot from this resource
@@ -101,16 +102,27 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         self.google_mock = self.google_patch.start()
         self.google_mock.return_value = self.google_response
 
-        self.tesseract_patch = mock.patch.object(TesseractHelper, 'get_confidence_and_words_from_image')
-        self.user_mock = self.tesseract_patch.start()
-        self.user_mock.return_value = [
-            [(u'CS4192250:', 75), (u'A', 88), (u't-.tLe.', 72), (u'.9oes', 72), (u'here\n\n', 81)],
-            [(u'Date:', 73), (u'29', 93), (u'/3/2016', 83), (u'15..', 76), (u'e0\n\n', 63)],
-            [(u'By:', 69), (u'A', 89), (u'c".crlain', 65), (u'doc.tor', 74), (u'tiHe\n\n', 75)]]
-
         self.errors_in_session_patch = mock.patch.object(SessionHelper, "errors_in_session")
         self.errors_in_session_mock = self.errors_in_session_patch.start()
         self.errors_in_session_mock.return_value = False
+
+        self.tesseract_module_patch = mock.patch.object(TesseractHelper, 'get_module_code_line')
+        self.tesseract_module_mock = self.tesseract_module_patch.start()
+        self.tesseract_module_mock.return_value = (u'CS4192250:', 75)
+
+        self.tesseract_title_patch = mock.patch.object(TesseractHelper, 'get_title_line')
+        self.tesseract_title_mock = self.tesseract_title_patch.start()
+        self.tesseract_title_mock.return_value = [(u'A', 88), (u't-.tLe.', 72), (u'.9oes', 72), (u'here\n\n', 81)]
+
+        self.tesseract_date_patch = mock.patch.object(TesseractHelper, 'get_date_line')
+        self.tesseract_date_mock = self.tesseract_date_patch.start()
+        self.tesseract_date_mock.return_value = [(u'Date:', 73), (u'29', 93), (u'/3/2016', 83), (u'15..', 76),
+                                                 (u'e0\n\n', 63)]
+
+        self.tesseract_lecturer_patch = mock.patch.object(TesseractHelper, 'get_lecturer_line')
+        self.tesseract_lecturer_mock = self.tesseract_lecturer_patch.start()
+        self.tesseract_lecturer_mock.return_value = [(u'By:', 69), (u'A', 89), (u'c".crlain', 65), (u'doc.tor', 74),
+                                                     (u'tiHe\n\n', 75)]
 
         self.credentials_patch = mock.patch.object(OauthService, 'get_credentials')
         self.credentials_mock = self.credentials_patch.start()
