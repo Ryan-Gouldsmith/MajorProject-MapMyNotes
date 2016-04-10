@@ -54,7 +54,7 @@ class TestGooglePlusService(TestCase):
 
         http_mock = HttpMock(self.google_plus_mock_response, {'status': '200'})
 
-        returned_values = google_plus_service.execute(request, http_mock)
+        returned_values = google_plus_service.execute_request(request, http_mock)
 
         expected = {'circledByCount': 100, 'emails': [{'type': 'account', 'value': 'test@gmail.com'}],
                     'objectType': 'person', 'occupation': 'A Test Occupation', 'tagline': 'Some Dummy data taglone',
@@ -72,7 +72,7 @@ class TestGooglePlusService(TestCase):
 
         http_mock = HttpMock(self.google_plus_mock_response, {'status': '200'})
 
-        returned_values = google_plus_service.execute(request, http_mock)
+        returned_values = google_plus_service.execute_request(request, http_mock)
 
         email_address = google_plus_service.parse_response_for_email(returned_values)
 
