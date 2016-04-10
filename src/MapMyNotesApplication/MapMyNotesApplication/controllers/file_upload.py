@@ -10,6 +10,7 @@ from MapMyNotesApplication.models.date_time_helper import DateTimeHelper
 from MapMyNotesApplication.models.exif_parser import ExifParser
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
+from MapMyNotesApplication.models.google_services_helper import GoogleServicesHelper
 from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.tesseract_helper import TesseractHelper
@@ -117,12 +118,7 @@ def show_image(note_image):
         suggested_date = exif_parser.get_image_date()
 
     if session_helper.check_if_session_contains_credentials():
-        # TODO duplicated functionality, extract to a generic helper function
-        service = OauthService()
-        session_credentials = session_helper.return_session_credentials()
-        http_auth = service.authorise(httplib2.Http(), session_credentials)
-        credentials = service.get_credentials()
-
+        credentials, http_auth = GoogleServicesHelper.authorise(session_helper)
         """
         https://developers.google.com/identity/protocols/OAuth2WebServer#example
         Reference for the access token expiration

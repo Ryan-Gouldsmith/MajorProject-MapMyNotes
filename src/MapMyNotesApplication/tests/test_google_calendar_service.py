@@ -1,23 +1,30 @@
 import os
 from datetime import datetime
 
+from flask import Flask
+from flask.ext.testing import TestCase
+from googleapiclient import discovery
+from googleapiclient.http import HttpMock
+
 from MapMyNotesApplication import database
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.module_code import ModuleCode
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.note_meta_data import NoteMetaData
 from MapMyNotesApplication.models.user import User
-from flask import Flask
-from flask.ext.testing import TestCase
-from googleapiclient import discovery
-from googleapiclient.http import HttpMock
 
 """
-    Help with mocking idea from the source code of the test client - in the tests they perform mocking. Looking at the code for the actual client I'd be using helped to work out how to go about testing oAuth stuff. https://github.com/google/oauth2client/blob/master/tests/test_client.py
+    Help with mocking idea from the source code of the test client - in the tests they perform mocking.
+    Looking at the code for the actual client I'd be using helped to work out how to go about testing oAuth stuff.
+    https://github.com/google/oauth2client/blob/master/tests/test_client.py
 
-    All Mock data is generated from https://developers.google.com/google-apps/calendar/v3/reference/events/list#examples using the authors oAuthAPI then modified.
+    All Mock data is generated from
+    https://developers.google.com/google-apps/calendar/v3/reference/events/list#examples
+     using the authors oAuthAPI then modified.
 
-    Patch Method was used to be like a RESTful service instead of update: This resource told me what was returned so I could test that. https://developers.google.com/apis-explorer/#p/calendar/v3/calendar.events.patch
+    Patch Method was used to be like a RESTful service instead of update:
+    This resource told me what was returned so I could test that.
+    https://developers.google.com/apis-explorer/#p/calendar/v3/calendar.events.patch
 """
 
 
@@ -60,7 +67,7 @@ class TestCalendarService(TestCase):
 
     def test_building_the_discovery_in_calendar_service(self):
         calendar_service = GoogleCalendarService()
-        # Discovery mock json was the response from their test disvoery api. TODO Cite this properly and get the appropriate data needed.
+        # Discovery mock json was the response from their test disvoery api.
         http_mock = HttpMock(self.discovery_mock, {'status': '200'})
 
         service = calendar_service.build(http_mock)
@@ -194,8 +201,27 @@ class TestCalendarService(TestCase):
         http_mock = HttpMock(self.discovery_mock, {'status': '200'})
         service = calendar_service.build(http_mock)
         event_id = "ideventcalendaritem1"
-        request = calendar_service.add_url_to_event_description(service, note_url, event)
-        http_mock = HttpMock(self.calendar_event_patched, {'status': '200'})
-        requested_event = calendar_service.execute_request(request, http_mock)
+        http_auth = HttpMock(self.calendar_event_patched, {'status': '200'})
+        requested_event = calendar_service.add_url_to_event_description(service, note_url, event, http_auth)
 
         assert requested_event['description'] == '"http://localhost:5000/show_note/1"'
+
+    def test_get_events_based_on_date_returns_correct_events(self):
+        note = Note('uploads/', self.meta_data_id, self.user_id)
+        database.session.add(note)
+        database.session.commit()
+
+        calendar_service = GoogleCalendarService()
+        http_mock = HttpMock(self.discovery_mock, {'status': '200'})
+
+        service = calendar_service.build(http_mock)
+        date_start = datetime.strptime("10/09/2016 12:00:00", "%d/%m/%Y %H:%M:%S")
+
+        date_end = datetime.strptime("10/09/2016 23:59:59", "%d/%m/%Y %H:%M:%S")
+
+        request = calendar_service.get_list_of_events(service, start=date_start, end=date_end)
+
+        http_mock = HttpMock(self.calendar_response_mock, {'status': '200'})
+        requested_events = calendar_service.get_events_based_on_date(date_start, date_end, http_mock, service)
+
+        assert '2014-09-10T19:00:00' in requested_events['items'][0]['start']['dateTime']

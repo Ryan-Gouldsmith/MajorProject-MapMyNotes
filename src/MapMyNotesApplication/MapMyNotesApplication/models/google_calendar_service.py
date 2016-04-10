@@ -16,9 +16,9 @@ class GoogleCalendarService(object):
         return discovery.build(self.API, self.VERSION, http=http_auth)
 
     def get_list_of_events(self, service, start=None, end=None):
-
+        print "start {}".format(start)
         if start is not None and end is not None:
-            if self.check_dates_are_correct(start=start, end=end) is False:
+            if not self.check_dates_are_correct(start=start, end=end):
                 return None
 
             return service.events().list(calendarId="primary", timeMin=start, timeMax=end, timeZone="Europe/London")
@@ -34,6 +34,13 @@ class GoogleCalendarService(object):
     def prepare_url_for_event(self, note):
         return current_app.config['root_url'] + "/show_note/{}".format(note.id)
 
-    def add_url_to_event_description(self, service, note_url, event):
+    def add_url_to_event_description(self, service, note_url, event, http_auth):
         event["description"] = note_url
-        return service.events().patch(calendarId='primary', eventId=event['id'], body=event)
+        google_request = service.events().patch(calendarId='primary', eventId=event['id'], body=event)
+        return self.execute_request(google_request, http_auth)
+
+    def get_events_based_on_date(self, start_date, end_date, http_auth, google_service):
+        google_request = self.get_list_of_events(google_service, start=start_date, end=end_date)
+        google_calendar_response = self.execute_request(google_request, http_auth)
+        print google_calendar_response
+        return google_calendar_response
