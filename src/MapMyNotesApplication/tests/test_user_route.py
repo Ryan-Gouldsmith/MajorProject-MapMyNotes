@@ -44,7 +44,7 @@ class TestUploadRoute(TestCase):
         database.create_all()
 
     @mock.patch.object(OauthService, 'authorise')
-    @mock.patch.object(GooglePlusService, 'execute')
+    @mock.patch.object(GooglePlusService, 'execute_request')
     def test_user_route(self, http, google):
         # http://flask.pocoo.org/docs/0.10/testing/
         with self.client.session_transaction() as session:
@@ -64,7 +64,7 @@ class TestUploadRoute(TestCase):
         oauth_return = OauthService.authorise(auth, credentials.to_json())
         OauthService.authorise.return_value = oauth_return
 
-        GooglePlusService.execute.return_value = {'circledByCount': 100,
+        GooglePlusService.execute_request.return_value = {'circledByCount': 100,
                                                     'emails': [{'type': 'account', 'value': 'test@gmail.com'}],
                                                     'objectType': 'person', 'occupation': 'A Test Occupation',
                                                     'tagline': 'Some Dummy data taglone', 'verified': 'False'}

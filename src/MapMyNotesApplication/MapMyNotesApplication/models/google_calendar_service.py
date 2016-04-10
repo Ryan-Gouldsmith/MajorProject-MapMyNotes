@@ -1,4 +1,3 @@
-from apiclient import discovery
 from flask import current_app
 
 """
@@ -7,13 +6,12 @@ Therefore it should be given an honourable reference.
 https://developers.google.com/google-apps/calendar/v3/reference/events/update
 """
 
+from MapMyNotesApplication.models.base_google_service import BaseGoogleService
 
-class GoogleCalendarService(object):
+
+class GoogleCalendarService(BaseGoogleService):
     API = "calendar"
     VERSION = "v3"
-
-    def build(self, http_auth):
-        return discovery.build(self.API, self.VERSION, http=http_auth)
 
     def get_list_of_events(self, service, start=None, end=None):
         print "start {}".format(start)
@@ -24,9 +22,6 @@ class GoogleCalendarService(object):
             return service.events().list(calendarId="primary", timeMin=start, timeMax=end, timeZone="Europe/London")
 
         return service.events().list(calendarId="primary", timeZone="Europe/London")
-
-    def execute_request(self, request, http):
-        return request.execute(http=http)
 
     def check_dates_are_correct(self, start, end):
         return start < end
