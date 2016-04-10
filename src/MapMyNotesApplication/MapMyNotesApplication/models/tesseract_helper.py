@@ -8,6 +8,7 @@ class TesseractHelper(object):
     def __init__(self, image):
         self.tesseract_api = PyTessBaseAPI(lang=self.CUSTOM_LANGUAGE)
         self.image = image
+        self.list_words_confidence = None
 
     def set_tiff_image_for_analysis(self):
         self.tesseract_api.SetImageFile(self.image)
@@ -29,5 +30,17 @@ class TesseractHelper(object):
 
             confidences = list(self.tesseract_api.MapWordConfidences())
             list_word_confidence.append(confidences)
-
+        self.list_words_confidence = list_word_confidence
         return list_word_confidence
+
+    def get_module_code_line(self):
+        return self.list_words_confidence[0][0] if (self.list_words_confidence is not None) else ""
+
+    def get_title_line(self):
+        return self.list_words_confidence[0][1:] if (self.list_words_confidence is not None) else ""
+
+    def get_date_line(self):
+        return self.list_words_confidence[1] if (self.list_words_confidence is not None) else ""
+
+    def get_lecturer_line(self):
+        return self.list_words_confidence[2] if (self.list_words_confidence is not None) else ""

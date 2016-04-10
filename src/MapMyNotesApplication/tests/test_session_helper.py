@@ -129,3 +129,13 @@ class TestSessionHelper(TestCase):
         session_helper.delete_user_from_session()
         user_in_session = 'user_id' in session
         assert user_in_session is False
+
+    def test_save_credentials_to_session_saves_credentials_properly(self):
+        with self.client.session_transaction() as session:
+            session_helper = SessionHelper(session)
+            session_helper.save_credentials_to_session("credentialsss")
+
+        is_credentials_in_session = 'credentials' in session
+        credentials_in_session = session['credentials']
+        assert is_credentials_in_session is True
+        assert credentials_in_session == "credentialsss"

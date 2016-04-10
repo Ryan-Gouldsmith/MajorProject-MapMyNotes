@@ -34,6 +34,5 @@ class OauthService(object):
         self.create_credentials_from_json(json_credentials)
         return self.credentials.authorize(http)
 
-    #TODO test
     def get_credentials(self):
         return self.credentials

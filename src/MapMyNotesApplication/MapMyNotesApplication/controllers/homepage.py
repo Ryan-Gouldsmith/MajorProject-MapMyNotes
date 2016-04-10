@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 
 import httplib2
+
+from MapMyNotesApplication.models.date_time_helper import DateTimeHelper
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
@@ -14,6 +16,7 @@ homepage = Blueprint('homepage', __name__)
 def home_page_route():
     session_helper = SessionHelper(session)
     if session_helper.check_if_session_contains_credentials():
+        # Todo Duplicated functionality
         service = OauthService()
         session_credentials = session_helper.return_session_credentials()
         http_auth = service.authorise(httplib2.Http(), session_credentials)
@@ -30,10 +33,8 @@ def home_page_route():
             """Google requires it to be in  RFC 3339 format.
              http://stackoverflow.com/questions/8556398/generate-rfc-3339-timestamp-in-python Reference.
             """
-            end_date = datetime.utcnow().isoformat("T") + "Z"
-            start_date = (datetime.utcnow() - timedelta(days=7)).isoformat("T") + "Z"
+            end_date, start_date = DateTimeHelper.get_last_7_days_of_dates()
             google_request = google_calendar_service.get_list_of_events(google_service, start=start_date, end=end_date)
-
             google_calendar_response = google_calendar_service.execute_request(google_request, http_auth)
 
             events = google_calendar_response['items']
