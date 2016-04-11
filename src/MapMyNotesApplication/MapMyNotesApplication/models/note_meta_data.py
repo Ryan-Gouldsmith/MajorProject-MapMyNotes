@@ -1,16 +1,15 @@
 from MapMyNotesApplication import database
-from sqlalchemy import Column, Integer, String, ForeignKey, exc, DateTime, and_
-from MapMyNotesApplication.models.module_code import Module_Code
+from MapMyNotesApplication.models.module_code import ModuleCode
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 
 
-class Note_Meta_Data(database.Model):
-
+class NoteMetaData(database.Model):
     __tablename__ = "notes_meta_data"
     id = Column(Integer, primary_key=True)
     lecturer = Column(String(100), nullable=False)
     location = Column(String(100), nullable=False)
-    module_code_id = Column(Integer, ForeignKey(Module_Code.id))
+    module_code_id = Column(Integer, ForeignKey(ModuleCode.id))
     date = Column(DateTime, nullable=False)
     title = Column(String(100), nullable=False)
 
@@ -42,4 +41,6 @@ class Note_Meta_Data(database.Model):
         module_code = meta_data.module_code_id
         date = meta_data.date
 
-        return Note_Meta_Data.query.filter(Note_Meta_Data.lecturer == lecturer, Note_Meta_Data.location == location, Note_Meta_Data.module_code_id == module_code, Note_Meta_Data.date == date).first()
+        return NoteMetaData.query.filter(NoteMetaData.lecturer == lecturer, NoteMetaData.location == location,
+                                         NoteMetaData.module_code_id == module_code,
+                                         NoteMetaData.date == date).first()

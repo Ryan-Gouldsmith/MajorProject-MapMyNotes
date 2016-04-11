@@ -12,3 +12,4 @@
 **/.cache
 **/.pyc
 **/client_secrets.json
+**/.idea/

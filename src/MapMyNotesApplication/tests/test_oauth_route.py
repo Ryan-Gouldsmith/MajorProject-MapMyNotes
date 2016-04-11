@@ -1,12 +1,8 @@
-from MapMyNotesApplication import application, database
-import pytest
-import os
-from flask import request
+from MapMyNotesApplication import application
 from flask.ext.testing import TestCase
 
 
 class TestOAuthRoute(TestCase):
-
     def create_app(self):
         app = application
         app.config['TESTING'] = True

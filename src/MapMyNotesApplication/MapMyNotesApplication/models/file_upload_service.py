@@ -1,27 +1,37 @@
 import os
+
+
 class FileUploadService(object):
+    ACCEPTED_FILE_EXTENSIONS = [".jpg", ".png", ".tiff"]
 
-    ACCEPTED_FILE_EXTENSIONS = [".jpg",".png",".tiff"]
+    def __init__(self, filename):
+        self.filename = filename
+        self.upload_path = None
 
-    def save_users_file(self, file_path, file_object):
-        file_object.save(file_path)
+    def save_users_file(self, file_object):
+        file_object.save(self.upload_path)
 
-    def is_forward_slash_in_filename(self, filename):
-        return "/" in filename
+    def is_forward_slash_in_filename(self):
+        return "/" in self.filename
 
+    def remove_slash_from_filename(self):
+        self.filename = self.filename.split("/")[1]
 
-    def prepare_file_path_file(self, filename):
-        split_filename = filename.split("/")
-        filename = split_filename[1]
-        return filename
-
-    def accepted_file_extension(self, filename):
-        filename, file_extension = os.path.splitext(filename)
+    def accepted_file_extension(self):
+        filename, file_extension = os.path.splitext(self.filename)
         return file_extension in self.ACCEPTED_FILE_EXTENSIONS
 
-    def file_exists(self, filename):
-        return os.path.isfile(filename)
+    def file_exists(self):
+        print self.upload_path
+        return os.path.isfile(self.upload_path)
 
-    def is_png(self, filename):
-        filename, file_extension = os.path.splitext(filename)
+    def is_png(self):
+        filename, file_extension = os.path.splitext(self.filename)
         return file_extension == '.png'
+
+    def add_full_path_to_filename(self, upload_path):
+        self.upload_path = "{}{}".format(upload_path, self.filename)
+        return self.upload_path
+
+    def update_filename(self, filename):
+        self.filename = filename
