@@ -7,6 +7,7 @@ from flask.ext.testing import TestCase
 from googleapiclient.http import HttpMock
 
 from MapMyNotesApplication import database, application
+from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.google_services_helper import GoogleServicesHelper
 from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
@@ -106,6 +107,7 @@ class TestGoogleServicesHelper(TestCase):
             }
         }
 
+
         with self.client.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
             self.oauth_service = OauthService()
@@ -137,6 +139,8 @@ class TestGoogleServicesHelper(TestCase):
         self.oauth_mock = self.oauth_patch.start()
         self.oauth_mock.return_value = self.authorise
 
+        self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar-discovery.json")
+        self.calendar_response_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar_response.json")
         self.create_app()
 
     def tearDown(self):
@@ -159,3 +163,14 @@ class TestGoogleServicesHelper(TestCase):
 
         assert credentials.to_json() == self.credentials_auth.to_json()
         assert type(http_auth) is HttpMock
+
+    def test_get_events_based_on_date_time_returns_the_correct_google_response(self):
+        calendar_service = GoogleCalendarService()
+        http_mock = HttpMock(self.discovery_mock, {'status': '200'})
+
+        service = calendar_service.build(http_mock)
+        http_mock = HttpMock(self.calendar_response_mock, {'status': '200'})
+        start_date = datetime.strptime("01 December 2016 01:00", "%d %B %Y %H:%M")
+        calendar_response = GoogleServicesHelper.get_events_based_on_date_time(start_date, calendar_service,service, http_mock)
+
+        assert calendar_response['etag'] == "\"1234567891012345\""
