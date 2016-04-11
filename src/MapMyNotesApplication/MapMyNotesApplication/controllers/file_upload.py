@@ -1,6 +1,5 @@
 import os
 
-import httplib2
 from flask import Blueprint, render_template, request, redirect, url_for, send_from_directory, session
 from werkzeug import secure_filename
 
@@ -11,7 +10,6 @@ from MapMyNotesApplication.models.exif_parser import ExifParser
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.google_services_helper import GoogleServicesHelper
-from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.tesseract_helper import TesseractHelper
 
@@ -138,10 +136,8 @@ def show_image(note_image):
             date_time_helper = DateTimeHelper()
             suggested_date, end_date, start_date = date_time_helper.process_suggested_date_for_calendar_events(
                 suggested_date)
-            google_request = google_calendar_service.get_list_of_events(google_service, start=start_date, end=end_date)
-
-            google_calendar_response = google_calendar_service.execute_request(google_request, http_auth)
-
+            google_calendar_response = google_calendar_service.get_events_based_on_date(start_date, end_date, http_auth,
+                                                                                        google_service)
             cal_events = google_calendar_response['items']
             events = []
             for event in cal_events:
@@ -151,7 +147,6 @@ def show_image(note_image):
         elif credentials.access_token_expired:
             return redirect(url_for('logout.logout'))
 
-    # TESSERACT PARSING HERE
     filename_test, file_extension = os.path.splitext(note_image)
     tiff_image = filename_test + ".tif"
     tif_path = FILE_UPLOAD_PATH + tiff_image

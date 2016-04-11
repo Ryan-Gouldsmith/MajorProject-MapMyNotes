@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, request, url_for, redirect, sessio
 from MapMyNotesApplication.models.date_time_helper import DateTimeHelper
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.google_services_helper import GoogleServicesHelper
+from MapMyNotesApplication.models.input_validator import InputValidator
 from MapMyNotesApplication.models.module_code import ModuleCode
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.note_meta_data import NoteMetaData
@@ -28,8 +29,9 @@ def add_meta_data(note_image):
     if credentials.access_token_expired:
         return redirect(url_for('logout.logout'))
 
+    validator = InputValidator(request.form)
     if request.method == POST:
-        if not check_all_params_exist(request.form):
+        if not validator.check_all_params_exist():
             error = "Some fields are missing"
             session_helper.set_errors_in_session(error)
             return redirect(url_for('fileupload.show_image', note_image=note_image))
@@ -48,9 +50,9 @@ def add_meta_data(note_image):
             session_helper.set_errors_in_session(error)
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
-        any_errors, errors = check_all_params_are_less_than_schema_length(request.form)
-        if any_errors:
-            session_helper.set_errors_in_session(errors)
+        less_than_schema_length = validator.check_all_params_are_less_than_schema_length()
+        if not less_than_schema_length:
+            session_helper.set_errors_in_session(validator.get_errors())
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
         module_code_data = request.form['module_code_data'].upper()
@@ -78,6 +80,7 @@ def add_meta_data(note_image):
 
             google_calendar_service = GoogleCalendarService()
             google_service = google_calendar_service.build(http_auth)
+
 
             note_url = google_calendar_service.prepare_url_for_event(note)
             date_time_helper = DateTimeHelper(combined_date_time=date_time)
@@ -133,6 +136,7 @@ def edit_meta_data(note_id):
 
         google_calendar_service = GoogleCalendarService()
         google_service = google_calendar_service.build(http_auth)
+
         date_time_helper = DateTimeHelper(combined_date_time=previous_date)
         start_date, end_date = date_time_helper.process_time_zone()
         note_url = google_calendar_service.prepare_url_for_event(note)
@@ -147,7 +151,8 @@ def edit_meta_data(note_id):
             response = google_calendar_service.add_url_to_event_description(google_service, "", event,
                                                                             http_auth)
 
-        if not check_all_params_exist(request.form):
+        input_validator = InputValidator(request.form)
+        if not input_validator.check_all_params_exist():
             session['errors'] = "Some fields are missing"
             return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
 
@@ -164,10 +169,10 @@ def edit_meta_data(note_id):
             session_helper.set_errors_in_session(error)
             return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
 
-        any_errors, errors = check_all_params_are_less_than_schema_length(request.form)
+        less_than_schema_length = input_validator.check_all_params_are_less_than_schema_length()
         note_image = note.image_path
-        if any_errors is True:
-            session['errors'] = errors
+        if not less_than_schema_length:
+            session['errors'] = input_validator.get_errors()
             return redirect(url_for('metadata.edit_meta_data', note_image=note_image))
 
         module_code_data = request.form['module_code_data'].upper()
@@ -199,6 +204,7 @@ def edit_meta_data(note_id):
             note = Note.query.get(note_id)
             note.update_meta_data_id(note_meta_data.id)
 
+
         note_url = google_calendar_service.prepare_url_for_event(note)
         date_time_helper = DateTimeHelper(combined_date_time=previous_date)
         start_date, end_date = date_time_helper.process_time_zone()
@@ -214,39 +220,3 @@ def edit_meta_data(note_id):
                 note.update_calendar_url(response['htmlLink'])
 
         return redirect(url_for('shownote.show_note', note_id=note_id))
-
-
-# TODO: Move the below functions to a helper class?
-
-def check_all_params_exist(params):
-    if params["module_code_data"] is None or params['lecturer_name_data'] is None or params['location_data'] is None \
-            or params['date_data'] is None or params['title_data'] is None or params['time_data'] is None:
-        return False
-
-    """ REFERENCE isspace checks for empty spaces
-        http://stackoverflow.com/questions/2405292/how-to-check-if-text-is-empty-spaces-tabs-newlines-in-python
-    """
-
-    if params['module_code_data'].isspace() or params['lecturer_name_data'].isspace() \
-            or params['location_data'].isspace() or params['date_data'].isspace() or params['title_data'].isspace() \
-            or params['time_data'].isspace():
-        return False
-
-    return True
-
-
-def check_all_params_are_less_than_schema_length(params):
-    errors = []
-    if len(params["module_code_data"]) > 50:
-        errors.append("Module code length too long, max 50 characters.")
-
-    if len(params['lecturer_name_data']) > 100:
-        errors.append("Lecture name is too long, max length 100 characters")
-
-    if len(params['location_data']) > 100:
-        errors.append("Location data too long, max length 100 characters")
-
-    if len(params['title_data']) > 100:
-        errors.append("title data too long, max length 100 characters")
-
-    return len(errors) > 0, errors
