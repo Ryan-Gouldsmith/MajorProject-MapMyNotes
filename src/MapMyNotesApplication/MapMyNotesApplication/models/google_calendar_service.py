@@ -37,5 +37,4 @@ class GoogleCalendarService(BaseGoogleService):
     def get_events_based_on_date(self, start_date, end_date, http_auth, google_service):
         google_request = self.get_list_of_events(google_service, start=start_date, end=end_date)
         google_calendar_response = self.execute_request(google_request, http_auth)
-        print google_calendar_response
         return google_calendar_response
