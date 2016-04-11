@@ -2,6 +2,10 @@ import os
 from datetime import datetime
 
 import mock
+from flask.ext.testing import LiveServerTestCase
+from googleapiclient.http import HttpMock
+from selenium import webdriver
+
 from MapMyNotesApplication import application, database
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.module_code import ModuleCode
@@ -10,9 +14,6 @@ from MapMyNotesApplication.models.note_meta_data import NoteMetaData
 from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.user import User
-from flask.ext.testing import LiveServerTestCase
-from googleapiclient.http import HttpMock
-from selenium import webdriver
 
 
 # https://books.google.co.uk/books?id=Xd0DCgAAQBAJ&pg=PA77&lpg=PA77&dq=flask-testing+liveservertestcase+selenium&source=bl&ots=fhCVat8wgm&sig=2ehfPK93v8fS2NQEq_vzdKYbc-U&hl=en&sa=X&ved=0ahUKEwiCr7ns6KLLAhVCUhQKHVO0DWoQ6AEIPTAF#v=onepage&q=flask-testing%20liveservertestcase%20selenium&f=false Docs are terrible this book may be good.
@@ -168,7 +169,7 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         self.google_patch = mock.patch.object(GoogleCalendarService, "execute_request")
         self.google_mock = self.google_patch.start()
         # https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.side_effect
-        self.google_mock.side_effect = [self.google_response, self.new_event, self.updated_response]
+        self.google_mock.side_effect = [self.google_response, self.new_event, self.google_response, self.updated_response]
 
         self.credentials_patch = mock.patch.object(OauthService, 'get_credentials')
         self.credentials_mock = self.credentials_patch.start()
@@ -261,7 +262,7 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         date.send_keys("20 January 2016")
         time = self.driver.find_element_by_class_name("time")
         time.clear()
-        time.send_keys("13:00")
+        time.send_keys("15:00")
         title = self.driver.find_element_by_class_name('title')
         title.clear()
         title.send_keys("Title")
@@ -271,3 +272,30 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         new_event_url = self.driver.find_element_by_class_name('calendar_link').get_attribute('href')
 
         assert new_event_url == "http://newupdatednote.co.uk/1"
+
+    def test_when_editing_the_date_it_shows_unable_to_save_to_calendar_if_no_event_was_found(self):
+        self.driver.get(self.get_server_url() + "/metadata/edit/" + str(self.note.id))
+        module_code = self.driver.find_element_by_class_name("module_code")
+        module_code.clear()
+        module_code.send_keys('CS31310')
+        lecturer = self.driver.find_element_by_class_name("lecturer")
+        lecturer.clear()
+        lecturer.send_keys("Mr Foo")
+        location = self.driver.find_element_by_class_name("location")
+        location.clear()
+        location.send_keys("C11 Hugh Owen")
+        date = self.driver.find_element_by_class_name("date")
+        date.clear()
+        date.send_keys("31 January 2016")
+        time = self.driver.find_element_by_class_name("time")
+        time.clear()
+        time.send_keys("15:00")
+        title = self.driver.find_element_by_class_name('title')
+        title.clear()
+        title.send_keys("Title")
+        submit = self.driver.find_element_by_class_name('submit')
+        submit.click()
+        calendar_text = self.driver.find_element_by_class_name('saved_to_cal')
+
+        assert calendar_text.text == "Unable to save to calendar"
+

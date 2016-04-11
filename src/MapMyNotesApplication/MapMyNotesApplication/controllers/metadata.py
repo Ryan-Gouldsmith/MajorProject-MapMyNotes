@@ -146,7 +146,8 @@ def edit_meta_data(note_id):
 
         event = GoogleServicesHelper.get_event_containing_module_code(module_code, google_calendar_response,
                                                                       previous_date)
-        if event and 'description' in note_url and note_url in event['description']:
+
+        if event and 'description' in event and note_url in event['description']:
             response = google_calendar_service.add_url_to_event_description(google_service, "", event,
                                                                             http_auth)
 
@@ -204,16 +205,19 @@ def edit_meta_data(note_id):
             note.update_meta_data_id(note_meta_data.id)
 
         note_url = google_calendar_service.prepare_url_for_event(note)
-        google_calendar_response = GoogleServicesHelper.get_events_based_on_date_time(previous_date,
+        google_calendar_response = GoogleServicesHelper.get_events_based_on_date_time(date_time,
                                                                                       google_calendar_service,
                                                                                       google_service, http_auth)
 
         event = GoogleServicesHelper.get_event_containing_module_code(module_code.module_code, google_calendar_response,
                                                                       date_time)
+        url = ""
         if event:
             response = google_calendar_service.add_url_to_event_description(google_service, note_url, event,
                                                                             http_auth)
             if response is not None and note_url in response['description']:
-                note.update_calendar_url(response['htmlLink'])
+                url = response['htmlLink']
+
+        note.update_calendar_url(url)
 
         return redirect(url_for('shownote.show_note', note_id=note_id))
