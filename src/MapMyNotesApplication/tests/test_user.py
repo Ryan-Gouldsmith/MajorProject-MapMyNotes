@@ -1,20 +1,16 @@
-from MapMyNotesApplication import application, database
-import pytest
+from MapMyNotesApplication import database
 from MapMyNotesApplication.models.user import User
-from sqlalchemy import func
-from flask.ext.testing import TestCase
 from flask import Flask
+from flask.ext.testing import TestCase
 
 
 class TestUser(TestCase):
-
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
         # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         return app
-
 
     def setUp(self):
         database.session.close()

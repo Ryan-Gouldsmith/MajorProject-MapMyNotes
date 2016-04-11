@@ -1,11 +1,9 @@
-import pytest
-from flask.ext.testing import TestCase
 from MapMyNotesApplication import application, database
-from flask import request, session, Flask
+from flask import session
+from flask.ext.testing import TestCase
 
 
 class TestLogoutRoute(TestCase):
-
     def create_app(self):
         app = application
         app.config['TESTING'] = True

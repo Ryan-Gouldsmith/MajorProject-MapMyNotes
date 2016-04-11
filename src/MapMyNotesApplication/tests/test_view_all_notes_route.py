@@ -1,14 +1,9 @@
 from MapMyNotesApplication import application, database
-import pytest
-import os
-from flask import request, Flask
-from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.user import User
 from flask.ext.testing import TestCase
 
 
 class TestViewAllNotesRoute(TestCase):
-
     def create_app(self):
         app = application
         app.config['TESTING'] = True

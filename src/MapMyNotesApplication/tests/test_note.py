@@ -1,17 +1,15 @@
-from MapMyNotesApplication import application, database
-import pytest
-from MapMyNotesApplication.models.note import Note
-from sqlalchemy import func
-from MapMyNotesApplication.models.module_code import Module_Code
-from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
-from MapMyNotesApplication.models.user import User
 from datetime import datetime
-from flask.ext.testing import TestCase
+
+from MapMyNotesApplication import database
+from MapMyNotesApplication.models.module_code import ModuleCode
+from MapMyNotesApplication.models.note import Note
+from MapMyNotesApplication.models.note_meta_data import NoteMetaData
+from MapMyNotesApplication.models.user import User
 from flask import Flask
+from flask.ext.testing import TestCase
 
 
 class TestOAuthRoute(TestCase):
-
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
@@ -27,12 +25,12 @@ class TestOAuthRoute(TestCase):
         database.session.add(user)
         database.session.commit()
         self.user_id = user.id
-        module_code = Module_Code('CS31310')
+        module_code = ModuleCode('CS31310')
         database.session.add(module_code)
         database.session.commit()
         self.module_code_id = module_code.id
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data = Note_Meta_Data("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "title")
+        note_meta_data = NoteMetaData("Mr Foo", self.module_code_id, 'C11 Hugh Owen', date, "title")
         note_meta_data.save()
         self.meta_data_id = note_meta_data.id
 
@@ -57,12 +55,11 @@ class TestOAuthRoute(TestCase):
     def test_it_returns_the_correct_file_path(self):
         file_path = "upload/test.png"
 
-
         note = Note(file_path, self.meta_data_id, self.user_id)
         database.session.add(note)
         database.session.commit()
         returned = Note.query.first()
-        assert returned.image_path ==  file_path
+        assert returned.image_path == file_path
 
     def test_the_save_function_in_a_note(self):
         file_path = "upload/test.png"
@@ -113,7 +110,7 @@ class TestOAuthRoute(TestCase):
         note.save()
 
         date = datetime.strptime("20th January 2016 15:00", "%dth %B %Y %H:%M")
-        note_meta_data_new = Note_Meta_Data("Test", self.module_code_id, 'Testy', date, 'Title Other')
+        note_meta_data_new = NoteMetaData("Test", self.module_code_id, 'Testy', date, 'Title Other')
         note_meta_data_new.save()
 
         note.update_meta_data_id(note_meta_data_new.id)

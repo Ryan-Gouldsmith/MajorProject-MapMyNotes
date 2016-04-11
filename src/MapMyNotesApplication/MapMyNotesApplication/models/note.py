@@ -1,16 +1,15 @@
 from MapMyNotesApplication import database
-from sqlalchemy import Column, Integer, String, ForeignKey, and_
-from MapMyNotesApplication.models.note_meta_data import Note_Meta_Data
-from MapMyNotesApplication.models.module_code import Module_Code
+from MapMyNotesApplication.models.module_code import ModuleCode
+from MapMyNotesApplication.models.note_meta_data import NoteMetaData
 from MapMyNotesApplication.models.user import User
+from sqlalchemy import Column, Integer, String, ForeignKey, and_
 
 
 class Note(database.Model):
-
     __tablename__ = "notes"
     id = Column(Integer, primary_key=True)
     image_path = Column(String(150), nullable=False)
-    note_meta_data_id = Column(Integer, ForeignKey(Note_Meta_Data.id))
+    note_meta_data_id = Column(Integer, ForeignKey(NoteMetaData.id))
     calendar_url = Column(String(256))
     user_id = Column(Integer, ForeignKey(User.id))
 
@@ -45,5 +44,6 @@ class Note(database.Model):
     @staticmethod
     def find_note_by_module_code(module_code, user_id):
         # API REFERENCE : http://docs.sqlalchemy.org/en/rel_1_0/orm/query.html#sqlalchemy.orm.query.Query.join
-        query = Module_Code.module_code.like(module_code)
-        return Note.query.join(Note_Meta_Data.meta_data).join(Note_Meta_Data.module_code).filter(and_(Note.user_id == user_id, query)).all()
+        query = ModuleCode.module_code.like(module_code)
+        return Note.query.join(NoteMetaData.meta_data).join(NoteMetaData.module_code).filter(
+            and_(Note.user_id == user_id, query)).all()

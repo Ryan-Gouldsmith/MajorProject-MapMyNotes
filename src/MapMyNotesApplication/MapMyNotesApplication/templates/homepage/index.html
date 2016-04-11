@@ -1,22 +1,22 @@
 {% extends "root.html" %}
 {% block head %}
-  {{super()}}
-  <link href="{{ url_for('static', filename='stylesheet/homepage.css')}}" rel="stylesheet" >
+{{super()}}
+<link href="{{ url_for('static', filename='stylesheet/homepage.css')}}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <h1 class="title">MapMyNotes</h1>
-    {% if events %}
-    <p class="welcome">Welcome, {{ email_address }} </p>
-    <h3> Events in the last week from your calendar </h3>
-      <section class="row events">
-        {% for event in events %}
-          <div class="block event">
-            <p class="summary">{{event.summary}}</p>
-            <a href="{{ event.htmlLink}}" class="link">View event</a>
-          </div>
-        {% endfor %}
-      </section>
-    {% else %}
-      <a href="{{ url_for('oauth.oauthsubmit')}}" class="link authorise"> Authorise to use Google </a>
-    {% endif %}
+<h1 class="title">MapMyNotes</h1>
+{% if events %}
+<p class="welcome">Welcome, {{ email_address }} </p>
+<h3> Events in the last week from your calendar </h3>
+<section class="row events">
+    {% for event in events %}
+    <div class="block event">
+        <p class="summary">{{event.summary}}</p>
+        <a href="{{ event.htmlLink}}" class="link">View event</a>
+    </div>
+    {% endfor %}
+</section>
+{% else %}
+<a href="{{ url_for('oauth.oauthsubmit')}}" class="link authorise"> Authorise to use Google </a>
+{% endif %}
 {% endblock %}
