@@ -1,5 +1,6 @@
 import httplib2
 
+from MapMyNotesApplication.models.date_time_helper import DateTimeHelper
 from MapMyNotesApplication.models.oauth_service import OauthService
 
 
@@ -20,3 +21,11 @@ class GoogleServicesHelper(object):
             if module_code in event['summary'].upper() and start_date in event['start']['dateTime']:
                 return event
         return None
+
+    @staticmethod
+    def get_events_based_on_date_time(date_time, google_calendar_service, google_service, http_auth):
+        date_time_helper = DateTimeHelper(combined_date_time=date_time)
+        start_date, end_date = date_time_helper.process_time_zone()
+        google_calendar_response = google_calendar_service.get_events_based_on_date(start_date, end_date, http_auth,
+                                                                                    google_service)
+        return google_calendar_response

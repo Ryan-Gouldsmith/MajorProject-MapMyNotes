@@ -81,12 +81,11 @@ def add_meta_data(note_image):
             google_calendar_service = GoogleCalendarService()
             google_service = google_calendar_service.build(http_auth)
 
-
             note_url = google_calendar_service.prepare_url_for_event(note)
-            date_time_helper = DateTimeHelper(combined_date_time=date_time)
-            start_date, end_date = date_time_helper.process_time_zone()
-            google_calendar_response = google_calendar_service.get_events_based_on_date(start_date, end_date, http_auth,
-                                                                                        google_service)
+            google_calendar_response = GoogleServicesHelper.get_events_based_on_date_time(date_time,
+                                                                                          google_calendar_service,
+                                                                                          google_service,
+                                                                                          http_auth)
 
             module_code = module_code_obj.module_code
 
@@ -137,11 +136,11 @@ def edit_meta_data(note_id):
         google_calendar_service = GoogleCalendarService()
         google_service = google_calendar_service.build(http_auth)
 
-        date_time_helper = DateTimeHelper(combined_date_time=previous_date)
-        start_date, end_date = date_time_helper.process_time_zone()
         note_url = google_calendar_service.prepare_url_for_event(note)
-        google_calendar_response = google_calendar_service.get_events_based_on_date(start_date, end_date, http_auth,
-                                                                                    google_service)
+
+        google_calendar_response = GoogleServicesHelper.get_events_based_on_date_time(previous_date,
+                                                                                      google_calendar_service,
+                                                                                      google_service, http_auth)
 
         module_code = note.meta_data.module_code.module_code
 
@@ -204,12 +203,10 @@ def edit_meta_data(note_id):
             note = Note.query.get(note_id)
             note.update_meta_data_id(note_meta_data.id)
 
-
         note_url = google_calendar_service.prepare_url_for_event(note)
-        date_time_helper = DateTimeHelper(combined_date_time=previous_date)
-        start_date, end_date = date_time_helper.process_time_zone()
-        google_calendar_response = google_calendar_service.get_events_based_on_date(start_date, end_date, http_auth,
-                                                                                    google_service)
+        google_calendar_response = GoogleServicesHelper.get_events_based_on_date_time(previous_date,
+                                                                                      google_calendar_service,
+                                                                                      google_service, http_auth)
 
         event = GoogleServicesHelper.get_event_containing_module_code(module_code.module_code, google_calendar_response,
                                                                       date_time)
