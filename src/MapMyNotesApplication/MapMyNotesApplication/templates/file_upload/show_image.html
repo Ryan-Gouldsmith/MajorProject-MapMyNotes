@@ -54,15 +54,19 @@
     <div class="suggestion block autofill_module_code autofill">
         <p class='tesseract_label suggestion_message'> The note's module code:</p>
         <p class="tesseract_module_code">
-            {%- if tesseract_module_code[1] >= 75 -%}
-                <span class="tesseract_green">
-            {%- elif tesseract_module_code[1] < 75 and tesseract_module_code[1] >= 70 -%}
-                <span class="tesseract_orange">
-            {%- else -%}
-                <span class="tesseract_red">
-            {%- endif -%}
-            {{- tesseract_module_code[0].strip() -}}
+            {%- if tesseract_module_code -%}
+                {%- if tesseract_module_code[1] >= 75 -%}
+                  <span class="tesseract_green">
+                {%- elif tesseract_module_code[1] < 75 and tesseract_module_code[1] >= 70 -%}
+                    <span class="tesseract_orange">
+                {%- else -%}
+                  <span class="tesseract_red">
+                {%- endif -%}
+                 {{- tesseract_module_code[0].strip() -}}
             </span>
+            {%- else -%}
+                        No module code could be found
+            {%- endif -%}
         </p>
     </div>
     <div class="suggestion block autofill_title autofill">
@@ -142,11 +146,6 @@
           $('.autofill_title').on("click", function(){
             $('.title').val($('.tesseract_title').text().trim());
           });
-
-
-
-
-
 
 </script>
 {% endblock %}
