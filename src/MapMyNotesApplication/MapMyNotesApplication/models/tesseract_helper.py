@@ -34,13 +34,25 @@ class TesseractHelper(object):
         return list_word_confidence
 
     def get_module_code_line(self):
-        return self.list_words_confidence[0][0] if (self.list_words_confidence is not None) else ""
+        if len(self.list_words_confidence[0]) > 0 and len(self.list_words_confidence[0][0]) > 0:
+            return self.list_words_confidence[0][0] if (self.list_words_confidence is not None) else ""
+        else:
+            return None
 
     def get_title_line(self):
-        return self.list_words_confidence[0][1:] if (self.list_words_confidence is not None) else ""
+        if len(self.list_words_confidence[0]) > 0 and len(self.list_words_confidence[0][1:]) > 0:
+            return self.list_words_confidence[0][1:] if (self.list_words_confidence is not None) else ""
+        else:
+            return []
 
     def get_date_line(self):
-        return self.list_words_confidence[1] if (self.list_words_confidence is not None) else ""
+        if len(self.list_words_confidence[1]) > 0:
+            return self.list_words_confidence[1] if (self.list_words_confidence is not None) else ""
+        else:
+            return []
 
     def get_lecturer_line(self):
-        return self.list_words_confidence[2] if (self.list_words_confidence is not None) else ""
+        if len(self.list_words_confidence[2]):
+            return self.list_words_confidence[2] if (self.list_words_confidence is not None) else ""
+        else:
+            return []

@@ -82,6 +82,42 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
                 "reminders": {
                     "useDefault": 'true'
                 }
+            },
+            {
+
+                "kind": "calendar#event",
+                "etag": "\"1234567891012345\"",
+                "id": "ideventcalendaritem1",
+                "status": "confirmed",
+                "htmlLink": "https://www.google.com/calendar/event?testtest",
+                "created": "2014-09-10T14:53:25.000Z",
+                "updated": "2014-09-10T14:54:12.748Z",
+                "summary": "missing data",
+                "creator": {
+                    "email": "test@gmail.com",
+                    "displayName": "Tester",
+                    "self": 'true'
+                },
+                "organizer": {
+                    "email": "test@gmail.com",
+                    "displayName": "Test",
+                    "self": 'true'
+                },
+                "start": {
+                    "date": "2016-12-01"
+                },
+                "end": {
+                    "date": "2016-12-01"
+                },
+                "transparency": "transparent",
+                "visibility": "private",
+                "iCalUID": "123456789@google.com",
+                "sequence": 0,
+                "guestsCanInviteOthers": 'false',
+                "guestsCanSeeOtherGuests": 'false',
+                "reminders": {
+                    "useDefault": 'true'
+                }
             }
         ]
         }
@@ -305,3 +341,12 @@ class TestIntegrationMetaDataForm(LiveServerTestCase):
         title_field = self.driver.find_element_by_class_name("title")
         title.click()
         assert title_field.get_attribute('value') == "A t-.tLe. .9oes here"
+
+    def test_google_calendar_response_without_a_date_time_field_ignores_the_response(self):
+        self.driver.get(self.get_server_url() + "/upload/show_image/test.png")
+        summaries = self.driver.find_elements_by_class_name("calendar_start_time")
+        summary_text = []
+        for summary in summaries:
+            summary_text.append(summary.text)
+
+        assert "Event has no time" not in summary_text

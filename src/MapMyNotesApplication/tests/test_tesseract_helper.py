@@ -18,7 +18,7 @@ class TestTesseractHelper(TestCase):
         return app
 
     def setUp(self):
-        self.image = "MapMyNotesApplication/upload/test.tif"
+        self.image = "MapMyNotesApplication/upload/tests_ryan_test_1.tif"
         database.session.close()
         database.drop_all()
         database.create_all()
@@ -86,4 +86,30 @@ class TestTesseractHelper(TestCase):
         lecturer_line = tesseract_helper.get_lecturer_line()
         assert type(lecturer_line) is list
         assert type(lecturer_line[0]) is tuple
+
+    def test_get_module_code_line_returns_none_with_empty_list(self):
+        tesseract_helper = TesseractHelper(self.image)
+        tesseract_helper.list_words_confidence = [[], [], []]
+        module_code = tesseract_helper.get_module_code_line()
+        assert module_code is None
+
+    def test_get_title_line_returns_none_with_empty_list(self):
+        tesseract_helper = TesseractHelper(self.image)
+        tesseract_helper.list_words_confidence = [[], [], []]
+        module_code = tesseract_helper.get_title_line()
+        assert module_code == []
+
+    def test_get_date_code_line_returns_none_with_empty_list(self):
+        tesseract_helper = TesseractHelper(self.image)
+        tesseract_helper.list_words_confidence = [[], [], []]
+        module_code = tesseract_helper.get_date_line()
+        assert module_code == []
+
+    def test_get_lecturer_line_returns_none_with_empty_list(self):
+        tesseract_helper = TesseractHelper(self.image)
+        tesseract_helper.list_words_confidence = [[], [], []]
+        module_code = tesseract_helper.get_lecturer_line()
+        assert module_code == []
+
+
 
