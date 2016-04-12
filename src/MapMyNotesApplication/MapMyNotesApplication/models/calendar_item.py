@@ -6,6 +6,8 @@ class CalendarItem(object):
         self.item = item
 
     def format_start_date(self):
+        if "dateTime" not in self.item["start"]:
+            return 'Event has no time'
         date = self.item["start"]["dateTime"]
         """ Had an issue when daylight timings came into play. with datetime, found this
         http://stackoverflow.com/questions/10494312/parsing-time-string-in-python
