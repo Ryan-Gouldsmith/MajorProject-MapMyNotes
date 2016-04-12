@@ -13,30 +13,29 @@
 {% endif %}
 
 <form action="{{ url_for('metadata.add_meta_data', note_image=note_image) }}" method="post">
-    <label class="module_label">Module Code:
-        <input type="text" class="module_code_data" name="module_code_data" required="required"
-               title="Must contain characters" pattern="^(?!\s+).+">
-    </label>
-    <label class='lecture_name_label'>Lecturer's Name:
-        <input type="text" class="lecturer_name" name="lecturer_name_data" required="required"
-               title="Must contain characters" pattern="^(?!\s+).+">
-    </label>
-    <label class="location_name_label"> Location of the lecture:
-        <input type="text" class="location_name" name="location_data" title="Must contain characters"
-               required="required" pattern='^(?!\s+).+'>
-    </label>
-    <label class='date_label'> Date of lecture:
-        <input type="text" class="date" id="datepicker" name="date_data" required="required"
-               title="Must contain characters" pattern='^(?!\s+).+'>
-    </label>
-    <label class="time_label"> Time of lecture:
-        <input type="text" class="time" id="time" name="time_data" required="required" title="Must contain characters"
-               pattern='^(?!\s+).+'>
-    </label>
-    <label class='title_label'> Title:
-        <input type="text" class="title" name="title_data" required="required" title="Must contain characters"
-               pattern="^(?!\s+).+">
-    </label>
+    <label class="module_label" for="module_code">Module Code: </label>
+    <input type="text" class="module_code_data" id="module_code" name="module_code_data" required="required"
+           title="Must contain characters" pattern="^(?!\s+).+">
+
+    <label class='lecture_name_label' for="lecturer">Lecturer's Name:</label>
+    <input type="text" class="lecturer_name" id="lecturer" name="lecturer_name_data" required="required"
+           title="Must contain characters" pattern="^(?!\s+).+">
+
+    <label class="location_name_label" for="location"> Location of the lecture: </label>
+    <input type="text" class="location_name" id="location" name="location_data" title="Must contain characters"
+           required="required" pattern='^(?!\s+).+'>
+
+    <label class='date_label' for="datepicker"> Date of lecture: </label>
+    <input type="text" class="date" id="datepicker" name="date_data" required="required"
+           title="Must contain characters" pattern='^(?!\s+).+'>
+
+    <label class="time_label" for="time"> Time of lecture: </label>
+
+    <input type="text" class="time" id="time" name="time_data" required="required" title="Must contain characters"
+           pattern='^(?!\s+).+'>
+    <label class='title_label' for="title"> Title: </label>
+    <input type="text" class="title" id="title" name="title_data" required="required" title="Must contain characters"
+           pattern="^(?!\s+).+">
     <input type="submit" class="submit btn" name="submit">
 </form>
 <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}"
@@ -54,15 +53,19 @@
     <div class="suggestion block autofill_module_code autofill">
         <p class='tesseract_label suggestion_message'> The note's module code:</p>
         <p class="tesseract_module_code">
+            {%- if tesseract_module_code -%}
             {%- if tesseract_module_code[1] >= 75 -%}
-                <span class="tesseract_green">
-            {%- elif tesseract_module_code[1] < 75 and tesseract_module_code[1] >= 70 -%}
-                <span class="tesseract_orange">
-            {%- else -%}
-                <span class="tesseract_red">
-            {%- endif -%}
-            {{- tesseract_module_code[0].strip() -}}
+                  <span class="tesseract_green">
+                {%- elif tesseract_module_code[1] < 75 and tesseract_module_code[1] >= 70 -%}
+                    <span class="tesseract_orange">
+                {%- else -%}
+                  <span class="tesseract_red">
+                {%- endif -%}
+                 {{- tesseract_module_code[0].strip() -}}
             </span>
+            {%- else -%}
+                        No module code could be found
+            {%- endif -%}
         </p>
     </div>
     <div class="suggestion block autofill_title autofill">
@@ -142,7 +145,6 @@
           $('.autofill_title').on("click", function(){
             $('.title').val($('.tesseract_title').text().trim());
           });
-
 
 
 
