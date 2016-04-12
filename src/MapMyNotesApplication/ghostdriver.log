@@ -1,5 +1,15 @@
-[INFO  - 2016-04-11T15:13:25.735Z] GhostDriver - Main - running on port 56863
-[INFO  - 2016-04-11T15:13:26.105Z] Session [f076ca30-fff7-11e5-95d5-e756b1f06b6e] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
-[INFO  - 2016-04-11T15:13:26.105Z] Session [f076ca30-fff7-11e5-95d5-e756b1f06b6e] - page.customHeaders:  - {}
-[INFO  - 2016-04-11T15:13:26.105Z] Session [f076ca30-fff7-11e5-95d5-e756b1f06b6e] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"mac-10.11 (El Capitan)-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
-[INFO  - 2016-04-11T15:13:26.105Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: f076ca30-fff7-11e5-95d5-e756b1f06b6e
+[INFO  - 2016-04-12T15:45:48.952Z] GhostDriver - Main - running on port 49787
+[INFO  - 2016-04-12T15:45:49.547Z] Session [a1428f70-00c5-11e6-b408-654807cf256f] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2016-04-12T15:45:49.547Z] Session [a1428f70-00c5-11e6-b408-654807cf256f] - page.customHeaders:  - {}
+[INFO  - 2016-04-12T15:45:49.547Z] Session [a1428f70-00c5-11e6-b408-654807cf256f] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"mac-10.11 (El Capitan)-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2016-04-12T15:45:49.547Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: a1428f70-00c5-11e6-b408-654807cf256f
+[INFO  - 2016-04-12T15:48:10.711Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T15:53:10.723Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T15:58:10.735Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T16:03:10.747Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T16:00:37.740Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T16:05:37.752Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T15:49:56.716Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T15:54:56.728Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T15:59:56.740Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[INFO  - 2016-04-12T16:04:56.752Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
