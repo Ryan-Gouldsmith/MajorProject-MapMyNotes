@@ -29,10 +29,20 @@ class GoogleCalendarService(BaseGoogleService):
     def prepare_url_for_event(self, note):
         return current_app.config['root_url'] + "/show_note/{}".format(note.id)
 
-    def add_url_to_event_description(self, service, note_url, event, http_auth):
-        event["description"] = note_url
+    def update_event(self, service, event, http_auth):
         google_request = service.events().patch(calendarId='primary', eventId=event['id'], body=event)
         return self.execute_request(google_request, http_auth)
+
+    def remove_note_url_from_description(self, note_url, event, service, http_auth):
+        event['description'] = event['description'].replace(note_url, "")
+        return self.update_event(service, event, http_auth)
+
+    def add_note_url_to_description(self, note_url, event, service, http_auth):
+        if 'description' in event:
+            event['description'] += " " + note_url
+        else:
+            event['descirption'] = note_url
+        return self.update_event(service, event, http_auth)
 
     def get_events_based_on_date(self, start_date, end_date, http_auth, google_service):
         google_request = self.get_list_of_events(google_service, start=start_date, end=end_date)
