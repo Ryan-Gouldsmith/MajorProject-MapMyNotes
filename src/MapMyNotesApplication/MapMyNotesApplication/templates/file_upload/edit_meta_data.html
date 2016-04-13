@@ -35,18 +35,15 @@
 
     <label class="title_label" for="title"> Title:</label>
 
-    <input type="text" class="title" id="title" value="{{ title }}" name="title_data" required="required" pattern="^(?!\s+).+"
+    <input type="text" class="title" id="title" value="{{ title }}" name="title_data" required="required"
+           pattern="^(?!\s+).+"
            title="Must contain characters">
     <input type="submit" class="submit btn" name="submit">
 </form>
 <img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="uploaded_image">
-<script type=text/javascript>
+<script>
       $('#datepicker').datepicker({dateFormat: "d MM yy"});
       $('#time').timepicker({'timeFormat': 'H:i'});
-
-
-
-
 
 </script>
 {% endblock %}
