@@ -96,7 +96,6 @@ def add_meta_data(note_image):
             if event is not None:
                 saved_response = google_calendar_service.add_note_url_to_description(note_url, event, google_service,
                                                                                      http_auth)
-                # saved_response = google_calendar_service.update_event(google_service, note_url, event,http_auth)
 
             if saved_response is not None and note_url in saved_response['description']:
                 note.update_calendar_url(saved_response['htmlLink'])
