@@ -41,7 +41,7 @@ class GoogleCalendarService(BaseGoogleService):
         if 'description' in event:
             event['description'] += " " + note_url
         else:
-            event['descirption'] = note_url
+            event['description'] = note_url
         return self.update_event(service, event, http_auth)
 
     def get_events_based_on_date(self, start_date, end_date, http_auth, google_service):
