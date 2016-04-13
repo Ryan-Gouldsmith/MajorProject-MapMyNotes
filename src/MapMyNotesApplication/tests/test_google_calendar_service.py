@@ -43,6 +43,9 @@ class TestCalendarService(TestCase):
                                                         "mock-data/calendar_week_response.json")
         self.calendar_event_patched = os.path.join(os.path.dirname(__file__),
                                                    "mock-data/calendar_updated_description.json")
+
+        self.calendar_no_description_link = os.path.join(os.path.dirname(__file__),
+                                                         "mock-data/no_description_field.json")
         return app
 
     def setUp(self):
@@ -202,7 +205,7 @@ class TestCalendarService(TestCase):
         service = calendar_service.build(http_mock)
         event_id = "ideventcalendaritem1"
         http_auth = HttpMock(self.calendar_event_patched, {'status': '200'})
-        requested_event = calendar_service.add_url_to_event_description(service, note_url, event, http_auth)
+        requested_event = calendar_service.add_note_url_to_description(note_url, event, service, http_auth)
 
         assert requested_event['description'] == '"http://localhost:5000/show_note/1"'
 
@@ -225,3 +228,55 @@ class TestCalendarService(TestCase):
         requested_events = calendar_service.get_events_based_on_date(date_start, date_end, http_mock, service)
 
         assert '2014-09-10T19:00:00' in requested_events['items'][0]['start']['dateTime']
+
+    def test_remove_note_url_from_description_removes_the_value_from_the_event(self):
+        calendar_service = GoogleCalendarService()
+        http_mock = HttpMock(self.discovery_mock, {'status': '200'})
+        service = calendar_service.build(http_mock)
+
+        note = Note('uploads/', self.meta_data_id, self.user_id)
+        database.session.add(note)
+        database.session.commit()
+
+        calendar_service = GoogleCalendarService()
+        event = {
+            "kind": "calendar#event",
+            "etag": "\"12334455667\"",
+            "id": "123456789",
+            "status": "confirmed",
+            "htmlLink": "https://test",
+            "created": "2016-03-24T08:59:46.000Z",
+            "updated": "2016-03-27T21:10:42.379Z",
+            "summary": "Test To Show Hannah",
+            "creator": {
+                "email": "test@gmail.com",
+                "displayName": "Test",
+                "self": True
+            },
+            "description": "http://localhost:5000/show_note/1",
+            "organizer": {
+                "email": "test@gmail.com",
+                "displayName": "test",
+                "self": True
+            },
+            "start": {
+                "dateTime": "2016-03-24T07:30:00Z"
+            },
+            "end": {
+                "dateTime": "2016-03-24T08:30:00Z"
+            },
+            "iCalUID": "test124@google.com",
+            "sequence": 0,
+            "reminders": {
+                "useDefault": True
+            }
+        }
+
+        note_url = calendar_service.prepare_url_for_event(note)
+        http_mock = HttpMock(self.discovery_mock, {'status': '200'})
+        service = calendar_service.build(http_mock)
+        http_auth = HttpMock(self.calendar_no_description_link, {'status': '200'})
+
+        responded_event = calendar_service.remove_note_url_from_description(note_url, event, service, http_auth)
+
+        assert '"http://localhost:5000/show_note/1"' not in responded_event['description']
