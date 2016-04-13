@@ -94,8 +94,9 @@ def add_meta_data(note_image):
 
             saved_response = None
             if event is not None:
-                saved_response = google_calendar_service.add_url_to_event_description(google_service, note_url, event,
-                                                                                      http_auth)
+                saved_response = google_calendar_service.add_note_url_to_description(note_url, event, google_service,
+                                                                                     http_auth)
+                # saved_response = google_calendar_service.update_event(google_service, note_url, event,http_auth)
 
             if saved_response is not None and note_url in saved_response['description']:
                 note.update_calendar_url(saved_response['htmlLink'])
@@ -148,8 +149,8 @@ def edit_meta_data(note_id):
                                                                       previous_date)
 
         if event and 'description' in event and note_url in event['description']:
-            response = google_calendar_service.add_url_to_event_description(google_service, "", event,
-                                                                            http_auth)
+            response = google_calendar_service.remove_note_url_from_description(note_url, event, google_service,
+                                                                                http_auth)
 
         input_validator = InputValidator(request.form)
         if not input_validator.check_all_params_exist():
@@ -213,8 +214,8 @@ def edit_meta_data(note_id):
                                                                       date_time)
         url = ""
         if event:
-            response = google_calendar_service.add_url_to_event_description(google_service, note_url, event,
-                                                                            http_auth)
+            response = google_calendar_service.add_note_url_to_description(note_url, event, google_service,
+                                                                           http_auth)
             if response is not None and note_url in response['description']:
                 url = response['htmlLink']
 
