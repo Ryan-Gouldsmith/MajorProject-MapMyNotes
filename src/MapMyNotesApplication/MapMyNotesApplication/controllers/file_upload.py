@@ -138,11 +138,27 @@ def show_image(note_image):
                 suggested_date)
             google_calendar_response = google_calendar_service.get_events_based_on_date(start_date, end_date, http_auth,
                                                                                         google_service)
+
+            # TODO TEST + REFACOTR
+            # Parse the response as normal.
             cal_events = google_calendar_response['items']
             events = []
             for event in cal_events:
-                event = CalendarItem(event)
-                events.append(event)
+                # check if the recocurrance is in the calendar items.
+                print "EVENTS {}".format(event)
+                if 'recurrence' in event and event['status'] == 'confirmed':
+                    # if it is, make a request for using the event id of the reoccurance along with the start and end date
+                    event_id = event['id']
+                    event_response = google_calendar_service.get_recurring_event_list(start_date, end_date, event_id,
+                                                                                      http_auth, google_service)
+                    print "response {}".format(event_response)
+                    for event_res in event_response['items']:
+                        event_item = CalendarItem(event_res)
+                        events.append(event_item)
+
+                elif event['status'] == 'confirmed':
+                    event = CalendarItem(event)
+                    events.append(event)
 
         elif credentials.access_token_expired:
             return redirect(url_for('logout.logout'))

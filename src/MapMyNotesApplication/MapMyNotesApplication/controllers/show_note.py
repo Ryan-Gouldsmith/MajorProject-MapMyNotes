@@ -33,5 +33,6 @@ def show_note(note_id):
 def delete_note(note_id):
     note = Note.query.get(note_id)
     note.delete()
+    #TODO delete from calendar too
 
     return redirect(url_for("homepage.home_page_route"))

@@ -46,6 +46,8 @@ class TestCalendarService(TestCase):
 
         self.calendar_no_description_link = os.path.join(os.path.dirname(__file__),
                                                          "mock-data/no_description_field.json")
+
+        self.reoccurring_events = os.path.join(os.path.dirname(__file__), "mock-data/reoccurring_events.json")
         return app
 
     def setUp(self):
@@ -280,3 +282,18 @@ class TestCalendarService(TestCase):
         responded_event = calendar_service.remove_note_url_from_description(note_url, event, service, http_auth)
 
         assert '"http://localhost:5000/show_note/1"' not in responded_event['description']
+
+    def test_get_recurring_event_list_returns_the_instance_list_of_events(self):
+        calendar_service = GoogleCalendarService()
+        http_mock = HttpMock(self.discovery_mock, {'status': '200'})
+        service = calendar_service.build(http_mock)
+
+        date_start = datetime.strptime("12/12/2016 00:00:00", "%d/%m/%Y %H:%M:%S")
+
+        date_end = datetime.strptime("08/12/2016 00:00:00", "%d/%m/%Y %H:%M:%S")
+        event_id = "123456789"
+
+        http_auth = HttpMock(self.reoccurring_events, {'status': '200'})
+        responded_events = calendar_service.get_recurring_event_list(date_start, date_end, event_id, http_auth, service)
+
+        assert 'recurringEventId' in responded_events['items'][0]

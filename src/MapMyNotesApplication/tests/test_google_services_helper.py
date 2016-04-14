@@ -25,6 +25,8 @@ class TestGoogleServicesHelper(TestCase):
         app.config['SECRET_KEY'] = "secret"
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__), "mock-data/authorised_credentials.json")
+        self.reoccurring_events = os.path.join(os.path.dirname(__file__), "mock-data/reoccurring_events.json")
+
         return app
 
     def setUp(self):
@@ -58,6 +60,47 @@ class TestGoogleServicesHelper(TestCase):
                 "end": {
                     "dateTime": "2016-12-01T02:30:00"
                 },
+                "transparency": "transparent",
+                "visibility": "private",
+                "iCalUID": "123456789@google.com",
+                "sequence": 0,
+                "guestsCanInviteOthers": 'false',
+                "guestsCanSeeOtherGuests": 'false',
+                "reminders": {
+                    "useDefault": 'true'
+                }
+            }
+        ]
+        }
+
+        self.event_reocurring = {"items": [
+            {
+
+                "kind": "calendar#event",
+                "etag": "\"1234567891012345\"",
+                "id": "ideventcalendaritem1",
+                "status": "confirmed",
+                "htmlLink": "https://www.google.com/calendar/event?testtest",
+                "created": "2014-09-10T14:53:25.000Z",
+                "updated": "2014-09-10T14:54:12.748Z",
+                "summary": "CS31310",
+                "creator": {
+                    "email": "test@gmail.com",
+                    "displayName": "Tester",
+                    "self": 'true'
+                },
+                "organizer": {
+                    "email": "test@gmail.com",
+                    "displayName": "Test",
+                    "self": 'true'
+                },
+                "start": {
+                    "dateTime": "2016-12-01T01:00:00"
+                },
+                "end": {
+                    "dateTime": "2016-12-01T02:30:00"
+                },
+                'recurrence': '12345',
                 "transparency": "transparent",
                 "visibility": "private",
                 "iCalUID": "123456789@google.com",
@@ -107,7 +150,6 @@ class TestGoogleServicesHelper(TestCase):
             }
         }
 
-
         with self.client.session_transaction() as session:
             http_mock = HttpMock(self.credentials, {'status': 200})
             self.oauth_service = OauthService()
@@ -117,7 +159,7 @@ class TestGoogleServicesHelper(TestCase):
             flow = self.oauth_service.create_flow_from_clients_secret()
 
             self.credentials_auth = self.oauth_service.exchange_code(flow, "123code",
-                                                                http=http_mock)
+                                                                     http=http_mock)
             self.oauth_service.create_credentials_from_json(self.credentials_auth.to_json())
 
             self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
@@ -171,6 +213,21 @@ class TestGoogleServicesHelper(TestCase):
         service = calendar_service.build(http_mock)
         http_mock = HttpMock(self.calendar_response_mock, {'status': '200'})
         start_date = datetime.strptime("01 December 2016 01:00", "%d %B %Y %H:%M")
-        calendar_response = GoogleServicesHelper.get_events_based_on_date_time(start_date, calendar_service,service, http_mock)
+        calendar_response = GoogleServicesHelper.get_events_based_on_date_time(start_date, calendar_service, service,
+                                                                               http_mock)
 
         assert calendar_response['etag'] == "\"1234567891012345\""
+
+    def test_get_reoccurring_events_based_on_datetime_returns_the_correct_response(self):
+        start_date = datetime.strptime("01 December 2016 01:00", "%d %B %Y %H:%M")
+        calendar_service = GoogleCalendarService()
+        http_mock = HttpMock(self.discovery_mock, {'status': '200'})
+
+        service = calendar_service.build(http_mock)
+
+        http_mock = HttpMock(self.reoccurring_events, {'status':'200'})
+
+        events = GoogleServicesHelper.get_reoccurring_events_based_on_datetime(start_date, calendar_service, service,
+                                                                               http_mock, self.event_reocurring)
+        print events
+        assert 'recurringEventId' in events[0]
