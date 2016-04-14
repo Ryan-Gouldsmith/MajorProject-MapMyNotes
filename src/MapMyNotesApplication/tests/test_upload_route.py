@@ -4,7 +4,7 @@ import mock
 from flask.ext.testing import TestCase
 from googleapiclient.http import HttpMock
 
-from MapMyNotesApplication import application, database
+from MapMyNotesApplication import application, database, csrf
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.user import User
@@ -12,8 +12,9 @@ from MapMyNotesApplication.models.user import User
 
 class TestUploadRoute(TestCase):
     def create_app(self):
+        application.config['TESTING'] = True
         app = application
-        app.config['TESTING'] = True
+        csrf.init_app(app)
         # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")

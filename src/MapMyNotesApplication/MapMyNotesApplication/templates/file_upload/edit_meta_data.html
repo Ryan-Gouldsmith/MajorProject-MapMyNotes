@@ -10,6 +10,7 @@
 <p class="error">Error uploading the form data: {{ errors }}</p>
 {% endif %}
 <form class="edit_form" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
     <label class="module_code_label" for="module_code"> Module Code:</label>
     <input type="text" class="module_code" id="module_code" value="{{ module_code}}" name="module_code_data"
            required="required"

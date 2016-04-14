@@ -3,14 +3,16 @@ import os
 
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask_seasurf import SeaSurf
 
 logging.basicConfig()
 
 application = Flask(__name__)
-
+application.config['TESTING'] = False
 application.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/mapmynotes'
 database = SQLAlchemy(application)
-application.secret_key = "Superduperdupersecretkey"
+# Better secret key. Help from this http://flask.pocoo.org/docs/0.10/quickstart/
+application.secret_key = os.urandom(50)
 application.config["root_url"] = "http://localhost:5000"
 application.config['REDIRECT_URL_GOOGLE'] = "http://localhost:5000/oauthsubmit"
 
@@ -43,3 +45,6 @@ application.register_blueprint(user)
 application.register_blueprint(viewallnotes)
 application.register_blueprint(searchblueprint)
 application.register_blueprint(logoutblueprint)
+
+csrf = SeaSurf(application)
+application.config['seasurf'] = csrf

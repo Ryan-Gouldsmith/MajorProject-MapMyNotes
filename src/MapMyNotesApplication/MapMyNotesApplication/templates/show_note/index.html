@@ -19,6 +19,7 @@
     </section>
     <section class="modify-note">
         <form action="{{ url_for('shownote.delete_note', note_id=note_id) }}" method="post" class="delete_note_form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             <input type="submit" name="submit" class="delete_note delete btn" value="Delete Note">
         </form>
         <form action="{{ url_for('metadata.edit_meta_data', note_id=note_id) }}"
