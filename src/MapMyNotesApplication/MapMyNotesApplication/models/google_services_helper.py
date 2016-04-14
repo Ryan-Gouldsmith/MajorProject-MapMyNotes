@@ -36,14 +36,14 @@ class GoogleServicesHelper(object):
                                                  response_original):
         date_time_helper = DateTimeHelper(combined_date_time=date_time)
         start_date, end_date = date_time_helper.process_time_zone()
-        test_foo = {}
-        test_foo['items'] = []
+        reoccurring_events = {}
+        reoccurring_events['items'] = []
         for event in response_original['items']:
             if 'recurrence' in event:
                 event_id = event['id']
                 new_response = google_calendar_service.get_recurring_event_list(start_date, end_date, event_id,
                                                                                 http_auth,
                                                                                 google_service)
-                [test_foo['items'].append(response) for response in new_response['items']]
+                [reoccurring_events['items'].append(response) for response in new_response['items']]
 
-        return test_foo['items']
+        return reoccurring_events['items']
