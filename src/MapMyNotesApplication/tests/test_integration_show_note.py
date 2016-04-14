@@ -1,7 +1,7 @@
 import os
 
 import mock
-from MapMyNotesApplication import application, database
+from MapMyNotesApplication import application, database, csrf
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
@@ -13,7 +13,9 @@ from selenium import webdriver
 
 class TestIntegretationShowNote(LiveServerTestCase):
     def create_app(self):
+        application.config['TESTING'] = True
         app = application
+        csrf.init_app(app)
         app.config['LIVESERVER_PORT'] = 5000
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
