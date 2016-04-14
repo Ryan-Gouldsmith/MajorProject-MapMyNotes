@@ -87,11 +87,17 @@ def add_meta_data(note_image):
                                                                                           google_service,
                                                                                           http_auth)
 
+            reoccurring_events = GoogleServicesHelper.get_reoccurring_events_based_on_datetime(date_time,
+                                                                                               google_calendar_service,
+                                                                                               google_service,
+                                                                                               http_auth,
+                                                                                               google_calendar_response)
+
             module_code = module_code_obj.module_code
 
+            google_calendar_response['items'] += reoccurring_events
             event = GoogleServicesHelper.get_event_containing_module_code(module_code, google_calendar_response,
                                                                           date_time)
-
             saved_response = None
             if event is not None:
                 saved_response = google_calendar_service.add_note_url_to_description(note_url, event, google_service,
@@ -141,8 +147,14 @@ def edit_meta_data(note_id):
         google_calendar_response = GoogleServicesHelper.get_events_based_on_date_time(previous_date,
                                                                                       google_calendar_service,
                                                                                       google_service, http_auth)
+        reoccurring_events = GoogleServicesHelper.get_reoccurring_events_based_on_datetime(previous_date,
+                                                                                           google_calendar_service,
+                                                                                           google_service, http_auth,
+                                                                                           google_calendar_response)
 
         module_code = note.meta_data.module_code.module_code
+
+        google_calendar_response['items'] += reoccurring_events
 
         event = GoogleServicesHelper.get_event_containing_module_code(module_code, google_calendar_response,
                                                                       previous_date)
@@ -209,6 +221,12 @@ def edit_meta_data(note_id):
                                                                                       google_calendar_service,
                                                                                       google_service, http_auth)
 
+        reoccurring_events = GoogleServicesHelper.get_reoccurring_events_based_on_datetime(date_time,
+                                                                                           google_calendar_service,
+                                                                                           google_service, http_auth,
+                                                                                           google_calendar_response)
+
+        google_calendar_response['items'] += reoccurring_events
         event = GoogleServicesHelper.get_event_containing_module_code(module_code.module_code, google_calendar_response,
                                                                       date_time)
         url = ""
