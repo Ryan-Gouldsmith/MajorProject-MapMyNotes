@@ -145,18 +145,18 @@ def show_image(note_image):
             events = []
             for event in cal_events:
                 # check if the recocurrance is in the calendar items.
-                print "EVENTS {}".format(event)
+                print event
+                print '\n'
                 if 'recurrence' in event and event['status'] == 'confirmed':
                     # if it is, make a request for using the event id of the reoccurance along with the start and end date
                     event_id = event['id']
                     event_response = google_calendar_service.get_recurring_event_list(start_date, end_date, event_id,
                                                                                       http_auth, google_service)
-                    print "response {}".format(event_response)
                     for event_res in event_response['items']:
                         event_item = CalendarItem(event_res)
                         events.append(event_item)
 
-                elif event['status'] == 'confirmed':
+                elif event['status'] == 'confirmed' and not 'recurringEventId' in event:
                     event = CalendarItem(event)
                     events.append(event)
 
