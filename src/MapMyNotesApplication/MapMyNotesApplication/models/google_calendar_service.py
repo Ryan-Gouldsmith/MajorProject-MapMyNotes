@@ -14,11 +14,9 @@ class GoogleCalendarService(BaseGoogleService):
     VERSION = "v3"
 
     def get_list_of_events(self, service, start=None, end=None):
-        print "start {}".format(start)
         if start is not None and end is not None:
             if not self.check_dates_are_correct(start=start, end=end):
                 return None
-
             return service.events().list(calendarId="primary", timeMin=start, timeMax=end, timeZone="Europe/London")
 
         return service.events().list(calendarId="primary", timeZone="Europe/London")
@@ -48,3 +46,7 @@ class GoogleCalendarService(BaseGoogleService):
         google_request = self.get_list_of_events(google_service, start=start_date, end=end_date)
         google_calendar_response = self.execute_request(google_request, http_auth)
         return google_calendar_response
+
+    def get_recurring_event_list(self, start, end, event_id, http_auth, google_service):
+        request = google_service.events().instances(calendarId="primary", eventId=event_id, timeMin=start, timeMax=end)
+        return self.execute_request(request, http_auth)
