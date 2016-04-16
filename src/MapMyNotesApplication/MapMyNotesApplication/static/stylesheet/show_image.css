@@ -25,6 +25,11 @@ form input[type="text"]{
   background-color:#E3F2FD;
   cursor:pointer;
 }
+.calendar_link{
+    text-decoration:none;
+    padding:2%;
+    height:20%;
+}
 @media(max-width:768px){
   .temp_uploaded_image {
     padding-left:10px;
