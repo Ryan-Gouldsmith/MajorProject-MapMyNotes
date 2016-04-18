@@ -151,16 +151,16 @@ class TestUploadRoute(TestCase):
 
         assert resource.status_code == 302
 
-        assert "Error: Wrong file extention in uploaded file" not in resource.data
+        assert "A wrong file extended was uploaded" not in resource.data
 
     def test_uploading_wrong_file_extension(self):
         upload_file = open("tests/ryan_test_1.pdf", "r")
 
-        resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects=False)
+        resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects=True)
 
-        assert resource.status_code is 200
+        assert resource.status_code == 200
 
-        assert "Error: Wrong file extension in uploaded file" in resource.data
+        assert "A wrong file extended was uploaded" in resource.data
 
     def test_show_image_route(self):
         filename = 'tests/ryan_test_1.jpg'
