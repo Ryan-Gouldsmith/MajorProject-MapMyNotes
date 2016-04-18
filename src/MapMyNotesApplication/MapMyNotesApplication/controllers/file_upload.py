@@ -33,13 +33,17 @@ def file_upload_index_route():
     if request.method == POST:
         uploaded_file = request.files["file"]
         if not uploaded_file:
-            return "A bad file has been uploaded"
+            error = "A file was not successfully uploaded"
+            session_helper.set_errors_in_session(error)
+            return redirect(url_for('fileupload.file_upload_index_route'))
 
         filename = uploaded_file.filename
         file_upload_service = FileUploadService(filename)
 
         if not file_upload_service.accepted_file_extension():
-            return "Error: Wrong file extension in uploaded file"
+            error = "A wrong file extended was uploaded"
+            session_helper.set_errors_in_session(error)
+            return redirect(url_for('fileupload.file_upload_index_route'))
 
         if file_upload_service.is_forward_slash_in_filename():
             file_upload_service.remove_slash_from_filename()
@@ -90,8 +94,12 @@ def file_upload_index_route():
             return "There was an error saving the file, please upload again."
 
         return redirect(url_for("fileupload.show_image", note_image=filename))
+    errors = None
+    if session_helper.errors_in_session():
+        errors = session_helper.get_errors()
+        session_helper.delete_session_errors()
 
-    return render_template('/file_upload/index.html')
+    return render_template('/file_upload/index.html', errors=errors)
 
 
 @fileupload.route("/upload/show_image/<note_image>", methods=[GET])
