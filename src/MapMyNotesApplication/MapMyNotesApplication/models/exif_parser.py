@@ -28,4 +28,4 @@ class ExifParser(object):
         return self.exif_data
 
     def get_image_date(self):
-        return self.exif_data[self.IMAGE_START_TIME]
+        return self.exif_data[self.IMAGE_START_TIME] if self.exif_data is not None else None
