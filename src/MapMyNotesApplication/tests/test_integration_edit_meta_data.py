@@ -175,6 +175,10 @@ class TestIntegrationEditMetaData(LiveServerTestCase):
         self.credentials_mock = self.credentials_patch.start()
         self.credentials_mock.return_value = oauth_service.credentials
 
+        self.user_patch = mock.patch.object(SessionHelper, 'return_user_id')
+        self.user_mock = self.user_patch.start()
+        self.user_mock.return_value = 1
+
         return app
 
     def setUp(self):

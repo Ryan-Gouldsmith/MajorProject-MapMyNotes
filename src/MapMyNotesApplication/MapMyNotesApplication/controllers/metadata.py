@@ -117,6 +117,10 @@ def edit_meta_data(note_id):
 
     if credentials.access_token_expired:
         return redirect(url_for('logout.logout'))
+    note = Note.query.get(note_id)
+
+    if note.user_id is not session_helper.return_user_id():
+        return "Sorry you can't access that"
 
     if request.method == GET:
         errors = None
@@ -124,7 +128,6 @@ def edit_meta_data(note_id):
             errors = session_helper.get_errors()
             session_helper.delete_session_errors()
 
-        note = Note.query.get(note_id)
         module_code = note.meta_data.module_code.module_code
         lecturer = note.meta_data.lecturer
         location = note.meta_data.location
@@ -136,7 +139,7 @@ def edit_meta_data(note_id):
                                errors=errors)
 
     elif request.method == POST:
-        note = Note.query.get(note_id)
+        #note = Note.query.get(note_id)
         previous_date = note.meta_data.date
 
         google_calendar_service = GoogleCalendarService()

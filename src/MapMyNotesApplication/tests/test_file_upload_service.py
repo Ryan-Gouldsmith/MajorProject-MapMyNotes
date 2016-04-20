@@ -115,6 +115,6 @@ class TestFileUploadService(TestCase):
         assert self.file_upload_service.upload_path == "example/ryan_test_1.jpg"
 
     def test_updating_filename_successfully_changes_the_name(self):
-        self.file_upload_service.update_filename("test_example")
+        self.file_upload_service.update_filename(1, "test_example")
 
-        assert self.file_upload_service.filename == "test_example"
+        assert self.file_upload_service.filename == "1_test_example"
