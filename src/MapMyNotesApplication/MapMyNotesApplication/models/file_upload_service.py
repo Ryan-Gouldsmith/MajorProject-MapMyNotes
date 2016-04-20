@@ -1,4 +1,5 @@
 import os
+import time
 
 
 class FileUploadService(object):
@@ -33,4 +34,8 @@ class FileUploadService(object):
         return self.upload_path
 
     def update_filename(self, user_id, filename):
-        self.filename = "{}_{}".format(user_id, filename)
+        current_time = self.get_current_time()
+        self.filename = "{}_{}_{}".format(user_id, current_time, filename)
+
+    def get_current_time(self):
+        return time.time()

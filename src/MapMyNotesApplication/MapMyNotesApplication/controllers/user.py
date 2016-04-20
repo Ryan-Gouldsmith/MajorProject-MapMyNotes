@@ -1,10 +1,9 @@
-import httplib2
+from flask import Blueprint, url_for, redirect, session
+
 from MapMyNotesApplication.models.google_plus_service import GooglePlusService
 from MapMyNotesApplication.models.google_services_helper import GoogleServicesHelper
-from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.user import User
-from flask import Blueprint, url_for, redirect, session
 
 user = Blueprint('user', __name__)
 
