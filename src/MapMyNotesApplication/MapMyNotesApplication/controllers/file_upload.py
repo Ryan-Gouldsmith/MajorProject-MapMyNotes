@@ -49,7 +49,7 @@ def file_upload_index_route():
             file_upload_service.remove_slash_from_filename()
 
         filename = secure_filename(file_upload_service.filename)
-        file_upload_service.update_filename(filename)
+        file_upload_service.update_filename(session_helper.return_user_id(), filename)
 
         prepared_file = file_upload_service.add_full_path_to_filename(FILE_UPLOAD_PATH)
         file_upload_service.save_users_file(uploaded_file)
@@ -93,7 +93,7 @@ def file_upload_index_route():
         if not file_upload_service.file_exists():
             return "There was an error saving the file, please upload again."
 
-        return redirect(url_for("fileupload.show_image", note_image=filename))
+        return redirect(url_for("fileupload.show_image", note_image=file_upload_service.filename))
     errors = None
     if session_helper.errors_in_session():
         errors = session_helper.get_errors()
@@ -104,10 +104,11 @@ def file_upload_index_route():
 
 @fileupload.route("/upload/show_image/<note_image>", methods=[GET])
 def show_image(note_image):
+    session_helper = SessionHelper(session)
+    print note_image
     file_upload_service = FileUploadService(note_image)
     file_upload_service.add_full_path_to_filename(FILE_UPLOAD_PATH)
     errors = None
-    session_helper = SessionHelper(session)
     if session_helper.errors_in_session():
         errors = session_helper.get_errors()
         session_helper.delete_session_errors()

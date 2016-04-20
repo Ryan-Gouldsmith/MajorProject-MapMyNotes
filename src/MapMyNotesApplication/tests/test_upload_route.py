@@ -105,11 +105,11 @@ class TestUploadRoute(TestCase):
         self.create_app()
 
     def tearDown(self):
-        if os.path.isfile("MapMyNotesApplication/upload/ryan_test_1.jpg"):
-            os.remove("MapMyNotesApplication/upload/ryan_test_1.jpg")
+        if os.path.isfile("MapMyNotesApplication/upload/1_ryan_test_1.jpg"):
+            os.remove("MapMyNotesApplication/upload/1_ryan_test_1.jpg")
 
-        if os.path.isfile('MapMyNotesApplication/upload/ryan_test_1.tif'):
-            os.remove('MapMyNotesApplication/upload/ryan_test_1.tif')
+        if os.path.isfile('MapMyNotesApplication/upload/1_ryan_test_1.tif'):
+            os.remove('MapMyNotesApplication/upload/1_ryan_test_1.tif')
 
         mock.patch.stopall()
 
@@ -142,7 +142,7 @@ class TestUploadRoute(TestCase):
 
         assert resource.status_code == 302
 
-        assert True is os.path.isfile("MapMyNotesApplication/upload/ryan_test_1.jpg")
+        assert True is os.path.isfile("MapMyNotesApplication/upload/1_ryan_test_1.jpg")
 
     def test_uploading_right_file_extension(self):
         upload_file = open("tests/ryan_test_1.jpg", "r")
@@ -165,13 +165,12 @@ class TestUploadRoute(TestCase):
     def test_show_image_route(self):
         filename = 'tests/ryan_test_1.jpg'
         upload_file = open(filename, "r")
-        file_list = filename.split("/")
 
-        file_name = file_list[1]
+        updated_filename = "1_ryan_test_1.jpg"
 
         resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects=False)
 
-        resource = self.client.get("/upload/show_image/" + file_name, follow_redirects=False)
+        resource = self.client.get("/upload/show_image/" + updated_filename, follow_redirects=False)
 
         assert resource.status_code is 200
 
@@ -194,7 +193,7 @@ class TestUploadRoute(TestCase):
 
         url_path = url_full.split("http://localhost")
 
-        expected_url = "/upload/show_image/ryan_test_1.jpg"
+        expected_url = "/upload/show_image/1_ryan_test_1.jpg"
         # checks the last part after the localhost.
         assert url_path[1] == expected_url
 
@@ -208,7 +207,7 @@ class TestUploadRoute(TestCase):
 
         resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects=False)
 
-        resource = self.client.get('/img/ryan_test_1.jpg')
+        resource = self.client.get('/img/1_ryan_test_1.jpg')
 
         assert resource.headers.get("Content-Type") == "image/jpeg"
         assert resource.status_code == 200
@@ -217,4 +216,4 @@ class TestUploadRoute(TestCase):
         upload_file = open("tests/ryan_test_1.jpg", "r")
         resource = self.client.post("/upload", data={"file": upload_file}, follow_redirects=False)
 
-        assert os.path.isfile("MapMyNotesApplication/upload/ryan_test_1.tif") is True
+        assert os.path.isfile("MapMyNotesApplication/upload/1_ryan_test_1.tif") is True

@@ -36,6 +36,9 @@ class TestShowNoteRoute(TestCase):
         database.session.commit()
         self.user_id = user.id
 
+        with self.client.session_transaction() as session:
+            session['user_id'] = self.user_id
+
         file_list = 'tests/test.png'.split("/")
 
         self.image = file_list[1]

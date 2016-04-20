@@ -22,7 +22,6 @@ class FileUploadService(object):
         return file_extension in self.ACCEPTED_FILE_EXTENSIONS
 
     def file_exists(self):
-        print self.upload_path
         return os.path.isfile(self.upload_path)
 
     def is_png(self):
@@ -33,5 +32,5 @@ class FileUploadService(object):
         self.upload_path = "{}{}".format(upload_path, self.filename)
         return self.upload_path
 
-    def update_filename(self, filename):
-        self.filename = filename
+    def update_filename(self, user_id, filename):
+        self.filename = "{}_{}".format(user_id, filename)
