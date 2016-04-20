@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask.ext.testing import TestCase
+from mock import mock
 from werkzeug.datastructures import FileStorage
 
 from MapMyNotesApplication.models.file_upload_service import FileUploadService
@@ -20,9 +21,15 @@ class TestFileUploadService(TestCase):
         self.filename = "tests/ryan_test_1.jpg"
         self.file_upload_service = FileUploadService(self.filename)
 
+        self.current_time_patch = mock.patch.object(FileUploadService, 'get_current_time')
+        self.current_time_mock = self.current_time_patch.start()
+        self.current_time_mock.return_value = "11111.1"
+
     def tearDown(self):
         if os.path.isfile(self.file_test_upload_path):
             os.remove(self.file_test_upload_path)
+
+        mock.patch.stopall()
 
     def test_file_upload_with_slash(self):
         expected = self.file_upload_service.is_forward_slash_in_filename()
@@ -117,4 +124,4 @@ class TestFileUploadService(TestCase):
     def test_updating_filename_successfully_changes_the_name(self):
         self.file_upload_service.update_filename(1, "test_example")
 
-        assert self.file_upload_service.filename == "1_test_example"
+        assert self.file_upload_service.filename == "1_11111.1_test_example"

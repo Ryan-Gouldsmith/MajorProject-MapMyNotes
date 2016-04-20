@@ -56,7 +56,6 @@ def file_upload_index_route():
 
         binarise = BinariseImage()
         if binarise.image_file_exists(prepared_file):
-            # TODO look into this, especially where return values are not used
             _ = binarise.read_image_as_grayscale(prepared_file)
             _ = binarise.apply_median_blur()
             threshold_image = binarise.apply_adaptive_threshold()
@@ -120,7 +119,6 @@ def show_image(note_image):
     events = None
     if not file_upload_service.is_png():
         exif_parser = ExifParser(file_upload_service.upload_path)
-        # TODO does it need to return a value here?
         _ = exif_parser.parse_exif()
         suggested_date = exif_parser.get_image_date()
 
@@ -154,8 +152,6 @@ def show_image(note_image):
             events = []
             for event in cal_events:
                 # check if the recocurrance is in the calendar items.
-                print event
-                print '\n'
                 if 'recurrence' in event and event['status'] == 'confirmed':
                     # if it is, make a request for using the event id of the reoccurance along with the start and end date
                     event_id = event['id']
