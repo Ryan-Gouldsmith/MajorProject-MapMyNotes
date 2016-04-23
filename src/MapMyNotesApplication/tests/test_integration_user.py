@@ -15,7 +15,7 @@ http://www.voidspace.org.uk/python/mock/patch.html
 """
 
 
-class TestUploadRoute(TestCase):
+class TestIntegrationUser(TestCase):
     def create_app(self):
         app = application
         app.config['TESTING'] = True
