@@ -14,7 +14,7 @@ from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.user import User
 
 
-class TestAddEditMetaDataRoute(TestCase):
+class TestIntegrationAddEditMetaData(TestCase):
     def create_app(self):
         app = application
         app.config['TESTING'] = True

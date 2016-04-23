@@ -3,7 +3,7 @@ from flask import session
 from flask.ext.testing import TestCase
 
 
-class TestLogoutRoute(TestCase):
+class TestIntegrationLogout(TestCase):
     def create_app(self):
         app = application
         app.config['TESTING'] = True

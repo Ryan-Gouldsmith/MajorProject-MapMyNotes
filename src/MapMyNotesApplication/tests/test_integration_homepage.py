@@ -1,47 +1,43 @@
 import os
 
 import mock
-from flask.ext.testing import LiveServerTestCase
+from flask.ext.testing import TestCase
 from googleapiclient.http import HttpMock
-from selenium import webdriver
 
 from MapMyNotesApplication import application, database
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.oauth_service import OauthService
-from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.user import User
 
 
-class TestIntegrationHomepage(LiveServerTestCase):
-
+class TestIntegrationHomePage(TestCase):
     def create_app(self):
         app = application
-        app.config['LIVESERVER_PORT'] = 5000
         app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = 'Secret key'
-        app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
         self.authorised_credentials = os.path.join(os.path.dirname(__file__), "mock-data/authorised_credentials.json")
+        app.config['secret_json_file'] = os.path.join(os.path.dirname(__file__), "mock-data/client_secret.json")
+        return app
 
+    def setUp(self):
         self.discovery_mock = os.path.join(os.path.dirname(__file__), "mock-data/calendar-discovery.json")
-
         calendar_service = GoogleCalendarService()
         http_mock = HttpMock(self.discovery_mock, {'status': '200'})
         service = calendar_service.build(http_mock)
 
-        http_mock = HttpMock(self.credentials, {'status': 200})
-        oauth_service = OauthService()
-        file_path = app.config['secret_json_file']
-        oauth_service.store_secret_file(file_path)
-        flow = oauth_service.create_flow_from_clients_secret()
-        self.credentials_oauth = oauth_service.exchange_code(flow, "123code", http=http_mock)
-        cred_obj = oauth_service.create_credentials_from_json(self.credentials_oauth.to_json())
-        auth = HttpMock(self.authorised_credentials, {'status': 200})
-        self.oauth_return = oauth_service.authorise(auth, self.credentials_oauth.to_json())
+        database.session.close()
+        database.drop_all()
+        database.create_all()
 
+        user = User("test@gmail.com")
+        database.session.add(user)
+
+        database.session.commit()
         self.google_response = {"items": [
             {
+
                 "kind": "calendar#event",
                 "etag": "\"1234567891012345\"",
                 "id": "ideventcalendaritem1",
@@ -78,73 +74,71 @@ class TestIntegrationHomepage(LiveServerTestCase):
             }
         ]
         }
-        self.patch = mock.patch.object(SessionHelper, "check_if_session_contains_credentials")
-        self.cred_mock = self.patch.start()
-        self.cred_mock.return_value = True
 
-        self.auth_patch = mock.patch.object(SessionHelper, "return_session_credentials")
-        self.auth_mock = self.auth_patch.start()
-        self.auth_mock.return_value = self.credentials_oauth.to_json()
+        # http://flask.pocoo.org/docs/0.10/testing/
+        with self.client.session_transaction() as session:
+            http_mock = HttpMock(self.credentials, {'status': 200})
+            oauth_service = OauthService()
+            file_path = self.app.config['secret_json_file']
 
-        self.user_patch = mock.patch.object(SessionHelper, 'return_user_id')
-        self.user_mock = self.user_patch.start()
-        self.user_mock.return_value = 1
+            oauth_service.store_secret_file(file_path)
+            flow = oauth_service.create_flow_from_clients_secret()
+            credentials = oauth_service.exchange_code(flow, "123code",
+                                                      http=http_mock)
 
-        self.oauth_patch = mock.patch.object(OauthService, "authorise")
-        self.oauth_mock = self.oauth_patch.start()
-        self.oauth_mock.return_value = self.oauth_return
+            oauth_service.create_credentials_from_json(credentials.to_json())
 
-        self.google_patch = mock.patch.object(GoogleCalendarService, "execute_request")
-        self.google_mock = self.google_patch.start()
-        self.google_mock.return_value = self.google_response
+            self.auth_mock = HttpMock(self.authorised_credentials, {'status': 200})
+            self.authorise = oauth_service.authorise(self.auth_mock, credentials.to_json())
+
+            session['credentials'] = credentials.to_json()
+            session['user_id'] = 1
 
         self.credentials_patch = mock.patch.object(OauthService, 'get_credentials')
         self.credentials_mock = self.credentials_patch.start()
         self.credentials_mock.return_value = oauth_service.credentials
 
+        self.oauth_patch = mock.patch.object(OauthService, 'authorise')
+        self.oauth_mock = self.oauth_patch.start()
+        self.oauth_mock.return_value = self.authorise
 
+        self.google_request_patch = mock.patch.object(GoogleCalendarService, 'execute_request')
+        self.google_request_mock = self.google_request_patch.start()
+        self.google_request_mock.return_value = self.google_response
 
-        return app
-
-    def setUp(self):
-        database.session.close()
-        database.drop_all()
-        database.create_all()
-        user = User("test@gmail.com")
-        database.session.add(user)
-        database.session.commit()
-
-        self.driver = webdriver.PhantomJS()
-        self.driver.set_window_size(1024, 640)
         self.create_app()
 
     def tearDown(self):
         mock.patch.stopall()
 
-    def stop(self):
-        mock.patch.stopall()
+    def test_home_route(self):
+        resource = self.client.get("/")
 
-    def test_should_display_the_correct_events_in_calendar(self):
-        self.driver.get(self.get_server_url() + "/")
-        events = self.driver.find_element_by_class_name("events")
-        event = self.driver.find_element_by_class_name("event")
-        summary = self.driver.find_element_by_class_name("summary")
-        link = self.driver.find_element_by_class_name("link").get_attribute("href")
+        assert resource.status_code == 200
 
-        assert events.is_displayed() is True
-        assert event.is_displayed() is True
-        assert summary.text == "Test Example"
-        assert link == "https://www.google.com/calendar/event?testtest"
+    def test_displays_logout_link_if_logged_in(self):
+        response = self.client.get("/")
 
-    def test_signing_in_does_not_show_the_sign_in_button(self):
-        self.driver.get(self.get_server_url() + "/")
-        welcome_div = self.driver.find_element_by_class_name("welcome")
-        authorise = self.driver.find_elements_by_class_name("authorise")
+        assert "logout" in response.data
+        assert "/logout" in response.data
 
-        assert len(authorise) is 0
-        assert welcome_div.is_displayed() is True
+    def test_if_not_logged_in_it_doesnt_display_logout(self):
+        with self.client.session_transaction() as session:
+            session.clear()
+        response = self.client.get("/")
 
-    def test_once_authorised_it_displays_users_email_address(self):
-        self.driver.get(self.get_server_url() + "/")
-        test_email = self.driver.find_element_by_class_name('welcome')
-        assert test_email.text == "Welcome, test@gmail.com"
+        assert "logout" not in response.data
+
+    def test_sign_in_displays_if_not_authorised(self):
+        with self.client.session_transaction() as session:
+            session.clear()
+        response = self.client.get("/")
+
+        assert "authorise" in response.data
+
+    def test_credentials_not_in_session_return_blank_homepage(self):
+        with self.client.session_transaction() as session:
+            session.clear()
+        response = self.client.get("/")
+
+        assert "events" not in response.data

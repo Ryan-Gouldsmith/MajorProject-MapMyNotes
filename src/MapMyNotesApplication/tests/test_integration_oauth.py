@@ -2,7 +2,7 @@ from MapMyNotesApplication import application
 from flask.ext.testing import TestCase
 
 
-class TestOAuthRoute(TestCase):
+class TestIntegrationOAuth(TestCase):
     def create_app(self):
         app = application
         app.config['TESTING'] = True

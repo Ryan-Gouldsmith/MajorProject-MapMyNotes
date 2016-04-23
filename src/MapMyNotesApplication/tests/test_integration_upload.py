@@ -11,7 +11,7 @@ from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.user import User
 
 
-class TestUploadRoute(TestCase):
+class TestIntegrationUpload(TestCase):
     def create_app(self):
         app = application
         app.config['TESTING'] = True

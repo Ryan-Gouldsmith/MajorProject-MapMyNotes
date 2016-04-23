@@ -16,7 +16,7 @@ http://makina-corpus.com/blog/metier/2013/dry-up-mock-instanciation-with-addclea
 """
 
 
-class TestIntegrationMetaDataForm(LiveServerTestCase):
+class TestAcceptanceMetaDataForm(LiveServerTestCase):
     def create_app(self):
         app = application
         app.config['LIVESERVER_PORT'] = 5000
