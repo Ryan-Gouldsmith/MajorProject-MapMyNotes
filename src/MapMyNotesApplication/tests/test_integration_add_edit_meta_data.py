@@ -3,9 +3,10 @@ from datetime import datetime
 
 import mock
 from flask.ext.testing import TestCase
+from flask_seasurf import SeaSurf
 from googleapiclient.http import HttpMock
 
-from MapMyNotesApplication import application, database
+from MapMyNotesApplication import application, database, csrf
 from MapMyNotesApplication.models.google_calendar_service import GoogleCalendarService
 from MapMyNotesApplication.models.module_code import ModuleCode
 from MapMyNotesApplication.models.note import Note
@@ -16,8 +17,9 @@ from MapMyNotesApplication.models.user import User
 
 class TestIntegrationAddEditMetaData(TestCase):
     def create_app(self):
+        application.config['TESTING'] = True
         app = application
-        app.config['TESTING'] = True
+        csrf.init_app(app)
         # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         self.credentials = os.path.join(os.path.dirname(__file__), "mock-data/credentials.json")
@@ -114,7 +116,6 @@ class TestIntegrationAddEditMetaData(TestCase):
         self.google_request_patch = mock.patch.object(GoogleCalendarService, 'execute_request')
         self.google_request_mock = self.google_request_patch.start()
         self.google_request_mock.return_value = self.returned_google_response
-
         self.create_app()
 
     def tearDown(self):

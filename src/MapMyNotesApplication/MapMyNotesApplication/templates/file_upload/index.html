@@ -13,6 +13,7 @@
     <p class="error">{{errors}}</p>
 {% endif %}
 <form enctype="multipart/form-data" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
     <input type="file" name="file" class="file_upload"/>
     <input type="submit" class="submit btn" value="Upload Note"/>
 </form>

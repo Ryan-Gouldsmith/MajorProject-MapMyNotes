@@ -1,18 +1,22 @@
 from datetime import datetime
 
-from MapMyNotesApplication import application, database
+from flask.ext.testing import TestCase
+
+from MapMyNotesApplication import application, database, csrf
 from MapMyNotesApplication.models.module_code import ModuleCode
 from MapMyNotesApplication.models.note import Note
 from MapMyNotesApplication.models.note_meta_data import NoteMetaData
 from MapMyNotesApplication.models.user import User
-from flask.ext.testing import TestCase
 
 
 class TestIntegrationShowNote(TestCase):
     def create_app(self):
+        application.config['TESTING'] = True
         app = application
-        app.config['TESTING'] = True
-        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/ Used to help with the test database, maybe could move this to a config file..
+        csrf.init_app(app)
+        # http://blog.toast38coza.me/adding-a-database-to-a-flask-app/
+        # Used to help with the test database, maybe could move this to a config file..
+
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
         return app
 
