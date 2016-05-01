@@ -5,6 +5,7 @@ fixtures==1.4.0
 Flask==0.10.1
 Flask-Migrate==1.8.0
 Flask-Script==2.0.5
+Flask-SeaSurf==0.2.2
 Flask-SQLAlchemy==2.1
 Flask-Testing==0.4.2
 funcsigs==0.4
