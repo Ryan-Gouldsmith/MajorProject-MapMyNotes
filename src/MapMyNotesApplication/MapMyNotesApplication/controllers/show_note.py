@@ -12,7 +12,14 @@ POST = "POST"
 
 @shownote.route("/show_note/<note_id>", methods=[GET])
 def show_note(note_id):
+    """
+    Shows a given note to the user
+    Parameters
+    ----------
+    note_id: The Id of the note
+    """
     session_helper = SessionHelper(session)
+    # get the note and the meta data values
     note = Note.query.get(note_id)
     if note.user_id is not session_helper.return_user_id():
         return "Sorry you can't access that"
@@ -26,7 +33,7 @@ def show_note(note_id):
         calendar_url = note.calendar_url
 
     formatted_date = DateTimeHelper.convert_date_time_to_string_representation(note.meta_data.date)
-
+    #display the note
     title = note.meta_data.title
     return render_template('/show_note/index.html', note_image=image_path, module_code=module_code, lecturer=lecturer,
                            location=location, date=formatted_date, note_id=note.id, title=title,
@@ -35,11 +42,17 @@ def show_note(note_id):
 
 @shownote.route("/delete_note/<note_id>", methods=[POST])
 def delete_note(note_id):
+    """
+    Deletes a note from the relational database.
+    Parameters
+    ----------
+    note_id: The note's id that is being deleted.
+
+    """
     session_helper = SessionHelper(session)
     note = Note.query.get(note_id)
     if note.user_id is not session_helper.return_user_id():
         return "Sorry you cant access that"
     note.delete()
-    # TODO delete from calendar too
 
     return redirect(url_for("homepage.home_page_route"))

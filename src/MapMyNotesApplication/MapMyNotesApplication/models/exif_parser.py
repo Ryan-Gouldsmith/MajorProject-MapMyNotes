@@ -19,13 +19,32 @@ class ExifParser(object):
     IMAGE_START_TIME = 36867
 
     def __init__(self, filename):
+        """
+        Creates a new Exif Parser
+        Parameters
+        ----------
+        filename: The filename which is currently being analysed for EXIF data.
+        """
         self.filename = filename
         self.image = Image.open(self.filename)
         self.exif_data = None
 
     def parse_exif(self):
+        """
+        Uses the PIL __getexif() API to extract the EXIF data
+        Returns
+        -------
+        Any associated EXIF data.
+        """
         self.exif_data = self.image._getexif()
         return self.exif_data
 
     def get_image_date(self):
+        """
+        Uses the EXIF data to attempt to extract that START time key
+        Returns
+        -------
+        The start time of the image
+        None if nothing could be found.
+        """
         return self.exif_data[self.IMAGE_START_TIME] if self.exif_data is not None else None
