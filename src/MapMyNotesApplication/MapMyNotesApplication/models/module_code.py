@@ -20,8 +20,8 @@ class ModuleCode(database.Model):
         database.session.commit()
 
     @staticmethod
-    def find_id_by_module_code(filename):
-        prepared_file = "%{0}%".format(filename)
+    def find_id_by_module_code(module_code):
+        prepared_module_code = "%{0}%".format(module_code)
         # http://docs.sqlalchemy.org/en/latest/orm/query.html
-        query = ModuleCode.module_code.like(prepared_file)
+        query = ModuleCode.module_code.like(prepared_module_code)
         return ModuleCode.query.filter(query).first()
