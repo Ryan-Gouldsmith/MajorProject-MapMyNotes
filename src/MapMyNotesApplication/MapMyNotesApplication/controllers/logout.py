@@ -8,6 +8,9 @@ GET = 'GET'
 
 @logoutblueprint.route("/logout", methods=[GET])
 def logout():
+    """
+    Renders the logout route and removes a user from the session
+    """
     # Remove credentials key and user id from session
     session_helper = SessionHelper(session)
     session_helper.delete_credentials_from_session()

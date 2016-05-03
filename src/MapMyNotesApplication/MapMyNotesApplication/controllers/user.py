@@ -10,6 +10,10 @@ user = Blueprint('user', __name__)
 
 @user.route('/signin')
 def signin():
+    """
+    Helps to connect with the OAuth service and  connect to the Google+ api to authorise and
+    get the email address from a user and save it in the relation.
+    """
     session_helper = SessionHelper(session)
     if session_helper.check_if_session_contains_credentials() is False:
         return redirect(url_for('oauth.oauthsubmit'))

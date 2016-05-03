@@ -20,6 +20,12 @@ GET = "GET"
 
 @metadata.route("/metadata/add/<note_image>", methods=[POST])
 def add_meta_data(note_image):
+    """
+    Adds the metadata to an associated route
+    Parameters
+    ----------
+    note_image: The image name for the note which will add text to.
+    """
     session_helper = SessionHelper(session)
     if not session_helper.is_user_id_in_session():
         return redirect(url_for('homepage.home_page_route'))
@@ -30,6 +36,7 @@ def add_meta_data(note_image):
         return redirect(url_for('logout.logout'))
 
     validator = InputValidator(request.form)
+    #check the validation
     if request.method == POST:
         if not validator.check_all_params_exist():
             error = "Some fields are missing"
@@ -55,6 +62,7 @@ def add_meta_data(note_image):
             session_helper.set_errors_in_session(validator.get_errors())
             return redirect(url_for('fileupload.show_image', note_image=note_image))
 
+        #extract the data from the request
         module_code_data = request.form['module_code_data'].upper()
         lecturer_name_data = request.form['lecturer_name_data']
         location_data = request.form['location_data']
@@ -63,11 +71,12 @@ def add_meta_data(note_image):
         file_path = "MapMyNotesApplication/upload/" + note_image
 
         if module_code_data and os.path.isfile(file_path):
+            #find or save
             module_code_obj = ModuleCode.find_id_by_module_code(module_code_data)
             if module_code_obj is None:
                 module_code_obj = ModuleCode(module_code_data)
                 module_code_obj.save()
-
+            #persist the data
             module_code_id = module_code_obj.id
             date_time = date_time_helper.convert_string_date_and_time_to_datetime()
             note_meta_data = NoteMetaData(lecturer_name_data, module_code_id, location_data, date_time, title_data)
@@ -86,7 +95,7 @@ def add_meta_data(note_image):
                                                                                           google_calendar_service,
                                                                                           google_service,
                                                                                           http_auth)
-
+            #check to see if there are any reoccurring events
             reoccurring_events = GoogleServicesHelper.get_reoccurring_events_based_on_datetime(date_time,
                                                                                                google_calendar_service,
                                                                                                google_service,
@@ -96,6 +105,7 @@ def add_meta_data(note_image):
             module_code = module_code_obj.module_code
 
             google_calendar_response['items'] += reoccurring_events
+            # Get the specific event containing the module code
             event = GoogleServicesHelper.get_event_containing_module_code(module_code, google_calendar_response,
                                                                           date_time)
             saved_response = None
@@ -112,6 +122,12 @@ def add_meta_data(note_image):
 
 @metadata.route("/metadata/edit/<note_id>", methods=[GET, POST])
 def edit_meta_data(note_id):
+    """
+    Edit the metadata for the given note id
+    Parameters
+    ----------
+    note_id: the note which the meta data will be edited
+    """
     session_helper = SessionHelper(session)
     credentials, http_auth = GoogleServicesHelper.authorise(session_helper)
 
@@ -121,7 +137,7 @@ def edit_meta_data(note_id):
 
     if note.user_id is not session_helper.return_user_id():
         return "Sorry you can't access that"
-
+    #renders the initial page first
     if request.method == GET:
         errors = None
         if session_helper.errors_in_session():
@@ -137,9 +153,8 @@ def edit_meta_data(note_id):
         return render_template('/file_upload/edit_meta_data.html', module_code=module_code, lecturer=lecturer,
                                location=location, date=date, time=time, title=title, note_image=note.image_path,
                                errors=errors)
-
+    # Gets any new meta data from the post request
     elif request.method == POST:
-        #note = Note.query.get(note_id)
         previous_date = note.meta_data.date
 
         google_calendar_service = GoogleCalendarService()
@@ -175,6 +190,7 @@ def edit_meta_data(note_id):
         time = request.form['time_data']
         date_time_helper = DateTimeHelper(date, time)
 
+        #checks the dates
         if not date_time_helper.is_date_formatted_correctly():
             session['errors'] = "Wrong date format: should be date month year eg: 20 February 2016"
             return redirect(url_for('metadata.edit_meta_data', note_id=note_id))
@@ -194,6 +210,7 @@ def edit_meta_data(note_id):
         lecturer_name = request.form['lecturer_name_data']
         location = request.form['location_data']
         title = request.form['title_data']
+        #Find existing module codes
         module_code = ModuleCode.find_id_by_module_code(module_code_data)
         date_time = date_time_helper.convert_string_date_and_time_to_datetime()
 
@@ -223,7 +240,7 @@ def edit_meta_data(note_id):
         google_calendar_response = GoogleServicesHelper.get_events_based_on_date_time(date_time,
                                                                                       google_calendar_service,
                                                                                       google_service, http_auth)
-
+        #get the reocurring events
         reoccurring_events = GoogleServicesHelper.get_reoccurring_events_based_on_datetime(date_time,
                                                                                            google_calendar_service,
                                                                                            google_service, http_auth,
@@ -234,6 +251,7 @@ def edit_meta_data(note_id):
                                                                       date_time)
         url = ""
         if event:
+            #append to the url
             response = google_calendar_service.add_note_url_to_description(note_url, event, google_service,
                                                                            http_auth)
             if response is not None and note_url in response['description']:
