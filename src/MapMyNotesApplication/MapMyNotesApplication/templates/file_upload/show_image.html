@@ -13,6 +13,7 @@
 {% endif %}
 
 <form action="{{ url_for('metadata.add_meta_data', note_image=note_image) }}" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
     <label class="module_label" for="module_code">Module Code: </label>
     <input type="text" class="module_code_data" id="module_code" name="module_code_data" required="required"
            title="Must contain characters" pattern="^(?!\s+).+">
