@@ -1,0 +1,20 @@
+{% extends "root.html" %}
+
+{% block head %}
+{{super()}}
+{# Template hierarchy and super and adding style sheets http://flask.pocoo.org/docs/0.10/patterns/templateinheritance/#}
+<link href="{{ url_for('static', filename='stylesheet/file_upload.css')}}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<h1 class='strapline'> Upload your note </h1>
+{% if errors %}
+    <p class="error">{{errors}}</p>
+{% endif %}
+<form enctype="multipart/form-data" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <input type="file" name="file" class="file_upload"/>
+    <input type="submit" class="submit btn" value="Upload Note"/>
+</form>
+{% endblock %}

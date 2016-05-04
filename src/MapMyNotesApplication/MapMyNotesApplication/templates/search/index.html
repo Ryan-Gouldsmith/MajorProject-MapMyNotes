@@ -1,0 +1,17 @@
+{% extends "root.html" %}
+{% block head %}
+{{super()}}
+<link href="{{ url_for('static', filename='stylesheet/search_note.css')}}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<h1 class="title"> Search for your note </h1>
+<form class="search_form" action="{{ url_for('searchblueprint.search') }}" method="get">
+    <input type='text' class="search_field" placeholder="Search your module code" name="module_code">
+    <input type="submit" value="Search" class="submit btn search_btn">
+</form>
+
+{% block results%}{% endblock %}
+
+{% endblock %}

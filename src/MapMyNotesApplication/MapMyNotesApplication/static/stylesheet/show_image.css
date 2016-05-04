@@ -1,0 +1,39 @@
+.temp_uploaded_image{
+  margin-right:auto;
+  display:inline-block;
+  padding-right:2%;
+  width:25%;
+}
+form {
+  vertical-align: top;
+  width:50%;
+  display:inline-block;
+  padding-right:50px;
+}
+form label {
+  width:97%;
+  display:inline-block;
+}
+form input[type="text"]{
+  width:93%;
+  padding:10px;
+}
+.suggestion_message{
+  font-weight: bold;
+}
+.autofill:hover{
+  background-color:#E3F2FD;
+  cursor:pointer;
+}
+.calendar_link{
+    text-decoration:none;
+    padding:2%;
+    height:20%;
+}
+@media(max-width:768px){
+  .temp_uploaded_image {
+    padding-left:10px;
+    padding-top:26px;
+    width:44%;
+  }
+}

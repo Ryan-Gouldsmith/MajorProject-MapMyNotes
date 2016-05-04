@@ -1,0 +1,164 @@
+{% extends "root.html" %}
+
+{% block head %}
+{{super()}}
+<link href="{{ url_for('static', filename='stylesheet/show_image.css')}}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<h1 class="strapline"> Showing note {{note_image}} </h1>
+{% if errors  %}
+<p class="error">Error uploading the form data: {{ errors }}</p>
+{% endif %}
+
+<form action="{{ url_for('metadata.add_meta_data', note_image=note_image) }}" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <label class="module_label" for="module_code">Module Code: </label>
+    <input type="text" class="module_code_data" id="module_code" name="module_code_data" required="required"
+           title="Must contain characters" pattern="^(?!\s+).+">
+
+    <label class='lecture_name_label' for="lecturer">Lecturer's Name:</label>
+    <input type="text" class="lecturer_name" id="lecturer" name="lecturer_name_data" required="required"
+           title="Must contain characters" pattern="^(?!\s+).+">
+
+    <label class="location_name_label" for="location"> Location of the lecture: </label>
+    <input type="text" class="location_name" id="location" name="location_data" title="Must contain characters"
+           required="required" pattern='^(?!\s+).+'>
+
+    <label class='date_label' for="datepicker"> Date of lecture: </label>
+    <input type="text" class="date" id="datepicker" name="date_data" required="required"
+           title="Must contain characters" pattern='^(?!\s+).+'>
+
+    <label class="time_label" for="time"> Time of lecture: </label>
+
+    <input type="text" class="time" id="time" name="time_data" required="required" title="Must contain characters"
+           pattern='^(?!\s+).+'>
+    <label class='title_label' for="title"> Title: </label>
+    <input type="text" class="title" id="title" name="title_data" required="required" title="Must contain characters"
+           pattern="^(?!\s+).+">
+    <input type="submit" class="submit btn" name="submit">
+</form>
+<img src="{{ url_for('fileupload.get_image', note_image=note_image) }}"
+     class="temp_uploaded_image"/>
+<section class="suggestions row">
+    <p class="suggestion_test">Below are suggesting based on analysis we did on your note:</p>
+    <div class="suggestion block">
+        <p class='suggested_date_label suggestion_message'> Photo taken on:</p>
+        {% if suggested_date %}
+        <p class="suggested_date"> {{ suggested_date }} </p>
+        {% else %}
+        <p class='suggested_date'> No suitable date was found from the note </p>
+        {% endif %}
+    </div>
+    <div class="suggestion block {% if tesseract_module_code %}autofill_module_code autofill{% endif %} ">
+        <p class='tesseract_label suggestion_message'> The note's module code:</p>
+        <p class="tesseract_module_code">
+            {%- if tesseract_module_code -%}
+            {%- if tesseract_module_code[1] >= 75 -%}
+                  <span class="tesseract_green">
+                {%- elif tesseract_module_code[1] < 75 and tesseract_module_code[1] >= 70 -%}
+                    <span class="tesseract_orange">
+                {%- else -%}
+                  <span class="tesseract_red">
+                {%- endif -%}
+                 {{- tesseract_module_code[0].strip() -}}
+            </span>
+            {%- else -%}
+                        No module code could be found
+            {%- endif -%}
+        </p>
+    </div>
+    <div class="suggestion block {% if tesseract_title %} autofill_title autofill{% endif %}">
+        <p class='tesseract_label suggestion_message'> The note's title: </p>
+        <p class="tesseract_title">
+            {%- if tesseract_title -%}
+                {%- for title_word in tesseract_title -%}
+                    {%- if title_word[1] >= 75 -%}
+                        <span class="tesseract_green">
+                    {%- elif title_word[1] < 75 and title_word[1] >= 70 -%}
+                        <span class="tesseract_orange">
+                    {%- else -%}
+                        <span class="tesseract_red">
+                    {%- endif -%}
+                    {{- title_word[0].strip() + " " -}}
+                    </span>
+                {%- endfor -%}
+            {%-  else -%}
+                No title could be found
+            {%- endif -%}
+        </p>
+    </div>
+    <div class="suggestion block ">
+        <p class='tesseract_label suggestion_message'> The note's lecture date: </p>
+        <p class="tesseract_date">
+            {%- if tesseract_date -%}
+                {%- for date_word in tesseract_date -%}
+                    {%- if date_word[1] >= 75 -%}
+                        <span class="tesseract_green">
+                    {%- elif date_word[1] < 75 and date_word[1] >= 70 -%}
+                        <span class="tesseract_orange">
+                    {%- else -%}
+                        <span class="tesseract_red">
+                    {%- endif -%}
+                    {{- date_word[0].strip() + " " -}}
+                    </span>
+                {%- endfor -%}
+            {%-  else -%}
+                No lecturer date could be found
+            {%- endif -%}
+        </p>
+    </div>
+    <div class="suggestion block {% if tesseract_lecturer %} autofill_lecturer autofill {% endif %}">
+        <p class='tesseract_label suggestion_message'> The note's lecturer: </p>
+        <p class='tesseract_lecturer'>
+            {%- if tesseract_lecturer -%}
+                {%- for lecturer_word in tesseract_lecturer -%}
+                    {%- if lecturer_word[1] >= 75 -%}
+                        <span class="tesseract_green">
+                    {%- elif lecturer_word[1] < 75 and lecturer_word[1] >= 72 -%}
+                        <span class="tesseract_orange">
+                    {%- else -%}
+                        <span class="tesseract_red">
+                    {%- endif -%}
+                {{- lecturer_word[0].strip() + " " -}}
+              </span>
+                {%- endfor -%}
+            {%- else -%}
+              No lecturer could be found
+            {%- endif -%}
+        </p>
+    </div>
+    <div class="suggestion_events">
+        <p class="suggested_event_label suggestion_message"> Calendar events on this day: </p>
+        {% if events %}
+        <div class="suggested_calendar_events">
+            {% for event in events %}
+            <div class="block suggested_calendar_event ">
+                <p class="calendar_event_title"> {{event.item.summary}} </p>
+                <p class="calendar_start_time"> {{ event.format_start_date() }} </p>
+                <a class="calendar_event_view btn calendar_link" href="{{ event.item.htmlLink }}">View event</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="suggested_event_message"> No Events were found in your calendar for that date </p>
+        {% endif %}
+    </div>
+</section>
+<script>
+          $('#datepicker').datepicker({dateFormat: "d MM yy"});
+          $('#time').timepicker({'timeFormat': 'H:i'});
+          $('.autofill_module_code').on("click", function(){
+            $('.module_code_data').val($('.tesseract_module_code').text().trim());
+          });
+          $('.autofill_lecturer').on("click", function(){
+            $('.lecturer_name').val($('.tesseract_lecturer').text().trim());
+          });
+          $('.autofill_title').on("click", function(){
+            $('.title').val($('.tesseract_title').text().trim());
+          });
+
+
+</script>
+{% endblock %}

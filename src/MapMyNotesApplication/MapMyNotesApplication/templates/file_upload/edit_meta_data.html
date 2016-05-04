@@ -1,0 +1,51 @@
+{% extends "root.html" %}
+{% block head %}
+{{super()}}
+<link href="{{ url_for('static', filename='stylesheet/edit_meta_data.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1 class="strapline_title"> Edit Meta data </h1>
+{% if errors  %}
+<p class="error">Error uploading the form data: {{ errors }}</p>
+{% endif %}
+<form class="edit_form" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <label class="module_code_label" for="module_code"> Module Code:</label>
+    <input type="text" class="module_code" id="module_code" value="{{ module_code}}" name="module_code_data"
+           required="required"
+           pattern="^(?!\s+).+" title="Must contain characters">
+
+    <label class="lecturer_label" for="lecturer"> Lecturer's Name:</label>
+    <input type="text" class="lecturer" id="lecturer" value="{{ lecturer }}" name="lecturer_name_data"
+           required="required"
+           pattern="^(?!\s+).+" title="Must contain characters">
+
+    <label class="location_label" for="location"> Location of the lecture: </label>
+    <input type="text" class="location" id="location" value="{{ location }}" name="location_data" required="required"
+           pattern="^(?!\s+).+" title="Must contain characters">
+
+    <label class='date_label' for="datepicker"> Date of lecture:</label>
+    <input type="text" class="date" id="datepicker" name="date_data" required="required"
+           title="Must contain characters" pattern='^(?!\s+).+' value="{{ date }}">
+
+    <label class="time_label" for="time"> Time of lecture:</label>
+
+    <input type="text" class="time" id="time" name="time_data" required="required" title="Must contain characters"
+           pattern='^(?!\s+).+' value="{{ time }}">
+
+    <label class="title_label" for="title"> Title:</label>
+
+    <input type="text" class="title" id="title" value="{{ title }}" name="title_data" required="required"
+           pattern="^(?!\s+).+"
+           title="Must contain characters">
+
+    <input type="submit" class="submit btn" name="submit">
+</form>
+<img src="{{ url_for('fileupload.get_image', note_image=note_image) }}" class="uploaded_image">
+<script>
+      $('#datepicker').datepicker({dateFormat: "d MM yy"});
+      $('#time').timepicker({'timeFormat': 'H:i'});
+
+</script>
+{% endblock %}

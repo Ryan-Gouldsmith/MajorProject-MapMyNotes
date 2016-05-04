@@ -1,0 +1,37 @@
+{% extends "root.html" %}
+
+{% block head %}
+{{super()}}
+<link href="{{ url_for('static', filename='stylesheet/show_note.css')}}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<h1 class="title"> {{ title }} </h1>
+<img src="{{ url_for('fileupload.get_image', note_image=note_image) }}"/>
+<div class="right">
+    <section class="meta-data-card">
+        <h3 class="main-intro"> Additional information </h3>
+        <p class="module_code"> Module Code: {{module_code}} </p>
+        <p class="lecturer_name"> By {{lecturer}} </p>
+        <p class="location_name"> {{location}} </p>
+        <p class="date"> {{date}} </p>
+    </section>
+    <section class="modify-note">
+        <form action="{{ url_for('shownote.delete_note', note_id=note_id) }}" method="post" class="delete_note_form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <input type="submit" name="submit" class="delete_note delete btn" value="Delete Note">
+        </form>
+        <form action="{{ url_for('metadata.edit_meta_data', note_id=note_id) }}"
+              method="get" class="edit_note_form">
+            <input type="submit" class="edit_note btn" value='Edit meta data'>
+        </form>
+        {% if calendar_url %}
+        <p class="saved_to_cal">Successfully saved to calendar</p>
+        <a class="calendar_link btn" href="{{ calendar_url }}"> View event </a>
+        {% else %}
+        <p class="saved_to_cal">Unable to save to calendar</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

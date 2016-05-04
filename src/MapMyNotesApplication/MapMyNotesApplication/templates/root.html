@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block head %}
+      <link href="{{url_for('static', filename='stylesheet/base.css')}}" rel="stylesheet" />
+      <title> Map My Notes </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+      <link rel='stylesheet' href="//cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.11/jquery.timepicker.css">
+
+      <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+      <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.11/jquery.timepicker.min.js"></script>
+
+    {% endblock %}
+  </head>
+  <body>
+    <nav>
+      <a href="/"> Home </a>
+      <a href="/upload"> Upload Note </a>
+      <a href="/view_notes"> View Notes </a>
+      <a href="/search"> Search </a>
+      {% if 'user_id' in session %}
+        <a href="/logout" class="logout"> Log out </a>
+      {% endif %}
+    </nav>
+    <main>{% block content%} {% endblock %} </main>
+  </body>
+</html>

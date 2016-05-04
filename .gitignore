@@ -7,3 +7,9 @@
 **/.fls
 **/.log
 **/.synctex.gz
+**/venv
+**/__pycache__
+**/.cache
+**/.pyc
+**/client_secrets.json
+**/.idea/
