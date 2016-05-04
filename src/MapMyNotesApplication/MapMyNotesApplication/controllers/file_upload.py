@@ -27,6 +27,10 @@ http://flask.pocoo.org/docs/0.10/patterns/fileuploads/
 
 @fileupload.route("/upload", methods=[GET, POST])
 def file_upload_index_route():
+    """
+        The upload route used for the file upload for a given.
+        Runs the binarisation script here too.
+    """
     session_helper = SessionHelper(session)
     if not session_helper.check_if_session_contains_credentials():
         return redirect(url_for('homepage.home_page_route'))
@@ -49,14 +53,14 @@ def file_upload_index_route():
             file_upload_service.remove_slash_from_filename()
 
         filename = secure_filename(file_upload_service.filename)
-        file_upload_service.update_filename(filename)
+        file_upload_service.update_filename(session_helper.return_user_id(), filename)
 
         prepared_file = file_upload_service.add_full_path_to_filename(FILE_UPLOAD_PATH)
         file_upload_service.save_users_file(uploaded_file)
 
         binarise = BinariseImage()
         if binarise.image_file_exists(prepared_file):
-            # TODO look into this, especially where return values are not used
+            #Runs the script which has been prepared for the binarisation of the image.
             _ = binarise.read_image_as_grayscale(prepared_file)
             _ = binarise.apply_median_blur()
             threshold_image = binarise.apply_adaptive_threshold()
@@ -93,7 +97,7 @@ def file_upload_index_route():
         if not file_upload_service.file_exists():
             return "There was an error saving the file, please upload again."
 
-        return redirect(url_for("fileupload.show_image", note_image=filename))
+        return redirect(url_for("fileupload.show_image", note_image=file_upload_service.filename))
     errors = None
     if session_helper.errors_in_session():
         errors = session_helper.get_errors()
@@ -104,10 +108,17 @@ def file_upload_index_route():
 
 @fileupload.route("/upload/show_image/<note_image>", methods=[GET])
 def show_image(note_image):
+    """
+    The show image route is called when the image is first uploaded and ready to be attached with meta-data
+    Parameters
+    ----------
+    note_image: The image path for the image.
+    """
+    session_helper = SessionHelper(session)
+    print note_image
     file_upload_service = FileUploadService(note_image)
     file_upload_service.add_full_path_to_filename(FILE_UPLOAD_PATH)
     errors = None
-    session_helper = SessionHelper(session)
     if session_helper.errors_in_session():
         errors = session_helper.get_errors()
         session_helper.delete_session_errors()
@@ -119,7 +130,6 @@ def show_image(note_image):
     events = None
     if not file_upload_service.is_png():
         exif_parser = ExifParser(file_upload_service.upload_path)
-        # TODO does it need to return a value here?
         _ = exif_parser.parse_exif()
         suggested_date = exif_parser.get_image_date()
 
@@ -147,14 +157,11 @@ def show_image(note_image):
             google_calendar_response = google_calendar_service.get_events_based_on_date(start_date, end_date, http_auth,
                                                                                         google_service)
 
-            # TODO TEST + REFACOTR
             # Parse the response as normal.
             cal_events = google_calendar_response['items']
             events = []
             for event in cal_events:
                 # check if the recocurrance is in the calendar items.
-                print event
-                print '\n'
                 if 'recurrence' in event and event['status'] == 'confirmed':
                     # if it is, make a request for using the event id of the reoccurance along with the start and end date
                     event_id = event['id']
@@ -195,16 +202,25 @@ def show_image(note_image):
                            tesseract_date=tesseract_date, tesseract_lecturer=tesseract_lecturer, errors=errors)
 
 
-"""
-    Not happy with this function, I think it will need to be looked into further down the down.
-    Surely there's a better way than this.
-    For some reason the send from directory did not work.
-    here https://github.com/mitsuhiko/flask/issues/1169
-"""
+
 
 
 @fileupload.route("/img/<path:note_image>")
 def get_image(note_image):
+    """
+    Used to service the images to Flask's front-end.
+    Parameters
+    ----------
+    note_image: The URL of the image that is being shown.
+    """
+    """
+        Not happy with this function, I think it will need to be looked into further down the down.
+        Surely there's a better way than this.
+        For some reason the send from directory did not work. REFERENCE
+        https://github.com/mitsuhiko/flask/issues/1169
+
+    """
+
     file_upload_service = FileUploadService(note_image)
     file_upload_service.add_full_path_to_filename(FILE_UPLOAD_PATH)
     if not file_upload_service.file_exists():
@@ -212,10 +228,13 @@ def get_image(note_image):
 
     filename = secure_filename(note_image)
     application_root = os.path.dirname(fileupload.root_path)
-
+    #send from directory is flask's way of loading the file
     return send_from_directory(os.path.join(application_root, 'upload'), filename)
 
 
 @fileupload.route("/error/404")
 def error_four_zero_four():
+    """
+    Renders a 404 page.
+    """
     return render_template("/error/404.html")

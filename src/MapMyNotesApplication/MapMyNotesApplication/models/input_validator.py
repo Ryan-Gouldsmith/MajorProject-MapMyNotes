@@ -1,9 +1,22 @@
 class InputValidator(object):
     def __init__(self, params):
+        """
+        Creates an input validator instance
+        Parameters
+        ----------
+        params: The params from the users input
+        """
         self.errors = []
         self.params = params
 
     def check_all_params_are_less_than_schema_length(self):
+        """
+        Performs sanity check against the length  of the params.
+        Returns
+        -------
+        True if there are errors identified
+        False if there are no errors identified
+        """
         if len(self.params["module_code_data"]) > 50:
             self.errors.append("Module code length too long, max 50 characters.")
 
@@ -19,9 +32,21 @@ class InputValidator(object):
         return len(self.errors) == 0
 
     def get_errors(self):
+        """
+        Returns
+        -------
+        A list of errors
+        """
         return self.errors
 
     def check_all_params_exist(self):
+        """
+        Checks to see if the key exists and ensures that the keys are not empty spaces
+        Returns
+        -------
+        True if there are not errors.
+        False if there are errors.
+        """
 
         if "module_code_data" not in self.params or "lecturer_name_data" not in self.params \
                 or 'location_data' not in self.params or "date_data" not in self.params or 'title_data' not in self.params \

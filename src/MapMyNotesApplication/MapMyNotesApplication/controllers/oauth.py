@@ -16,20 +16,27 @@ GET = "GET"
 
 @oauth.route('/oauthsubmit', methods=[GET])
 def oauthsubmit():
+    """
+    Uses the Google API Client library to authenticate with Google.
+    """
     oauth_service = OauthService()
+    #get the client secret
     client_secrets_file = current_app.config['secret_json_file']
     session_helper = SessionHelper(session)
-
+    #checks it exists
     if oauth_service.client_secret_file_exists(client_secrets_file):
         oauth_service.store_secret_file(client_secrets_file)
-
+        #create a flow
         flow = oauth_service.create_flow_from_clients_secret()
 
         if 'code' not in request.args:
+            # see if the code is in the url
             authorisation_uri = oauth_service.get_authorisation_url(flow)
             return redirect(authorisation_uri)
         else:
+            #get the code from the url
             code = request.args.get('code')
+            #exhange the code
             credentials = oauth_service.exchange_code(flow, code)
             session_helper.save_credentials_to_session(credentials.to_json())
             return redirect(url_for('user.signin'))

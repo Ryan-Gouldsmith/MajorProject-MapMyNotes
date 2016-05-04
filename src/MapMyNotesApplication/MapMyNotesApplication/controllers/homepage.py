@@ -11,6 +11,9 @@ homepage = Blueprint('homepage', __name__)
 
 @homepage.route("/")
 def home_page_route():
+    """
+    Renders the homepage route
+    """
     session_helper = SessionHelper(session)
     if session_helper.check_if_session_contains_credentials():
         credentials, http_auth = GoogleServicesHelper.authorise(session_helper)
