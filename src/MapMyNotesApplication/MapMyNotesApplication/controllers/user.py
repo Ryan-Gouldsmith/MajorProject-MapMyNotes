@@ -1,16 +1,19 @@
-import httplib2
+from flask import Blueprint, url_for, redirect, session
+
 from MapMyNotesApplication.models.google_plus_service import GooglePlusService
 from MapMyNotesApplication.models.google_services_helper import GoogleServicesHelper
-from MapMyNotesApplication.models.oauth_service import OauthService
 from MapMyNotesApplication.models.session_helper import SessionHelper
 from MapMyNotesApplication.models.user import User
-from flask import Blueprint, url_for, redirect, session
 
 user = Blueprint('user', __name__)
 
 
 @user.route('/signin')
 def signin():
+    """
+    Helps to connect with the OAuth service and  connect to the Google+ api to authorise and
+    get the email address from a user and save it in the relation.
+    """
     session_helper = SessionHelper(session)
     if session_helper.check_if_session_contains_credentials() is False:
         return redirect(url_for('oauth.oauthsubmit'))
