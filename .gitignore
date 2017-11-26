@@ -13,3 +13,5 @@
 **/.pyc
 **/client_secrets.json
 **/.idea/
+deploy.sh
+**/upload/*
